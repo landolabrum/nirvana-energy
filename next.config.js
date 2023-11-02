@@ -1,5 +1,3 @@
-const isProd = process.env.NODE_ENV === 'production';
-
 
 const nextConfig = {
   reactStrictMode: true,
@@ -25,8 +23,8 @@ const nextConfig = {
       },
     ],
   },
-  basePath: isProd ? '/repo-name' : '',
-  assetPrefix: isProd ? '/repo-name/' : '',
+  basePath:  '/nirvana-energy',
+  assetPrefix: '/nirvana-energy/',
   // redirects: () => {
   //   return [
   //     { source: '/r/:sponsor', destination: '/enroll/:sponsor', permanent: false },

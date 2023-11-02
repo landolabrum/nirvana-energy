@@ -8,8 +8,8 @@ export default class MyDocument extends Document {
     return (
       <Html>
           <Head>
-            <link rel="stylesheet" href="/styles/global.css" />
-            <link rel="stylesheet" href="/styles/theme.css" />
+            <link rel="stylesheet" href="./styles/global.css" />
+            <link rel="stylesheet" href="./styles/theme.css" />
           </Head>
         <body id="app-body">
           <Main />

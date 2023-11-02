@@ -7,7 +7,7 @@ import environment from '~/src/environment';
 import capitalize from '@webstack/helpers/Capitalize';
 
 const Title: React.FC = () => {
-  const [title, setTitle] = useState<string>('Default Title');
+  const [title, setTitle] = useState<string>(String(environment.merchant.name));
   
   const router = useRouter();
   useEffect(() => {
