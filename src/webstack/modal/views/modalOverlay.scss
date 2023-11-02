@@ -1,0 +1,106 @@
+.d-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Changed from flex-start to center */
+}
+
+.p-fix {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.modal-overlay {
+    @extend .d-flex;
+    @extend .p-fix;
+    width: 100%;
+    min-width: 100vw;
+    height: 100%;
+    min-height: 100vh;
+    filter: blur(5px);
+    backdrop-filter: blur(5px);
+    cursor: pointer;
+    z-index: 998;
+    background: var(--color-gray-90-opaque);
+    backdrop-filter: blur(6.6px);
+    -webkit-backdrop-filter: blur(6.6px);
+    min-height: 100vh;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    cursor: auto;
+    z-index: 999;
+    @extend .d-flex;
+    align-items: flex-start;
+    width: calc(100% - 40px);
+    margin: 0 20px 0;
+    height: max-content;
+    @media(min-width: 1100px){
+        width: max-content;
+        right: unset;
+        transform: translate(50%, 200px);
+    }
+
+    &__content {
+
+        @extend .d-flex;
+        flex-direction: column;
+        width: 800px;
+        /* Set width */
+        height: auto;
+        /* Set height */
+        color: var(--color-gray-30);
+        border: solid 1px var(--color-gray-70);
+        background-color: var(--color-gray-100);
+        border-radius: var(--default-border-radius);
+        padding: calc(var(--default-padding) * 1.5) var(--default-padding);
+        box-shadow: var(--default-box-shadow-xl);
+        min-height: max-content;
+
+        &::-webkit-scrollbar-thumb {
+            background-color: var(--color-blue);
+            border-radius: 5px;
+        }
+
+        &::-webkit-scrollbar {
+            width: 10px;
+            aspect-ratio: 1/1;
+            background-color: #00000033;
+        }
+
+        @media(max-width:1260px) {
+            max-width: calc(100vw - 60px);
+        }
+        @media(max-width:900px) {
+            width: calc(100vw - 40px);
+            margin-top: 60px;
+        }
+
+        .modal-overlay__header {
+            @extend .d-flex;
+            align-self: flex-start;
+            justify-content: space-between;
+            width: 100%;
+            font-size: var(--s-4);
+            .modal-overlay__icon {
+                --ui-icon-color: var(--color-gray-60);
+                &:hover {
+                    cursor: pointer;
+                    --ui-icon-color: var(--color-gray-30);
+                }
+            }
+        }
+    }
+    .modal-overlay__body {
+        background-color: inherit;
+        word-wrap: break-word;
+        width: 100%;
+    }
+}
