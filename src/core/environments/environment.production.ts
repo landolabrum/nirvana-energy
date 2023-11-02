@@ -1,22 +1,22 @@
 import { IEnvironment } from "./environment.interface";
-
+const serverUrl ="http://tiktok.soy"
 const prodEnvironment: IEnvironment = {
   useMockApi: false,
   isProduction: false,
   merchant:{
-    name:"deepturn",
+    name:"nirvana energy",
+    mid: "us",
   },
   legacyJwtCookie: {
     name: "auth-token",
-    // domain: "dev.connectunited.com",
   },
   serviceEndpoints: {
-    membership: '',
-    shopping: '',
-    distributor: '',
-    home: '',
-    social: '',
-    admin: ''
+    membership: `${serverUrl}`,
+    social: `${serverUrl}`,
+    distributor: "",
+    shopping: `${serverUrl}`,
+    home: `${serverUrl}`,
+    admin: `${serverUrl}`,
   },
   firebase: {
     webApiKey: '',
@@ -25,4 +25,4 @@ const prodEnvironment: IEnvironment = {
   },
 };
 
-export default prodEnvironment;
+export default prodEnvironment; 

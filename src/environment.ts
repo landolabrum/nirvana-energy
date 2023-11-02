@@ -7,12 +7,11 @@ let environment: IEnvironment = devEnvironment;
 
 if (typeof window == "object") {
   switch (window.location.host?.toLowerCase()) {
-    case "deepturn.com":
-      environment = prodEnvironment;
-      break;
     case "localhost:3000":
-    // case "192.168.86.101:3000":
       environment = devEnvironment;
+      break;
+    default:
+      environment = prodEnvironment;
       break;
   }
 }
