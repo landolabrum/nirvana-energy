@@ -14,6 +14,7 @@
     background-color: var(--color-gray-80);
     gap: var(--default-padding);
     min-height: 490px;
+    height: max-content;
     color:var(--color-gray-30);
     #product-feature-form__options{
         width:100%;

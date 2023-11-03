@@ -15,6 +15,8 @@ import ProductFeatureOther from './views/ProductFeatureOther';
 import { useUser } from '~/src/core/authentication/hooks/useUser';
 import { IFormField } from '@webstack/components/UiForm/models/IFormModel';
 import useScrollTo from '@webstack/components/AdapTable/hooks/useScrollTo';
+import UiDiv from '@webstack/components/UiDiv/UiDiv';
+import dFlex from '@webstack/jsx/dFlex';
 
 export type IMoreInfoField = {
     name: string;
@@ -42,11 +44,12 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
     const clearAllSelected = () => setForm(defaultForm);
     const { features: formFeatures, contact: formContact } = form;
     const [disabled, setDisabled] = useState<boolean>(false);
+    // const [view, setView] = useState<string>('loading');
     const [view, setView] = useState<string>('feature');
     const [message, setMessage]=useState<string | null>(null);
     const memberService = getService<IMemberService>('IMemberService');
 
-    const handleContact = (e: any) => {
+    const handleContact = (e: any, handleErrors = true) => {
         const { name: name, value: value } = e.target;
         const handleContactErrors = () => {
             const noValue = () => {
@@ -74,7 +77,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
         let updatedContact = formContact.map((contactField: any) => {
             if (contactField.name === name) {
                 contactField.value = value;
-                contactField.error = handleContactErrors();
+                if(handleErrors)contactField.error = handleContactErrors();
             }
             return contactField;
         });
@@ -218,7 +221,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
         lg: 4,
         gap: 10,
     }
-
+    const successJsx = dFlex({height: '500px'});
     useEffect(() => {
         const user_cust = [
             { name: 'name', label: 'name', value: user?.name, required: true },
@@ -229,14 +232,14 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
         const account = async () => {
             if (user != undefined) {
                 user_cust.map((f: any) => {
-                    handleContact({ target: f })
+                    handleContact({ target: f }, false)
                 })
             };
         }
         account().then(() =>
             setDisabled(formContact.find((f: IFormField) => f.name == 'address').value?.line1 == undefined)
         );
-    }, [user != undefined, setDisabled]);
+    }, [user, setDisabled]);
 
     if (formFeatures?.length) return (
         <>
@@ -251,8 +254,8 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
                     <div>To complete the process, simply click on the link in the email.</div>
                 </div>}
                 {view == 'error' && <h1>Error</h1>}
-                {view == 'loading' && <div><UiLoader position='relative' /></div>}
-                {view == 'success' && <div>{message}</div>}
+                {view == 'loading' && <div><UiLoader height='500px' position='relative' /></div>}
+                {view == 'success' && <UiDiv id='feature_message' jsx={successJsx}>{message || ''}</UiDiv>}
                 {view == 'feature' && <>
                     {selected?.length ? (
                         <div className='product-feature-form__selected'>
@@ -309,7 +312,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
                         }}>Features</UiButton>
                     </div>
                     <UiForm fields={formContact}
-                        disabled={disabled || !Boolean(user)}
+                        disabled={disabled}
                         title={'contact info'} onChange={handleContact} onSubmit={handleSubmit} />
                 </div>}
             </div>

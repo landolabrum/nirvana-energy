@@ -8,11 +8,12 @@ interface IDiv {
   variant?: string;
   style?: React.CSSProperties;
   jsx?: string;
+  id?: string;
   minWidth?: number;
   maxWidth?: number;
 }
 
-const UiDiv: FC<IDiv> = ({ children, variant, style, jsx = ``, minWidth, maxWidth }) => {
+const UiDiv: FC<IDiv> = ({ children, variant, style, jsx = ``, id, minWidth, maxWidth }) => {
   const jsxRef = useRef<any>(null);
   const width = useWindow()?.width;
   const [show, setShow]=useState<boolean>(true);
@@ -39,21 +40,24 @@ const UiDiv: FC<IDiv> = ({ children, variant, style, jsx = ``, minWidth, maxWidt
     }
   },[minMet, maxMet]);
   useEffect(() => {
-    if(jsxRef?.current) {
+    if(jsxRef?.current && id && jsxRef.current.previousSibling?.tagName != 'STYLE') {
       const styleJsx = document.createElement('style');
       styleJsx.setAttribute('jsx', '');
-      styleJsx.innerText = jsx;
+      console.log('[ JSX ]',jsx)
+      styleJsx.innerText = `#${id}`+ jsx;
       // Insert the new sibling before the target element
       jsxRef.current.parentNode.insertBefore(styleJsx, jsxRef.current);
     }
   }, [jsxRef.current]);
-  if(show)return (
+  if(show && Boolean(id && jsx) || show && Boolean(!jsx && !id))return (
     <>
       <style jsx>{styles}</style>
+      {Boolean(!id && jsx) && 'jsx needs [props.id]'}
         <div
           ref={jsxRef}
           style={style}
           className={className}
+          id={id}
         >
           {children}
         </div>

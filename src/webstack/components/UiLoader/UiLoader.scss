@@ -31,7 +31,6 @@
         /* Equal width for the text and dots */
         display: flex;
         justify-content: flex-end;
-        width: 80%;
       }
       &.ui-loader__loading-text-container-no-dots{
         width: 100%;
@@ -46,6 +45,7 @@
         /* Equal width for the text and dots */
         display: flex;
         justify-content: flex-start;
+        width: inherit;
       }
     }
 
