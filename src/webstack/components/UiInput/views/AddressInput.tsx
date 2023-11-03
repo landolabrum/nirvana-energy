@@ -44,11 +44,7 @@ const AutocompleteAddressInput = ({ address, setAddress, traits, inputClasses, l
       }
     });
   };
-
-  useEffect(() => {
-    initAutocomplete();
-  }, [address]);
-
+  useEffect(()=>{initAutocomplete()}, [address]);
   const addressDisplay = address != undefined ?
     `${address?.line1 ? address?.line1 + ', ' : ''
     }${address?.line2 ? address?.line2 + ' ' : ''
@@ -56,7 +52,6 @@ const AutocompleteAddressInput = ({ address, setAddress, traits, inputClasses, l
     }${address?.state ? address?.state + ', ' : ''
     }${address?.postal_code ? address?.postal_code + ', ' : ''
     }${address?.country ? address?.country : ''}` : undefined;
-
   return (<>
     <style jsx>{styles}</style>
       <input

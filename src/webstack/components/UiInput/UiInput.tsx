@@ -19,7 +19,7 @@ const UiInput: NextComponentType<NextPageContext, {}, IInput> = (props: IInput) 
         name: e?.target?.name || ""
       }
     };
-    console.log('[ _e ]', e)
+    // console.log('[ _e ]', e)
     let [newV, extra] = maskInput(e, type);
     _e.target.value = extra !== undefined ? [newV, extra] : newV;
     if (onChange) onChange(_e);

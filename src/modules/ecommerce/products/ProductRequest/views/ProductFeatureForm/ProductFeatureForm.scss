@@ -19,6 +19,12 @@
     #product-feature-form__options{
         width:100%;
     }
+    &__select-title{
+        width: 100%;
+        text-transform: capitalize;
+        font-size: var(--s-4);
+        color: var(--color-gray-50);
+    }
     &__contact {
         width: 100%;
         @extend .d-flex;
@@ -164,8 +170,12 @@
             text-transform: capitalize;
         }
 
-        &__action {
-            width: 80px;
+    }
+    &__action {
+        width: 100%;
+        justify-content: flex-start;
+        div{
+            width: 130px;
         }
     }
 }

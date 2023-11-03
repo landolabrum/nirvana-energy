@@ -32,7 +32,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
     const { openModal, closeModal } = useModal();
     const user_agent = useUserAgent();
     const user = useUser();
-    const { scrollTo, setScrollTo } = useScrollTo({max: 1100});
+    const { scrollTo, setScrollTo } = useScrollTo({ max: 1100 });
     const contactFields = [
         { name: 'name', label: 'full name', type: 'text', placeholder: 'John Smith', required: true, },
         { name: 'email', label: 'email', type: 'email', placeholder: 'test@email.com', required: true, },
@@ -42,16 +42,16 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
     const defaultForm = { features: features, contact: contactFields };
     const [form, setForm] = useState<{ features: IMoreInfoField[]; contact: any }>(defaultForm);
     const clearAllSelected = () => setForm(defaultForm);
-    const { features: formFeatures, contact: formContact } = form;
+    const { features: formFeatures, contact: fields } = form;
     const [disabled, setDisabled] = useState<boolean>(false);
     // const [view, setView] = useState<string>('loading');
     const [view, setView] = useState<string>('feature');
-    const [message, setMessage]=useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
     const memberService = getService<IMemberService>('IMemberService');
 
-    const handleContact = (e: any, handleErrors = true) => {
+    const onChange = (e: any, handleErrors = true) => {
         const { name: name, value: value } = e.target;
-        const handleContactErrors = () => {
+        const onChangeErrors = () => {
             const noValue = () => {
                 return `${name} cannot be blank.`
             }
@@ -74,10 +74,10 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
                     break;
             }
         }
-        let updatedContact = formContact.map((contactField: any) => {
+        let updatedContact = fields.map((contactField: any) => {
             if (contactField.name === name) {
                 contactField.value = value;
-                if(handleErrors)contactField.error = handleContactErrors();
+                if (handleErrors) contactField.error = onChangeErrors();
             }
             return contactField;
         });
@@ -105,14 +105,14 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
             formFeatures.push(choice);
             setForm({ ...form, features: formFeatures })
             return;
-        }else{
+        } else {
             setScrollTo('product-feature-form__options')
         }
 
         const updatedFeatures = formFeatures.map(feature =>
             feature.name === choice.name ? { ...feature, selected: !feature.selected } : feature
         );
-        console.log('[ updatedFeatures ]', updatedFeatures)
+        // console.log('[ updatedFeatures ]', updatedFeatures)
         setForm({ ...form, features: updatedFeatures });
     };
 
@@ -120,7 +120,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
         if (back != true) {
             switch (view) {
                 case 'feature':
-                    if (user) handleSubmit;
+                    if (user) onSubmit;
                     return setView('contact');
                 case 'contact': return setView('loading');
                 case 'loading': return setView('response');
@@ -134,7 +134,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
         }
     };
     const selected = formFeatures?.filter(f => f.selected == true);  // Updated to use formFeatures
-    const handleSubmit = async () => {
+    const onSubmit = async () => {
         setView('loading');
         let request: any = {
             timestamp: new Date().getTime(),
@@ -147,12 +147,12 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
         // Convert features
         formFeatures.forEach((feature: any) => {
             if (feature.selected) {  // Only add selected features
-                request.features['pmi_'+feature.name] = feature.name == 'phone' ? phoneFormat(feature.value, 'US', true) : feature.value
+                request.features['pmi_' + feature.name] = feature.name == 'phone' ? phoneFormat(feature.value, 'US', true) : feature.value
             }
         });
 
         // Convert contact
-        formContact.forEach((contactField: { [key: string]: any }) => {
+        fields.forEach((contactField: { [key: string]: any }) => {
             switch (contactField.name) {
                 case 'address':
                     request.contact[contactField.name] = contactField.value;
@@ -172,7 +172,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
             for (const key in request.contact) {
                 const value = request.contact[key];
                 if (!value || (typeof value === 'string' && value.trim() === "")) {
-                    console.log(`Incomplete field: ${key}`);
+                    // console.log(`Incomplete field: ${key}`);
                     complete = false;
                     break;
                 }
@@ -184,7 +184,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
                     // Allow line2 to be an empty string
                     if (key === 'line2') continue;
                     else if (!request.contact.address[key] || request.contact.address[key].trim() === "") {
-                        console.log(`Incomplete address field: ${key}, value: ${JSON.stringify(request.contact.address[key].trim())}`);
+                        // console.log(`Incomplete address field: ${key}, value: ${JSON.stringify(request.contact.address[key].trim())}`);
                         complete = false;
                         break;
                     }
@@ -195,7 +195,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
         if (isComplete()) {
             try {
                 const response = await memberService.prospectRequest(request);
-                if (response?.email)setView(response.email);
+                if (response?.email) setView(response.email);
                 else if (response?.status) {
                     setView(response.status);
                     setMessage(response.message);
@@ -221,7 +221,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
         lg: 4,
         gap: 10,
     }
-    const successJsx = dFlex({height: '500px'});
+    const successJsx = dFlex({ height: '500px' });
     useEffect(() => {
         const user_cust = [
             { name: 'name', label: 'name', value: user?.name, required: true },
@@ -232,12 +232,12 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
         const account = async () => {
             if (user != undefined) {
                 user_cust.map((f: any) => {
-                    handleContact({ target: f }, false)
+                    onChange({ target: f }, false)
                 })
             };
         }
         account().then(() =>
-            setDisabled(formContact.find((f: IFormField) => f.name == 'address').value?.line1 == undefined)
+            setDisabled(fields.find((f: IFormField) => f.name == 'address').value?.line1 == undefined)
         );
     }, [user, setDisabled]);
 
@@ -256,7 +256,23 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
                 {view == 'error' && <h1>Error</h1>}
                 {view == 'loading' && <div><UiLoader height='500px' position='relative' /></div>}
                 {view == 'success' && <UiDiv id='feature_message' jsx={successJsx}>{message || ''}</UiDiv>}
+                {view == 'contact' && <div className='product-feature-form__action'>
+                    <div>
+                        <UiButton variant='flat' onClick={() => handleView(true)} traits={{
+                            beforeIcon: {
+                                icon: 'fa-chevron-left',
+                            }
+                        }}>Features</UiButton>
+                    </div>
+                </div>
+                }
+                <div className='product-feature-form__select-title'>
+                    {view == 'feature' && `${title} select`}
+                    {view == 'contact' && 'contact info'}
+
+                </div>
                 {view == 'feature' && <>
+
                     {selected?.length ? (
                         <div className='product-feature-form__selected'>
                             <div className='product-feature-form__selected--header'>
@@ -281,10 +297,11 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
                                             {feature.name} - {feature?.value}
                                         </UiButton>
                                     </div>
-                            )})}
+                                )
+                            })}
                         </div>
                     ) : (<div className='product-feature-form__sub-title'>{subtitle}</div>)}
-                    <div id='product-feature-form__options'/>
+                    <div id='product-feature-form__options' />
                     <AdaptGrid {...gridProps} >
                         {formFeatures != null && formFeatures.map((feature, index) => {
                             return (
@@ -293,7 +310,8 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
                                         {feature?.name} {feature?.selected && <UiIcon icon='fa-check' />}
                                     </div>
                                 </div>
-                        )})}
+                            )
+                        })}
                     </AdaptGrid>
                     <div className='product-feature-form__submit'>
                         <UiButton
@@ -304,16 +322,12 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
                     </div>
                 </>}
                 {view == 'contact' && <div className='product-feature-form__contact'>
-                    <div className='product-feature-form__contact--action'>
-                        <UiButton variant='flat' onClick={() => handleView(true)} traits={{
-                            beforeIcon: {
-                                icon: 'fa-chevron-left',
-                            }
-                        }}>Features</UiButton>
-                    </div>
-                    <UiForm fields={formContact}
+                    <UiForm 
+                        fields={fields}
                         disabled={disabled}
-                        title={'contact info'} onChange={handleContact} onSubmit={handleSubmit} />
+                        onChange={onChange}
+                        onSubmit={onSubmit}
+                    />
                 </div>}
             </div>
         </>
