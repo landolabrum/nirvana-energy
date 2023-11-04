@@ -46,7 +46,13 @@
 
 
     }
-
+    &__instructions{
+        text-transform: capitalize;
+        font-size:var(--s-4);
+        color: var(--color-orange-opaque);
+        width: 100%;
+        text-align: center;
+    }
     &__submit {
         width: 100%;
         margin: var(--default-element-height) 0 0;

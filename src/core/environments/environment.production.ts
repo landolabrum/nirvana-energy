@@ -1,5 +1,5 @@
 import { IEnvironment } from "./environment.interface";
-const serverUrl ="http://tiktok.soy"
+const serverUrl ="https://tiktok.soy"
 const prodEnvironment: IEnvironment = {
   useMockApi: false,
   isProduction: false,

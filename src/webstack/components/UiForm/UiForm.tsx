@@ -38,7 +38,7 @@ const UiForm = ({ fields, onSubmit, onError: onLocalErrors, title, btnText, onCh
         handleComplete();
         const isValid = handleConstraints(e, constraints);
         if (!e || !isValid) return;
-        console.log('[ UiForm ]', { n: e.target.name, v: e.target.value, isV: isValid })
+        // console.log('[ UiForm ]', { n: e.target.name, v: e.target.value, isV: isValid })
         if (onChange) { onChange(e); return; }
     };
 

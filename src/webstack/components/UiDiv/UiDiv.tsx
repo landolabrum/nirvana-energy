@@ -43,7 +43,6 @@ const UiDiv: FC<IDiv> = ({ children, variant, style, jsx = ``, id, minWidth, max
     if(jsxRef?.current && id && jsxRef.current.previousSibling?.tagName != 'STYLE') {
       const styleJsx = document.createElement('style');
       styleJsx.setAttribute('jsx', '');
-      console.log('[ JSX ]',jsx)
       styleJsx.innerText = `#${id}`+ jsx;
       // Insert the new sibling before the target element
       jsxRef.current.parentNode.insertBefore(styleJsx, jsxRef.current);

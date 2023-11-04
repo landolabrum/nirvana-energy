@@ -67,7 +67,6 @@ const CheckoutButton: React.FC<ICheckoutButton> = ({ cart, label = "Checkout", i
             //       }
             //     ]
             //   }
-            console.log('[ checkoutResponse ]', checkoutResponse)
             if(checkoutResponse.total){
                 const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION?.trim();
                 const encryptedResponse = encryptString(JSON.stringify(checkoutResponse), ENCRYPTION_KEY);

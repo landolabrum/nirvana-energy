@@ -63,7 +63,7 @@ const SignIn = ({ email }: { email: string | undefined }) => {
           ...(validTFA && { code: credentials.code }),
           user_agent,
         });
-        console.log(`[  signInResponse]:`, signInResponse);
+        // console.log(`[  signInResponse]:`, signInResponse);
       }catch(e:any){
         if(e.detail!=undefined){
           e.detail?.fields && setNotif({

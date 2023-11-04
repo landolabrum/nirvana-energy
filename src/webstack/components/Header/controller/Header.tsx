@@ -62,7 +62,7 @@ const Header: React.FC = () => {
 
   // Reset context when router.asPath changes
   useEffect(() => {
-    console.log('[ HeaderState ]',headerState)
+    // console.log('[ HeaderState ]',headerState)
     if (router.asPath !== route) {
       setContext(null);
       setRoute(router.asPath);

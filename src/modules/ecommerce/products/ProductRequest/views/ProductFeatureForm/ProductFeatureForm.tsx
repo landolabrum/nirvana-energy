@@ -273,7 +273,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
                 </div>
                 {view == 'feature' && <>
 
-                    {selected?.length ? (
+                    {/* {selected?.length ? ( */}
                         <div className='product-feature-form__selected'>
                             <div className='product-feature-form__selected--header'>
                                 {`Selected ${title}s`} | total amps estimate {calculateTotalValue()}
@@ -281,7 +281,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
                             <div className='product-feature-form__tools' >
                                 <div className='product-feature-form__tools--tool'>  <div onClick={clearAllSelected}>clear all</div> </div>
                             </div>
-                            {formFeatures && Object.values(formFeatures).map((feature, index) => {
+                            {formFeatures && Boolean(selected?.length) && Object.values(formFeatures).map((feature, index) => {
                                 if (feature?.selected) return (
                                     <div key={index}>
                                         <UiButton
@@ -299,8 +299,9 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
                                     </div>
                                 )
                             })}
+                            {!selected.length && <div className='product-feature-form__instructions'>please Select, {title} to continue.</div>}
                         </div>
-                    ) : (<div className='product-feature-form__sub-title'>{subtitle}</div>)}
+                    {/* // ) : (<div className='product-feature-form__sub-title'>{subtitle}</div>)} */}
                     <div id='product-feature-form__options' />
                     <AdaptGrid {...gridProps} >
                         {formFeatures != null && formFeatures.map((feature, index) => {

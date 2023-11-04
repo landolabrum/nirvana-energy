@@ -187,7 +187,7 @@ export default class MemberService
         );
         let memberJwt: any = null;
         if(res)memberJwt = res;
-        res && console.log('[ RES ]', res)
+        // res && console.log('[ RES ]', res)
         this.saveMemberToken(memberJwt);
         this.saveLegacyCookie(memberJwt);
         return this._getCurrentUser(true)!;

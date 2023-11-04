@@ -90,7 +90,7 @@ export const useClearanceRoutes = () => {
       return routeItems
         .filter(route => {
           // If the route doesn't have clearance property or the user's clearance level is greater than or equal to the route's clearance level
-          console.log('[ clearance ]: ', route.clearance, level, user)
+          // console.log('[ clearance ]: ', route.clearance, level, user)
           return route.clearance == undefined ||
             Boolean(user && route?.clearance && route?.clearance <= level && route.clearance != 0) || Boolean(!user && route?.clearance == 0)
         })

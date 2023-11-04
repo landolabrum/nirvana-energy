@@ -108,18 +108,18 @@ const SignUp = ({ setView }: ISignUp) => {
       } catch (_e: any) {
         const e = JSON.parse(JSON.stringify(_e));
         if (e.name === "AuthenticationError") {
-          console.log("[ ERROR 1 ]", e);
+          // console.log("[ ERROR 1 ]", e);
         }
         if (e.error) {
           if (e.detail?.fields) {
             const errorFields = e.detail?.fields;
             const newFields = fields.map((field: IFormField) => {
-              console.log('[ field ]', field);
+              // console.log('[ field ]', field);
               const isError = errorFields.find((f: IFormField) => {
-                console.log('[ isE ]',f)
+                // console.log('[ isE ]',f)
                 return field.name == f.name
               })
-              console.log('[ isError ]', isError, );
+              // console.log('[ isError ]', isError, );
               if(isError)field.error = isError.message;
               return field
             })

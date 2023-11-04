@@ -93,7 +93,7 @@ const AdapTable = ({
     if (!setPage) return;
     const lastNum = Number(String(newPage).charAt(1));
     if (newPage === 0 ) wait = true;
-    console.log({newPage, wait})
+    // console.log({newPage, wait})
     if (wait && newPage !== 0) setPage(parseInt(newPage.toString().slice(-1)));
     // setPage(parseInt(newPage.toString().substring(1, 2)));
     if (!wait && newPage <= totalPages && newPage >= 1) setPage(newPage);

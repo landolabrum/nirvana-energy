@@ -19,7 +19,7 @@ export default function BreadCrumbs({ links }: BreadCrumbsProps) {
   const router = useRouter();
   const width = useWindow().width;
   function handleClick(route: string) {
-    console.log("[ ROUTE ]",route)
+    // console.log("[ ROUTE ]",route)
     router.push(route)
   }
 

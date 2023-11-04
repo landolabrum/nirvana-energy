@@ -10,7 +10,7 @@ const handleConstraints = (e: any, constraints: IFormField['constraints']) => {
         // NO MAX? GET A PASS
         if (!constraints?.min) return true;
         const min = typeof constraints?.min == 'number' ? constraints?.min : constraints?.min?.value;
-        console.log('[ min ]', min)
+        // console.log('[ min ]', min)
         const notMin = min && min <= Number(value.length);
         // console.log(`[ ${name} ]:`, {
         //     max: `${value.length}/${max}, isValid: ${notMax}`

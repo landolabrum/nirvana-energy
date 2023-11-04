@@ -16,13 +16,13 @@ const Transaction: React.FC = () => {
       let token:any = decryptString(router.query.token, ENCRYPTION_KEY);
       if(token?.line_items){
         token?.line_items.forEach((line:any, index: number) => {
-          console.log("[ LINE ]: ", line, index)
+          // console.log("[ LINE ]: ", line, index)
           token.line_items[index] = {
             name: line.name,
 
           }
         });
-        console.log("[ LINE_ITEMS ]: ", token.line_items)
+        // console.log("[ LINE_ITEMS ]: ", token.line_items)
 
       }
       setTransaction(token)

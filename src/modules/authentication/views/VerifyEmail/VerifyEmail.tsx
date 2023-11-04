@@ -33,7 +33,7 @@ const VerifyEmail: React.FC<any> = ({token, onSuccess}:IVerifyEmail) => {
             return;
         }
         const verifiedResponse = await memberService.verifyEmail(String(token));
-        console.log("[ IS VER ]", verifiedResponse)
+        // console.log("[ IS VER ]", verifiedResponse)
         if(verifiedResponse.status == 'incomplete')setState(verifiedResponse);
         else if(verifiedResponse.status == 'success' && verifiedResponse.customer)onSuccess(`${verifiedResponse.customer?.email}`);
     }
@@ -58,7 +58,7 @@ const VerifyEmail: React.FC<any> = ({token, onSuccess}:IVerifyEmail) => {
                 const updatedField = { ...field, value };
                 const is_p = name === 'password'
                 const is_c = name === 'confirm_password'
-                console.log('[ field ]', { pw_value, confirm_pw_value })
+                // console.log('[ field ]', { pw_value, confirm_pw_value })
                 if ( Boolean( is_c && pw_value !== value && pw_value !== '') 
                 || Boolean(is_p && confirm_pw_value !== value && confirm_pw_value !== '') ) {
                     updatedField.error = 'Not Same as Password';
@@ -78,7 +78,7 @@ const VerifyEmail: React.FC<any> = ({token, onSuccess}:IVerifyEmail) => {
         let customer = state.customer;
         customer.metadata.password = newPassword;
             const updateMember = await memberService.updateMember(customer.id, customer);
-            console.log('[ updateMember ]', updateMember);
+            // console.log('[ updateMember ]', updateMember);
             if(updateMember)onSuccess(updateMember.email);
         
 

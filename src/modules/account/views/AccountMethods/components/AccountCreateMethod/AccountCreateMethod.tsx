@@ -187,7 +187,7 @@ const AccountCreateMethod: React.FC<IAccountCreateMethod> = ({
                 const customerResponse = methodResponse?.customer;
                 if (customerResponse) {
                     const updated_customer = memberService.updateCurrentUser(customerResponse);
-                    console.log('[ UPDATED CUSTOMER ]', updated_customer)
+                    // console.log('[ UPDATED CUSTOMER ]', updated_customer)
                 }
                 context[0].label = 'successfully added card ending in: ' + method.number.slice(-4);
                 setStatus('success');

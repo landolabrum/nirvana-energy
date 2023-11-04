@@ -42,7 +42,6 @@ const ProductFeatureOther: React.FC<any> = ({ onSubmit, title }: IOtherItem) => 
       value: value,
       selected: true
     }
-    console.log('[ OTHER ]', otherItem)
     onSubmit(otherItem)
   }
   return (

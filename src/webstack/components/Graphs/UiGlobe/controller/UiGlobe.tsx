@@ -36,7 +36,6 @@ const UiGlobe: React.FC = () => {
     let x:number = size.width;
     let y:number = size.height;
 
-    console.log(isPortrait, isMobile)
     if(isPortrait && isMobile)setXy([x, Math.trunc(y * .5)]);
     else if(!isPortrait && isMobile)setXy([Math.trunc(x), Math.trunc(x)]);
     else if(isPortrait && !isMobile)setXy([Math.trunc(x - 400), Math.trunc(x - 100)]);

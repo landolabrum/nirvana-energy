@@ -89,14 +89,14 @@ const AdminCustomerAdd: React.FC = () => {
   };
 
   const handleAddCustomer = (e: any) => {
-    console.log('[ E ]: ', e)
+    // console.log('[ E ]: ', e)
   }
 
   useEffect(() => { }, [updateField]);
   return (
     <>
       <style jsx>{styles}</style>
-      form: {JSON.stringify(customer)}
+      {/* form: {JSON.stringify(customer)} */}
       <UiForm
         fields={customer}
         onChange={updateField}

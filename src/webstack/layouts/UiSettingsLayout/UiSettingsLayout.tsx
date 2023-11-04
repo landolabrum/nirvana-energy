@@ -23,7 +23,6 @@ const UiSettingsLayout: React.FC<ISettingsLayout> = ({
     name,
     defaultView
   }: ISettingsLayout) => {
-  const [loaded, setLoaded] = useState(false);
   const [view, setView] = useState<string>();
   const handleView = (view: string) => {
     setView(view);

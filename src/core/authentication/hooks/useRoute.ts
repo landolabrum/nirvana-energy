@@ -53,10 +53,10 @@ export default function useRoute(handleSideNav?: () => void) {
         router.push('/');
       } else if (!router.pathname.includes(VERIFICATION_LANDING)) {
         // handleRoute({href:UNAUTHED_LANDING});
-        console.log("[ RT ]",);
+        // console.log("[ RT ]",);
       }
     } else {
-      console.log('[ FAIl ]');
+      // console.log('[ FAIl ]');
       return;
     }
   }

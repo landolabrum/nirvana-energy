@@ -44,7 +44,7 @@ const AccountCurrentMethod: React.FC<any> = ({ method, onDeleteSuccess, response
     }
     const handleSetDefault = (mid: string) => {
         setClicked(4);
-        console.log('[ MID ]', mid)
+        // console.log('[ MID ]', mid)
     }
     const handleClick = (clickTarget?: number) => {
         let target = clickTarget;
