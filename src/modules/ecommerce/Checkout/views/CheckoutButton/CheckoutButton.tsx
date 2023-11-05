@@ -3,13 +3,13 @@ import React, {  useState } from 'react';
 import styles from './CheckoutButton.scss';
 import UiButton from '@webstack/components/UiButton/UiButton';
 import { calculateCartTotal } from '@webstack/helpers/userExperienceFormats';
-import { useModal } from '@webstack/modal/contexts/modalContext';
 import { useRouter } from 'next/router';
 import Checkout from '~/src/pages/checkout';
 import { ITraits } from '@webstack/components/FormControl/FormControl';
 import { getService } from '@webstack/common';
 import IMemberService from '~/src/core/services/MemberService/IMemberService';
 import { encryptString } from '@webstack/helpers/Encryption';
+import { useModal } from '@webstack/components/modal/contexts/modalContext';
 
 // Remember to create a sibling SCSS file with the same name as this component
 interface ICheckoutButton {

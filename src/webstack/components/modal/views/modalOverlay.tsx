@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import { ModalContext } from '@webstack/modal/contexts/modalContext';
 import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
-import styles from "@webstack/modal/views/modalOverlay.scss"; // or use your preferred way of styling
+import styles from "@webstack/components/modal/views/modalOverlay.scss"; // or use your preferred way of styling
+import { ModalContext } from '../contexts/modalContext';
 
 
 const ModalOverlay: React.FC = () => {

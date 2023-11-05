@@ -5,6 +5,7 @@ import type { NextComponentType, NextPageContext } from "next";
 import FormControl, { IFormControl as IFormControl } from "../FormControl/FormControl";
 import Link from "next/link";
 import type { FC } from "react";
+import { IVariant } from "../AdapTable/models/IVariant";
 
 interface ILinkProvider {
   href?: string;
@@ -42,6 +43,7 @@ interface IButton extends IFormControl {
   href?: string;
   target?: string;
   type?: "button" | "submit" | "reset";
+  variant?: IVariant;
 }
 
 interface IButtonContext extends IButton {

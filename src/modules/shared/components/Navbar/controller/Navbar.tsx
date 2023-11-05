@@ -9,9 +9,9 @@ import UiButton from "@webstack/components/UiButton/UiButton";
 import environment from "~/src/environment";
 import NavButton from "../views/NavButton/NavButton";
 import NavSelect from "../views/NavSelect/NavSelect";
-import { useModal } from "@webstack/modal/contexts/modalContext";
 import Authentication from "~/src/pages/authentication";
 import useCart, { useCartTotal } from "~/src/modules/ecommerce/cart/hooks/useCart";
+import { useModal } from "@webstack/components/modal/contexts/modalContext";
 
 const Navbar = () => {
   const width = useWindow().width;
@@ -54,6 +54,7 @@ const Navbar = () => {
   useEffect(() => {
     sideNav && closeSideNavOnWidthChange();
   }, [width > 1100, routes]);
+  const isOpenEqualSideNav = open == 'sidenav';
   const cartTotal = useCartTotal();
   const cartRoute = routes.find((r: any) => r.href == '/cart')
   if (!hide) {
@@ -63,7 +64,7 @@ const Navbar = () => {
         {/* <h1 color="#f30" className='dev'>c{JSON.stringify(cartTotal)}</h1> */}
         <nav id="nav-bar" style={sideNav ? { bottom: "0" }:undefined}>
           <div className="navbar__nav-content">
-            <div className="navbar__nav-trigger" onClick={() => setOpen(open !== "sidenav" ? "sidenav" : "!sidenav")}>
+            <div className="navbar__nav-trigger" onClick={() => setOpen(!isOpenEqualSideNav ? "sidenav" : "!sidenav")}>
               {sideNav ? <UiIcon icon="fa-xmark" /> : <UiIcon icon="fa-bars" />}
             </div>
             <div className="navbar__brand-logo">
@@ -88,7 +89,7 @@ const Navbar = () => {
               {routes &&
                 routes.map((item: IRoute, key: number) => {
                   return (
-                    <div key={key} className="navbar__nav-item-container">
+                    <div key={key} className={`navbar__nav-item-container ${item?.label && `navbar__nav-item-container__${item.label}`}`}>
                       {item?.items && (
                         <div
                           onDoubleClick={() =>

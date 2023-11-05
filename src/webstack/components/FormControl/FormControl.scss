@@ -93,7 +93,7 @@ $elPad: 14px;
     border-radius: var(--default-border-radius);
     color: var(--color-gray-50);
     --ui-icon-color: var(--color-gray-50);
-    background-color: var(--color-gray-70);
+    background-color: var(--color-gray-90);
     outline: solid 1px transparent;
     border: solid 1px transparent;
     &:focus-within {
@@ -105,7 +105,7 @@ $elPad: 14px;
     &:hover {
       --ui-icon-color: var(--color-gray-50);
       color: var(--color-gray-50);
-      background-color: var(--color-gray-60);
+      background-color: var(--color-dark);
     }
 
     $pad: 5px;
@@ -154,11 +154,11 @@ $elPad: 14px;
     &.form-control__element-input{
       color: var(--color-gray-50);
       --ui-icon-color: var(--color-gray-50);
-      background-color: var(--color-gray-70);
+      background-color: var(--color-gray-100-opaque);
       border: solid 1px var(--color-gray-60);
       &:hover{
         border: solid 1px var(--color-gray-50);
-        background-color: var(--color-gray-60);
+        background-color: var(--color-gray-90);
         --ui-icon-color: var(--color-gray-50);
       }
       &:focus-within:not(.form-control__element-invalid){
@@ -222,7 +222,7 @@ $elPad: 14px;
     }
 
     &[class$="-glow"] {
-      background-color: var(--color-gray-100);
+      background-color: var(--color-gray-90);
       color: white;
       animation: none; // Stop the animation on hover.
 

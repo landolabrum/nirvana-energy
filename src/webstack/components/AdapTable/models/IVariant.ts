@@ -5,6 +5,7 @@ export type IVariant =
   | "card"
   | "right"
   | "dark"
+  | "glow"
   | "lite"
   | "center dark"
   | "account"

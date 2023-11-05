@@ -127,7 +127,7 @@ const SignIn = ({ email }: { email: string | undefined }) => {
 
       </div>
       <div className="sign-in__login">
-        <UiButton traits={{ width: "100%" }} onClick={handleSignIn} busy={isSubmitting}>
+        <UiButton variant='glow' traits={{ width: "100%" }} onClick={handleSignIn} busy={isSubmitting}>
           login
         </UiButton>
       </div>
