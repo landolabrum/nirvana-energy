@@ -14,7 +14,7 @@ const ProfileForm = ({ user, open = false }: any) => {
     { name: 'first_name', label: 'first name', required: true },
     { name: 'last_name', label: 'last name', required: true },
     { name: 'email', label: 'email', required: true },
-    { name: 'phone', label: 'phone', required: true, min: 1, max: 9 },
+    { name: 'phone', label: 'phone', required: true,constraints:{ min: 1, max: 9} },
     { name: 'address', label: 'address', required: true },
   ]
   const [fields, setFields] = useState<IFormField[]>(initialFields);
