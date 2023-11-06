@@ -17,9 +17,12 @@ interface NavAccountProps {
 }
 
 const NavSelect: React.FC<NavAccountProps> = ({ width, open, setOpen, handleRoute, item, displayName, route, routes }) => {
+    const notAccountSmall = width < 1100 && item.label !== "account";
+    const isAccountSmall = width < 1100 && item.label === "account";
+    const isDesktop = width > 1100;
     return (
         <>
-            {width < 1100 &&
+            {notAccountSmall &&
                 <UiCollapse
                     label={item.label === "account" ? `${displayName}` : item.label?.toString()}
                     variant="flat"
@@ -32,7 +35,25 @@ const NavSelect: React.FC<NavAccountProps> = ({ width, open, setOpen, handleRout
                     />
                 </UiCollapse>
             }
-            {width > 1100  &&
+            {isAccountSmall && 
+                     <UiSelect
+                     variant={
+                         open === item?.label
+                             ? "nav-item__active"
+                             : route.replaceAll("/", "") === item?.label
+                                 ? "nav-item__active"
+                                 : "nav-item"
+                     }
+                     title={item.label === "account" ? `${displayName}` : item.label?.toString()}
+                     traits={{ beforeIcon: item?.icon }}
+                     options={item.items}
+                     onSelect={(value) => handleRoute({ href: value })}
+                     openDirection="up"
+                     onToggle={(isOpen) => setOpen(isOpen ? item?.label : null)}
+                     openState={open === item?.label}
+                 />
+            }
+            {isDesktop &&
                 <UiSelect
                     variant={
                         open === item?.label

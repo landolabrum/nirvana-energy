@@ -7,6 +7,7 @@ const currentMonth = currentDate.getMonth() + 1; // Months are 0-indexed
 const maskInput = (e: any, type?: string) => {
     let {name, value, defaultValue }=e.target;
     // if(value == undefined)value = '';
+    // console.log('maskl ] ', name, value)
     const oldValue = defaultValue || "";
     const isDeleting = value.length < oldValue.length;
     // For Expiry Type
@@ -26,24 +27,16 @@ const maskInput = (e: any, type?: string) => {
         }
         return [value, undefined];
     }
-    if (e.target.type === 'text') return [value.replace(/[^a-zA-Z\s]+/g, '') , undefined];
-    if (e.target.type === 'number') return [ value.replace(/[^0-9]+/g, ''), undefined];
-    // For Card Number Input
-    if (name === 'number' && name != 'phone') {
-        const [_brand, formattedNumber] = formatCreditCard(value);
-        if (_brand === 'unknown')return [formattedNumber, "fa-exclamation-triangle"];
-        return [formattedNumber, _brand];
-    }
-    if (name === 'email') {
+    else if (name === 'email') {
         value.replace(/[^a-zA-Z0-9@.]+/g, "");
         const atCount = (value.match(/@/g) || []).length;
         const atIndex = value.indexOf("@");
         const dotAfterAtCount = atIndex !== -1 ? (value.substring(atIndex).match(/\./g) || []).length : 0;
-        if (atCount > 1 || dotAfterAtCount > 1)return [value.substring(0, value.length - 1), undefined];
+        if (atCount > 1 || dotAfterAtCount > 1)value = value.substring(0, value.length - 1);
         return [value, undefined];
     }
     
-    if (name === 'phone') {
+    else if (name === 'phone') {
         const cleanPhone = value?.replace(/\D+/g, '');
         const inputType = e.nativeEvent?.inputType;
         let formattedPhone = '';
@@ -71,6 +64,14 @@ const maskInput = (e: any, type?: string) => {
         // HANDLE DELETE Non NUMBER CHARS
         else if(inputType == 'deleteContentBackward')formattedPhone = value.replace(/[^0-9]*$/, '');
         return [formattedPhone, undefined];
+    }
+    else if (e.target.type === 'text') return [value.replace(/[^a-zA-Z\s]+/g, '') , undefined];
+    else if (e.target.type === 'number') return [ value.replace(/[^0-9]+/g, ''), undefined];
+    // For Card Number Input
+    else if (name === 'number' && name != 'phone') {
+        const [_brand, formattedNumber] = formatCreditCard(value);
+        if (_brand === 'unknown')return [formattedNumber, "fa-exclamation-triangle"];
+        return [formattedNumber, _brand];
     }
     return [value, undefined];
 };

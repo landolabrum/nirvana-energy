@@ -31,14 +31,13 @@ const UiForm = ({ fields, onSubmit, onError: onLocalErrors, title, btnText, onCh
             if (f.required && ![undefined, '', null].includes(f.value)) setComplete(true);
         });
         const anyRequired = fields.filter(f => f.required);
-        // console.log('[ anyRequired ]', anyRequired)
+        console.log('[ anyRequired ]', anyRequired)
     }
 
     const handleInputChange = (e: any, constraints?: IFormField['constraints']) => {
         handleComplete();
         const isValid = handleConstraints(e, constraints);
         if (!e || !isValid) return;
-        // console.log('[ UiForm ]', { n: e.target.name, v: e.target.value, isV: isValid })
         if (onChange) { onChange(e); return; }
     };
 
@@ -72,7 +71,6 @@ const UiForm = ({ fields, onSubmit, onError: onLocalErrors, title, btnText, onCh
             onLocalErrors(newErrors);
         }
     };
-
     useEffect(() => { }, [fields, disabled]);
     if (!fields) return<></>;
     return (<>

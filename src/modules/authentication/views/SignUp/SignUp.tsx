@@ -90,8 +90,7 @@ const SignUp = ({ setView }: ISignUp) => {
   }
 
   const handleChange = (e: any) => {
-    const name = e?.target?.name;
-    const value = e?.target?.value;
+    const {name, value}=e.target;
     changeField(name, 'value', value);
   };
   const handleSubmit = async () => {

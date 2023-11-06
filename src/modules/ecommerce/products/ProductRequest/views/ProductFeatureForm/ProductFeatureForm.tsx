@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import styles from './ProductFeatureForm.scss';
 import AdaptGrid from '@webstack/components/AdaptGrid/AdaptGrid';
 import UiButton from '@webstack/components/UiButton/UiButton';
-import { useModal } from '@webstack/modal/contexts/modalContext';
 import UiForm from '@webstack/components/UiForm/UiForm';
 import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
 import { phoneFormat } from '@webstack/helpers/userExperienceFormats';
@@ -17,6 +16,7 @@ import { IFormField } from '@webstack/components/UiForm/models/IFormModel';
 import useScrollTo from '@webstack/components/AdapTable/hooks/useScrollTo';
 import UiDiv from '@webstack/components/UiDiv/UiDiv';
 import dFlex from '@webstack/jsx/dFlex';
+import { useModal } from '@webstack/components/modal/contexts/modalContext';
 
 export type IMoreInfoField = {
     name: string;
