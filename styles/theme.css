@@ -90,6 +90,9 @@
   --s-7: 14px;
   --s-8: 12px;
   --s-9: 10px;
+  @media(max-width: 1100px){
+    --default-border-radius: 5px;
+  }
 }
 
 body {
@@ -113,6 +116,7 @@ body {
     background-color: var(--color-gray-60);
   }
 }
+
 
 .no-scroll::-webkit-scrollbar {
   display: none;
