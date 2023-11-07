@@ -8,8 +8,8 @@ $space: var(--s-7);
 }
 
 .products-listing__banner {
-
-    padding: var(--s-7);
+    width: calc(100% - calc(var(--default-padding) * 2));
+    padding: var(--default-padding);
     background-color: var(--color-gray-30);
     gap: var(--s-7);
     border-radius: var(--default-border-radius);

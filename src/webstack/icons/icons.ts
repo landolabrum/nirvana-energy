@@ -6,6 +6,7 @@ import {  spinner } from "./html/theme";
 import { emptyCart } from "./html/ecommerce/empty-cart";
 import { brandIcons } from "./categories/brand_icons";
 import { methodIcons } from "./categories/method_icons";
+import { fontAwesomeLight } from "./categories/font_awesome_light";
 import { socialIcons } from "./categories/social_icons";
 import { offGridBox, smallBox, mediumBox, largeBox } from "./html/ecommerce/products/box";
 
@@ -23,6 +24,7 @@ const imported_icons = {
 const Icons: UiIconSet = {
   // PAYMENT METHODS
   ...imported_icons,
+  ...fontAwesomeLight,
   //  THEME
   spinner: { width: 100, height: 100, html: spinner },
   "deepturn-logo":brandIcons.deepturn_logo,
