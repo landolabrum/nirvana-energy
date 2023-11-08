@@ -1,31 +1,76 @@
 // Relative Path: ./Home.tsx
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styles from './Home.scss';
 import BannerProduct from '../../ecommerce/products/views/BannerProduct/BannerProduct';
 import AdaptGrid from '@webstack/components/AdaptGrid/AdaptGrid';
 import HomeGridItem from '../views/HomeGridItem/HomeGridItem';
 import AdapTable from '@webstack/components/AdapTable/views/AdapTable';
-import UiSettingsLayout from '@webstack/layouts/UiSettingsLayout/UiSettingsLayout';
+import { applianceArray } from '../../ecommerce/products/ProductRequest/data/applianceArray';
+import { capitalizeAll } from '@webstack/helpers/Capitalize';
+import UiLoader from '@webstack/components/UiLoader/UiLoader';
 
 // Remember to create a sibling SCSS file with the same name as this component
 
 const Home = () => {
-    const kwToAmps = (kw: number) => {
-        const volts = 240;
-        return `${((kw / volts).toFixed(2))} Amps`;
+    const volts = 240;
+    const [loaded, setLoaded]=useState<boolean>(false);
+    const kWAmpsCell = (kw: number): any => {
+        const amps = (kw * 1000 / volts).toFixed(2); // Convert kW to W by multiplying by 1000
+        return <>
+            {kw} (kW) = {amps} (Amps)<br /><i style={{ color: '#f90' }}>*continuous output</i>
+        </>;
     }
-    return (
+    const exCell = (kw: number): JSX.Element => {
+        const targetAmps = kw * 1000 / volts; // Convert kW to W by multiplying by 1000 and then to Amps
+        let currentSum = 0;
+        let selectedAppliances: JSX.Element[] = [];
+        for (let appliance of applianceArray) {
+            if (currentSum + appliance.value <= targetAmps) {
+                currentSum += appliance.value;
+                selectedAppliances.push(
+                    <li key={appliance.name} style={{ lineHeight: '1.5' }}>
+                        {capitalizeAll(appliance.name)} {appliance.value} (Amps)
+                    </li>
+                );
+            }
+        }
+        return <ol>{selectedAppliances}</ol>;
+    };
+
+
+    const comparisonData = [
+        { manufacturer: 'Tesla', 'capacity': 13, 'output': 5.5 },
+        { manufacturer: 'LG', 'capacity': 15, 'output': 6.4 },
+        { manufacturer: 'Enphase', 'capacity': 12, 'output': 5 },
+    ];
+    const [tableData, setTableData] = useState<any>(comparisonData);
+    const handleTableData = () => {
+        const completed = comparisonData.map((f: any) => {
+            f["value-to-your-home"] = kWAmpsCell(f.output);
+            f["example-usage"] = exCell(f.output);
+            f["capacity"] = `${f.capacity} (kW) `;
+            f["output"] = `${f.output} (kW)`;
+            return f;
+        });
+        setTableData(completed);
+        setLoaded(true);
+    };
+    useEffect(() => {
+        handleTableData();
+    }, [loaded]);
+
+    if(loaded)return (
         <>
             <style jsx>{styles}</style>
             <div className='home'>
                 <BannerProduct />
                 <div className='home__full'>
                     <div className='home--title'>
-                        Helping you Create your Nirvana!
+                        Time to Create your Nirvana!
                         On and Off-grid battery back up
                     </div>
                     <div className='home__sub-title'>
-                        If you're thinking about going off grid or want to learn more about backup battery systems, its time to create your
+                        If you&apos;re thinking about going off grid or want to learn more about backup battery systems, it&apos;s time to create your
                     </div>
                 </div>
                 <div className='home__full'>
@@ -37,7 +82,7 @@ const Home = () => {
                     <HomeGridItem icon='fal-cloud-bolt-sun' title='power outages' >
                         With backup batteries, you can be sure your home will have
                         power even during outages.
-                        Most batteries will only back up what's stored when the grid goes down. Be sure to get our system that refills the battery if the grid stays down.
+                        Most batteries will only back up what is stored when the grid goes down. Be sure to get our system that refills the battery if the grid stays down.
                     </HomeGridItem>
                     <HomeGridItem icon='fa-globe' title='environmental concerns' >
                         Using solar battery backup systems helps reduce your carbon footprint. The less you rely on the grid, the more you do for our planet.
@@ -61,54 +106,22 @@ const Home = () => {
                         Off-grid systems are not connected to the utility grid. These systems can be tailored to fit your needs no matter how big or small and using several different power sources.
                     </HomeGridItem>
                 </AdaptGrid>
-                <br />
-                <br />
-                <h1>Don't be fooled</h1>
+                <div className='home__full'>
+                    <div className='home--title'>
+                        Don&apos;t be fooled by ( Name Brand ) Batteries
+                    </div>
+                </div>
                 <br />
                 <AdapTable
+                    // variant='mini'
                     options={{ hide: ['header', 'footer'] }}
-                    onRowClick={(e) => { alert(JSON.stringify(e)) }}
-                    data={[
-                        {
-                            manufacturer: 'Tesla',
-                            'capacity-kw': 10,
-                            'output-kw': 10,
-                            // 'continuous-capacity-amps': `${kwToAmps(10)}`,
-                        },
-                        // {
-                        //     brand:'Enphase ( Enchrage 10 )',
-                        //     'total-capacity-kw':310.5,
-                        //     'continuous-capacity':'3.84kW',
-                        //     'warrenty-cycle':'4000',
-                        //     'average-price':'~'
-                        // },
-                        // {
-                        //     brand:'Generack',
-                        //     'total-capacity-kw': 15.5,
-                        //     'continuous-capacity':'4.5kW',
-                        //     'warrenty-cycle':'4000',
-                        //     'average-price':'~'
-                        // },
-                        // {
-                        //     brand:'LG',
-                        //     'total-capacity-kw':'9.6kW',
-                        //     'continuous-capacity':'5kW',
-                        //     'warrenty-cycle':'4000',
-                        //     'average-price':'~'
-                        // },
-                        // {
-                        //     brand:'Nirvana Energy',
-                        //     'total-capacity-kw':'9.6kW',
-                        //     'continuous-capacity':'5kW',
-                        //     'warrenty-cycle':'4000',
-                        //     'average-price':'~'
-                        // }
-                    ]}
+                    data={tableData}
                 />
-                <h1>Appliance Amp List</h1>
+                {/* <h1>Appliance Amp List</h1> */}
             </div>
         </>
     );
+    return <UiLoader/>;
 };
 
 export default Home;

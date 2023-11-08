@@ -80,23 +80,6 @@ const AdaptTableCell: NextComponentType<NextPageContext, {}, Props> = ({ cell, d
     return (
       <>
         <style jsx>{styles}</style>
-        {cell === "icon-label" && (
-          <div data-keywords={data?.keywords} className="adaptable-cell__icon-label">
-            <div className={`icon-label--icon${data?.background ? " " + keyStringConverter(data?.label, true, true) : ""}`}>
-              {data?.icon}
-            </div>
-            <div className="icon-label--label">{data?.label}</div>
-          </div>
-        )}
-        {cell === "copy-id" && (
-          <div className="adaptable-cell__copy-id">
-            <div className="adaptable-cell__copy-label">{data}</div>
-            <a className={`adaptable-cell__copy ${copied ? " adaptable-cell__copied" : ""}`} onClick={() => handleCopy(data)}>
-              <UiIcon icon="fa-copy" />
-            </a>
-          </div>
-        )}
-        {cell === "id" && <div className="adaptable-cell__id">{data}</div>}
         {cell === "member" && (
           <div className="adaptable-cell__member-container">
             <div>
@@ -109,54 +92,6 @@ const AdaptTableCell: NextComponentType<NextPageContext, {}, Props> = ({ cell, d
               </div>
               {data.email}
             </div>
-          </div>
-        )}
-        {cell == "product" && (
-          <div className="adaptable-cell__product">
-            <div className="adaptable-cell__product-description">{data}</div>
-            <div className="adaptable-cell__product-icon">
-            </div>
-          </div>
-        )}
-        {cell === "wallet-address" && (
-          <div className="adaptable-cell__wallet-address">
-            {data?.walletAddress?.length > 15 ? (
-              <>
-                <div className="adaptable-cell__wallet-condensed" data-value={data?.walletAddress}>
-                  {`${data?.walletAddress?.substring(0, 6)}...${data?.walletAddress?.substring(
-                    data?.walletAddress.length - 4
-                  )}`}
-                </div>
-                <a className={`adaptable-cell__copy ${copied ? " adaptable-cell__copied" : ""}`} onClick={() => handleCopy(data?.walletAddress)}>
-                  <UiIcon icon="fa-copy" />
-                </a>
-                {data.transactionhash && (
-                  <a
-                    className={`adaptable-cell__etherscan-link${hover === "transaction-hash"?" adaptable-cell__etherscan-link-hover":""}`}
-                    href={`https://etherscan.io/tx/${data.transactionhash}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    onMouseEnter={()=>setHover("transaction-hash")}
-                    onMouseLeave={()=>setHover("")}
-                  >
-                    <UiIcon icon="fa-globe" />
-                  </a>
-                )}
-              </>
-            ) : (
-              <NaCell />
-            )}
-          </div>
-        )}
-        {cell === "date" && (
-          <div className="adaptable-cell__date">
-            <div>{mut[0]}</div>
-            <div>{mut[1]}</div>
-          </div>
-        )}
-        {cell === "currency-crypto" && (
-          <div className="adaptable-cell__currency-crypto">
-            <UiIcon icon={`${data?.currencySymbol?.toLowerCase()}-logo`} /> {data?.amount} {data?.currencySymbol}
           </div>
         )}
       </>

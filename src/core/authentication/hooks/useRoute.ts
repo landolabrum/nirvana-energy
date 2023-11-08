@@ -25,7 +25,7 @@ export default function useRoute(handleSideNav?: () => void) {
         option.items ||
         option.active === false
       ) return;
-      option.href && router.push(option.href, undefined, { shallow: false });
+      else if(option.href )router.push(option.href, undefined, { shallow: false });
       handleSideNav && handleSideNav();
     }
 

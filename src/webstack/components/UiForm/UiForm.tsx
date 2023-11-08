@@ -31,7 +31,7 @@ const UiForm = ({ fields, onSubmit, onError: onLocalErrors, title, btnText, onCh
             if (f.required && ![undefined, '', null].includes(f.value)) setComplete(true);
         });
         const anyRequired = fields.filter(f => f.required);
-        console.log('[ anyRequired ]', anyRequired)
+        // console.log('[ anyRequired ]', anyRequired)
     }
 
     const handleInputChange = (e: any, constraints?: IFormField['constraints']) => {

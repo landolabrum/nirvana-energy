@@ -15,6 +15,9 @@ export default class MyDocument extends Document {
           <Main />
           <NextScript />
         </body>
+        <span style={{visibility:'hidden'}}>
+        {`########## Property of MindBurner Corporation ########## \n\n ##########  Unauthorized use is prohibited ##########`}
+        </span>
       </Html>
     );
   }

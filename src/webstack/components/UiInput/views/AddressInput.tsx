@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import styles from '../UiInput.scss';
 import { Loader } from '@googlemaps/js-api-loader';
-import { ITraits } from '@webstack/components/FormControl/FormControl';
+import FormControl, { ITraits } from '@webstack/components/FormControl/FormControl';
 
 interface IAddressInput {
   address?: any;
@@ -54,6 +54,12 @@ const AutocompleteAddressInput = ({ address, setAddress, traits, inputClasses, l
     }${address?.country ? address?.country : ''}` : undefined;
   return (<>
     <style jsx>{styles}</style>
+    <FormControl
+          error={error}
+          label={label}
+          traits={{
+            ...traits,
+          }}>
       <input
         className={inputClasses}
         id="autocomplete-address"
@@ -62,6 +68,7 @@ const AutocompleteAddressInput = ({ address, setAddress, traits, inputClasses, l
         defaultValue={addressDisplay}
         name="address"
       />
+      </FormControl>
   </>
   );
 };

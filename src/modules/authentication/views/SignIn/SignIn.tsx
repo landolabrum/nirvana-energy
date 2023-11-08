@@ -92,7 +92,6 @@ const SignIn = ({ email }: { email: string | undefined }) => {
         {["email", "password"].map((field) => {
           const hasError = signInResponse?.fields !== undefined && signInResponse?.fields.find((f:any)=>f.name==field)
           return(
-
             <UiInput
             key={field}
             type={field}

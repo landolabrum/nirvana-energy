@@ -12,6 +12,7 @@ const UiInput: NextComponentType<NextPageContext, {}, IInput> = (props: IInput) 
   const [show, setShow] = useState<boolean>(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    
     if (props?.max && props.max < e.target.value.length) return;
     let _e: any = {
       target: {
@@ -31,40 +32,43 @@ const UiInput: NextComponentType<NextPageContext, {}, IInput> = (props: IInput) 
     props.disabled ? "input-disabled" : "",
     props.traits?.beforeIcon ? "input__has-icons" : ""
   ].join(" ");
-  if(props.variant == 'invalid' && value?.length == 0)props.variant == undefined;
+  if (props.variant == 'invalid' && value?.length == 0) props.variant == undefined;
   const elType = show && type === "password" ? "text" : type;
-  useEffect(() => {}, [props?.variant]);
+  useEffect(() => { }, [props?.variant]);
 
   return (
     <>
       <style jsx>{styles}</style>
-      <FormControl
-        {...props}
-        traits={{
-          ...props.traits,
-          afterIcon: type === "password" ? {
-            icon: show ? "fa-eye" : "fa-eye-slash",
-            onClick: () => setShow(!show)
-          } : props.traits?.afterIcon,
-        }}>
-        { props.name != 'address' ? <input
-          id={props?.id}
-          className={inputClasses}
-          name={props.name}
-          type={elType}
-          placeholder={props.placeholder}
-          min={props.min}
-          max={props.max}
-          value={value?value:''}
-          onChange={handleChange}
-          autoComplete={props.autoComplete}
-          onKeyDown={onKeyDown}
-          onKeyUp={onKeyUp}
-          onPaste={props.onPaste}
-          required={Boolean(required)}
-        // defaultValue={ props.defaultValue ? props.defaultValue :  value}
-        /> :
-        <AutocompleteAddressInput
+      {props.name != 'address' &&
+        <FormControl
+          {...props}
+          traits={{
+            ...props.traits,
+            afterIcon: type === "password" ? {
+              icon: show ? "fa-eye" : "fa-eye-slash",
+              onClick: () => setShow(!show)
+            } : props.traits?.afterIcon,
+          }}>
+          <input
+            id={props?.id}
+            className={inputClasses}
+            name={props.name}
+            type={elType}
+            placeholder={props.placeholder}
+            min={props.min}
+            max={props.max}
+            value={value ? value : ''}
+            onChange={handleChange}
+            autoComplete={props.autoComplete}
+            onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
+            onPaste={props.onPaste}
+            required={Boolean(required)}
+          // defaultValue={ props.defaultValue ? props.defaultValue :  value}
+          />
+        </FormControl>
+      }
+      {props.name == 'address' && <AutocompleteAddressInput
         label={props.label}
         inputClasses={inputClasses} traits={{
           ...props.traits,
@@ -76,10 +80,7 @@ const UiInput: NextComponentType<NextPageContext, {}, IInput> = (props: IInput) 
         error={props.error}
         address={value}
         setAddress={handleChange}
-      />
-          }
-
-      </FormControl>
+      />}
       <div className={`input__message ${message ? 'input__message-show' : ''}${props?.variant ? ' input__message-' + props.variant : ''}`}>
         {message && message}
       </div>

@@ -11,7 +11,7 @@ $small: 1100px;
   }
 
   &:hover {
-    --ui-icon-color: var(--color-secondary);
+    --ui-icon-color: var(--color-primary);
   }
 }
 
@@ -22,6 +22,8 @@ $small: 1100px;
   align-items: center;
   justify-content: center;
   height: 100%;
+  --ui-icon-height: var(--s-1);
+  --ui-icon-width: var(--s-1);
 
   @media (max-width: $small) {
     width: max-content;

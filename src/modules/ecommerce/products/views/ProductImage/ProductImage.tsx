@@ -19,7 +19,7 @@ const ProductImage: React.FC<{ image?: any, options?: any }> = ({ image, options
                             onError={() => setImageLoadError(true)}
                         />
 
-                    ) : <UiIcon icon='deepturn-logo' />}
+                    ) : <UiIcon icon='nirvana-logo' />}
                 {/* </div> */}
             </div>
         </>

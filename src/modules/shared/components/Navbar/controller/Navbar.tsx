@@ -10,7 +10,7 @@ import environment from "~/src/environment";
 import NavButton from "../views/NavButton/NavButton";
 import NavSelect from "../views/NavSelect/NavSelect";
 import Authentication from "~/src/pages/authentication";
-import useCart, { useCartTotal } from "~/src/modules/ecommerce/cart/hooks/useCart";
+import  { useCartTotal } from "~/src/modules/ecommerce/cart/hooks/useCart";
 import { useModal } from "@webstack/components/modal/contexts/modalContext";
 
 const Navbar = () => {
@@ -69,7 +69,9 @@ const Navbar = () => {
             </div>
             <div className="navbar__brand-logo">
               <div className="navbar__hide_show">
-                <UiIcon onClick={handleHide} icon="deepturn-logo" />
+                <UiIcon 
+                // onClick={handleHide}
+                icon="nirvana-logo" />
               </div>
               <UiButton variant="flat" onClick={() => handleRoute({ href: "/" })}>
                 {environment?.merchant?.name}
@@ -139,7 +141,7 @@ const Navbar = () => {
         <style jsx>{styles}</style>
         <div className="navbar__brand-logo">
           <div className="navbar__hide_show">
-            <UiIcon onClick={handleHide} icon="deepturn-logo" />
+            <UiIcon onClick={handleHide} icon="nirvana-logo" />
           </div>
           <UiButton variant="flat" onClick={() => handleRoute({ href: "/" })}>
             {environment?.merchant?.name}

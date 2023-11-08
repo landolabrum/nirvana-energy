@@ -16,6 +16,7 @@ export default function DefaultLayout(props: IProps) {
         <main>
           {props.children}
         </main>
+   
     </>
   );
 }

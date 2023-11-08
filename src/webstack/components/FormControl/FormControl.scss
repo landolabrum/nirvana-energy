@@ -162,7 +162,7 @@ $elPad: 14px;
         --ui-icon-color: var(--color-gray-50);
       }
       &:focus-within:not(.form-control__element-invalid){
-        background-color: var(--color-gray-50);
+        background-color: var(--color-gray-80);
         border: solid 1px var(--color-gray-30);
         color: var(--color-white);
       }
@@ -178,7 +178,7 @@ $elPad: 14px;
     .form-control__icon-placeholder {
       height: 100%;
       width: var(--s-9);
-      background-color: inherit;
+      background-color: transparent;
     }
 
     &.form-control__element-invalid {

@@ -21,6 +21,7 @@ export interface TableContentProps extends TableFunctionProps {
   options?: TableOptions;
   variant?: IVariant;
   onRowClick?: (e: any) => void;
+  hideHeader?: boolean;
 }
 export interface TableFunctionProps {
   data?: any;
@@ -42,6 +43,7 @@ export const AdapTableContent = ({
   startIndex,
   variant,
   onRowClick,
+  hideHeader,
   options,
 }: TableContentProps) => {
   const index = options?.index ? options.index + 1 : 0;
@@ -123,9 +125,11 @@ export const AdapTableContent = ({
       <div className={`table-container ${variant ? "table-container-" + variant : ""}`}>
         <table
           ref={tableRef}
-          className={`${variant ? "table-" + variant : ""} ${view === "show" && "table-show"}`}
+          className={
+            `${variant ? "table-" + variant : ""} ${view === "show" && "table-show"} ${hideHeader && 'hide-header' || ''}`
+          }
         >
-          <thead>
+          <thead className={hideHeader && 'hide-header' || ''}>
             <tr>
               {index !== 0 && <th className="index">#</th>}
               {data &&

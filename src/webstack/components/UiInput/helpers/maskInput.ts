@@ -65,7 +65,7 @@ const maskInput = (e: any, type?: string) => {
         else if(inputType == 'deleteContentBackward')formattedPhone = value.replace(/[^0-9]*$/, '');
         return [formattedPhone, undefined];
     }
-    else if (e.target.type === 'text') return [value.replace(/[^a-zA-Z\s]+/g, '') , undefined];
+    // else if (e.target.type === 'text') return [value.replace(/[^a-zA-Z\s]+/g, '') , undefined];
     else if (e.target.type === 'number') return [ value.replace(/[^0-9]+/g, ''), undefined];
     // For Card Number Input
     else if (name === 'number' && name != 'phone') {

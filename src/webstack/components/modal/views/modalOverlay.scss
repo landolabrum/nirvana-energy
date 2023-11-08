@@ -31,6 +31,7 @@
 }
 
 .modal {
+    $width: calc(100% - 40px);
     position: fixed;
     top: 0;
     left: 0;
@@ -39,13 +40,14 @@
     z-index: 999;
     @extend .d-flex;
     align-items: flex-start;
-    width: calc(100% - 40px);
+    width: $width;
     margin: 0 20px 0;
     height: max-content;
     @media(min-width: 1100px){
-        width: max-content;
-        right: unset;
-        transform: translate(50%, 200px);
+        width: 800px; // Set a fixed width for larger screens
+        // max-width: 90%; // Add a max-width to ensure it doesn't get too wide on very large screens
+        height: auto; // Height can be auto for scrollable content
+        transform: translate(calc(50vw - 400px), 200px); // Center the modal
     }
 
     &__content {

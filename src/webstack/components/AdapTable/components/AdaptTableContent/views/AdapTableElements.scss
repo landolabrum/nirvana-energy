@@ -82,6 +82,11 @@ table {
   &.table-show{
     display: table;
   }
+  &.hide-header{
+    border-radius: var(--default-border-radius);
+    border: solid 1px transparent;
+    overflow: hidden;
+  }
   &.table-mini {
     margin-top: 15px;
     padding-top: 15px;
@@ -102,6 +107,7 @@ table {
     }
   }
   thead {
+  
     @media (max-width: 900px) {
       display: none;
     }

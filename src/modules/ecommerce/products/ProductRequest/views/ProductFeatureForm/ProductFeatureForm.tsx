@@ -50,11 +50,11 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
     const memberService = getService<IMemberService>('IMemberService');
 
     const onChange = (e: any, handleErrors = true) => {
-        const { name: name, value: value } = e.target;
+        const { name: name, value: value, error: error } = e.target;
         const onChangeErrors = () => {
-            const noValue = () => {
-                return `${name} cannot be blank.`
-            }
+            const noValue = () => {return `${name} cannot be blank.`}
+            if(e.target.error) return e.target.error;
+
             switch (name) {
                 case 'name':
                     if (value?.split(' ')?.length == 1) return 'need last name';
@@ -62,6 +62,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
                     break;
                 case 'email':
                     if (value == null) return noValue();
+                    if(!Boolean(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)))return '**( syntax ERROR )**';
                     break;
                 case 'phone':
                     if (value == null) return noValue();
@@ -226,7 +227,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
         const user_cust = [
             { name: 'name', label: 'name', value: user?.name, required: true },
             { name: 'email', label: 'email', value: user?.email, type: 'email', required: true },
-            { name: 'phone', label: 'phone', type: 'tel', value: user?.phone ? phoneFormat(user?.phone, 'us') : null, required: true },
+            { name: 'phone', label: 'phone', type: 'tel', value: user?.phone ? user?.phone : null, required: true },
             { name: 'address', label: 'address', value: user?.address, required: true },
         ]
         const account = async () => {

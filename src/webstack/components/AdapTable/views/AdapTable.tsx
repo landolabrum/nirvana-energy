@@ -129,6 +129,7 @@ const AdapTable = ({
           />
         )}
         <AdapTableContent
+          hideHeader={hideHeader}
           data={data}
           setSort={(key, isAscend) => sortByKey(key, isAscend)}
           loading={loading}

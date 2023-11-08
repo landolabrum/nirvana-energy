@@ -64,7 +64,7 @@ const Authentication: React.FC<any> = (props: any) => {
           
           <div className='authentication__view-header'>
             <div className="authentication__logo">
-              <UiIcon icon="deepturn-logo" />
+              <UiIcon icon="nirvana-logo" />
             </div>
             <div className='authentication__view-name'>
               {keyStringConverter(view)}
