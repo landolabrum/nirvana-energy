@@ -1,23 +1,27 @@
-
 import Document, { Html, Head, Main, NextScript } from "next/document";
-// import { GA_TRACKING_ID } from "../utils/gtag";
-// import favicon from "../static/favicon/fav-32x32.ico"
-{/* <link rel="shortcut icon" href={favicon.src}/> */ }
+import buildTimestamp  from '@webstack/hooks/useBuildDate'; // Ensure this import path is correct
+
 export default class MyDocument extends Document {
   render() {
+    // Assuming buildTimestamp is a function that returns the timestamp string
+    const buildDate = buildTimestamp();
+
     return (
       <Html>
-          <Head>
-            <link rel="stylesheet" href="./styles/global.css" />
-            <link rel="stylesheet" href="./styles/theme.css" />
-          </Head>
+        <Head>
+          <link rel="stylesheet" href="./styles/global.css" />
+          <link rel="stylesheet" href="./styles/theme.css" />
+          {/* Other head elements */}
+        </Head>
         <body id="app-body">
           <Main />
           <NextScript />
+          <span style={{ visibility: 'hidden' }}>
+          {`☠ Property of MindBurner Corporation ☠\nUnauthorized use is prohibited ☠☠☠☠☠☠☠☠☠☠
+          ☠☠☠ ${JSON.stringify({"buildDate": "buildTimestamp()"})} ☠☠☠
+          `}
+          </span>
         </body>
-        <span style={{visibility:'hidden'}}>
-        {`########## Property of MindBurner Corporation ########## \n\n ##########  Unauthorized use is prohibited ##########`}
-        </span>
       </Html>
     );
   }

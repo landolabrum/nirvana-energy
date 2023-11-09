@@ -27,7 +27,7 @@ export default class MemberService
     if (quote) {
 
       const res = await this.post<{}, any>(
-        "usage/prospect/create",
+        "usage/prospect/create/",
         quote
       )
       return res

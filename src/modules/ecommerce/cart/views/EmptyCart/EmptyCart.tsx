@@ -9,6 +9,7 @@ const EmptyCart: React.FC = () => {
     return (
         <>
             <style jsx>{styles}</style>
+                <h1>your cart is empty</h1>
             <div className="cart__empty-cart">
                 <div className={`cart__emtpy-cart-canvas `}>
                     <div className='canvas-texture' />

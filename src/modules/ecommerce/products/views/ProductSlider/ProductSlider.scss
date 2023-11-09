@@ -20,7 +20,7 @@ $pad: 18px;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
   margin: var(--s-7) 0;
-  height: $hite;
+  height: 100%;
   @media(max-width:900px){
     height: 100%;
   }
@@ -49,9 +49,12 @@ $pad: 18px;
 }
 
 .product-slider__product{
+  border-radius: var(--default-border-radius);
+  border: solid 1px var(--color-blue-10);
+  outline: solid 1px var(--color-blue);
+  padding: var(--default-padding);
   cursor: pointer;
   width: 450px;
-  height: inherit;
   display: flex;
   flex-direction: column;
   $dHite: 80px;

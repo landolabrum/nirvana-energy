@@ -91,7 +91,7 @@ const Navbar = () => {
               {routes &&
                 routes.map((item: IRoute, key: number) => {
                   return (
-                    <div key={key} className={`navbar__nav-item-container ${item?.label && `navbar__nav-item-container__${item.label}`}`}>
+                    <div key={key} className={`navbar__nav-item-container ${item?.label && `navbar__nav-item-container__${String(item.label).toLowerCase()}`}`}>
                       {item?.items && (
                         <div
                           onDoubleClick={() =>

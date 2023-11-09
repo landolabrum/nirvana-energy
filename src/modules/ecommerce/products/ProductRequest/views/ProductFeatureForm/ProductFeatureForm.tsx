@@ -249,7 +249,7 @@ const ProductFeatureForm: React.FC<IProductMoreInfoForm> = ({ features, title, s
             <div className='product-feature-form'>
                 {view.includes("@") && <div className='product-feature-form__success'>
                     <div>A verification email to
-                        <span className='product-feature-form__success--email'> {view}</span>
+                        <span className='product-feature-form__success--email'> {view}, </span>
                         has been sent.
                     </div>
                     <div>To complete the process, simply click on the link in the email.</div>

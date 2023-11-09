@@ -11,7 +11,7 @@
     width: calc(100% - 40px);
     border-radius: var(--default-border-radius);
     padding: var(--s-3) var(--s-6) var(--s-1);
-    background-color: var(--color-gray-80);
+    background-color: var(--color-gray-90);
     gap: var(--default-padding);
     min-height: 490px;
     height: max-content;
@@ -59,7 +59,7 @@
     }
 
     &__selected {
-        background-color: var(--color-gray-70);
+        background-color: var(--color-gray-80);
         // width: calc(100% - calc(var(--s-7) * 2));
         width: 100%;
         position: relative;
@@ -137,12 +137,13 @@
         @extend .d-flex;
         border-radius: var(--default-border-radius);
         --ui-icon-color: var(--color-white);
-        border: solid 1px;
-        background-color: var(--color-gray-70);
-
+        border: solid 1px var(--color-gray-50);
+        background-color: var(--color-gray-80);
+        
         &:hover {
             color: var(--color-gray-10);
-            background-color: var(--color-gray-60);
+            border: solid 1px var(--color-gray-20);
+            background-color: var(--color-gray-70);
         }
 
         &--selected {

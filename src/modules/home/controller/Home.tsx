@@ -8,6 +8,7 @@ import AdapTable from '@webstack/components/AdapTable/views/AdapTable';
 import { applianceArray } from '../../ecommerce/products/ProductRequest/data/applianceArray';
 import { capitalizeAll } from '@webstack/helpers/Capitalize';
 import UiLoader from '@webstack/components/UiLoader/UiLoader';
+import ProductRequest from '../../ecommerce/products/ProductRequest/controller/ProductRequest';
 
 // Remember to create a sibling SCSS file with the same name as this component
 
@@ -42,6 +43,8 @@ const Home = () => {
         { manufacturer: 'Tesla', 'capacity': 13, 'output': 5.5 },
         { manufacturer: 'LG', 'capacity': 15, 'output': 6.4 },
         { manufacturer: 'Enphase', 'capacity': 12, 'output': 5 },
+        { manufacturer: 'Generack', 'capacity': 0, 'output': 7.6 },
+        { manufacturer: 'GrowWatt', 'capacity': 0, 'output': 6 },
     ];
     const [tableData, setTableData] = useState<any>(comparisonData);
     const handleTableData = () => {
@@ -63,7 +66,8 @@ const Home = () => {
         <>
             <style jsx>{styles}</style>
             <div className='home'>
-                <BannerProduct />
+                <ProductRequest/>
+                {/* <BannerProduct /> */}
                 <div className='home__full'>
                     <div className='home--title'>
                         Time to Create your Nirvana!

@@ -27,7 +27,7 @@ export interface HandleRouteProps {
 export const routes: IRoute[] = [
   // { label: "dashboard", href: "/dashboard", icon: "fal-guage", active: true, clearance: 1 },
   { label: "configure", href: "/configure", icon: "fa-tags", active: true },
-  // { label: "products", href: "/products", icon: "fa-tags", active: true },
+  { label: "products", href: "/products", icon: "fa-tags", active: true },
   // {
   //   label: "Store",
   //   icon: "fa-store",
