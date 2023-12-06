@@ -7,12 +7,13 @@ import { IPaymentMethod } from "~/src/modules/account/model/IMethod";
 export default interface IMemberService {
   // METHODS
   getCurrentUser(): UserContext | undefined;
+  getSetupIntent(client_secret: string): any;
   prospectRequest(quote: any, test?:boolean): any | undefined;
   updateCurrentUser(user: UserContext): void;
-  getMethods(): Promise<any>;
+  getMethods(customerId?: string): Promise<any>;
   deleteMethod(id: string): Promise<any>;
   processTransaction(cart:ICartItem[]): Promise<any>;
-  createCustomerMethod(method: IPaymentMethod): Promise<any>;
+  createPaymentIntent(method?: IPaymentMethod): Promise<any>;
   userChanged: EventEmitter<UserContext | undefined>;
   verifyEmail(token: string):Promise<any>;
   signIn({ email,
@@ -23,7 +24,8 @@ export default interface IMemberService {
   signUp({
     name,
     email,
-    password,
+    password, 
+    referrer_url,
     user_agent
   }: any): Promise<any>;
   signOut(): Promise<string>;
@@ -31,4 +33,5 @@ export default interface IMemberService {
   getPersonalInformation(): Promise<any | null>;
   getMemberProfileInformation(memberId: string): Promise<any | null>;
   updateMember(id: string, memberData: any): Promise<any>;
+  toggleDefaultPaymentMethod(paymentMethodId: string): Promise<any>;
 }

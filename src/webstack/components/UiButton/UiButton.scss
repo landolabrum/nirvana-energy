@@ -4,7 +4,7 @@
     cursor: default;
     position: relative;
     color: transparent;
-    text-shadow: 0 0 2px var(--color-gray-60);
+    text-shadow: 0 0 2px var(--gray-60);
   }
   100%{
     color: inherit;
@@ -20,10 +20,9 @@
     cursor: default;
     position: relative;
     color: transparent;
-    text-shadow: 0 0 2px var(--color-gray-60);
+    text-shadow: 0 0 2px var(--gray-60);
   }
 }
-
 button {
   display: flex;
   align-items: inherit;
@@ -35,18 +34,22 @@ button {
   height: inherit;
   line-height: inherit;
   width: 100%;
+  overflow: inherit;
   gap: inherit;
   text-transform: inherit;
   font-size: inherit;
+  animation: inherit;
   font-weight: inherit;
   font-family: inherit;
   cursor: inherit;
   // border-radius: inherit;
-  overflow: hidden;
   padding: 0;
   &.flat {
     margin: 0;
     
+  }
+  &.lite{
+    text-decoration: none;
   }
   &.link,
   &.flat {
@@ -68,7 +71,7 @@ button {
     align-items: center;
     border-radius: var(--input-border-radius);
     // background-color: #00000045;
-    --ui-icon-color: var(--color-blue);
+    --ui-icon-color: var(--blue);
   }
   &.icon, &.disabled-icon{
     padding: 0 7px;
@@ -85,14 +88,14 @@ button {
       justify-content: flex-start;
     }
   }
-  // &:disabled{
-  //   user-select: none;
-  //   cursor:not-allowed !important;
-  //   animation: disable 1s forwards;
-  // }
-  // &:not(disabled){
-  //   animation: abled 1s forwards;
-  // }
+  &:disabled{
+    user-select: none;
+    cursor:not-allowed !important;
+    animation: disable 1s forwards;
+  }
+  &:not(disabled){
+    animation: abled 1s forwards;
+  }
 }
 .ui-button__link {
   color: inherit;

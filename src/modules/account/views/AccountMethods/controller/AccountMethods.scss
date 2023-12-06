@@ -7,47 +7,43 @@
 
 
 .brdr {
-    border: solid 1px var(--color-gray-80);
-    outline: solid 1px var(--color-gray-60);
+    border: solid 1px var(--gray-80);
+    outline: solid 1px var(--gray-60);
 }
 .body {
-    padding: 0 var(--default-padding);
-    width: calc(calc(100% - 1px) - calc(var(--default-padding) * 2));
+    padding: 0 var(--padding);
+    width: calc(calc(100% - 1px) - calc(var(--padding) * 2));
 }
 .account-methods {
     @extend .d-flex;
     flex-direction: column;
-    gap: var(--default-padding);
-    justify-content: flex-start;
-    min-height: var(--default-element-height);
+    gap: var(--padding);
+    justify-content: stretch;
+    min-height: var(--element-height);
     width: 100%;
-
     .account-methods__existing {
+        width: calc(100% - calc(var(--padding) * 2));
         @extend .d-flex;
         flex-direction: column;
-
-        // .account-methods__header {
-        //     @extend  .d-flex, .brdr, .body;
-        //     line-height: 1;
-        //     height: var(--default-element-height);
-        //     border-radius: var(--default-border-radius) var(--default-border-radius) 0 0;
-        //     background-color: var(--color-gray-60);
-        //     color: var(--color-gray-30);
-        //     text-transform: capitalize;
-        //     font-size: var(--s-6);
-
-        //     @media(max-width: 900px) {
-        //         font-size: var(--s-8);
-        //     }
-        // }
-
+        gap: var(--padding);
+        padding: var(--padding);
+        background-color: var(--gray-80);
+        border-radius: var(--border-radius);
+        border: solid 1px var(--gray-70);
+        &--title{
+            width: 100%;
+            font-size: var(--s-3);
+            text-transform: capitalize;
+            color: var(--gray-40);
+        }
         .account-methods__list {
             @extend .d-flex;
             flex-direction: column;
             gap: var(--s-7);
+            width: 100%;
             .account-methods__list-item {
                 width: 100%;
-                min-height: var(--default-element-height);
+                min-height: var(--element-height);
             }
         }
     }

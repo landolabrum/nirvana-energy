@@ -2,7 +2,6 @@ import BreadCrumbs, {BreadCrumbLinkProps} from "../components/BreadCrumbs/BreadC
 import styles from "./Header.scss";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { capitalize } from "lodash";
 import Navbar from "@shared/components/Navbar/controller/Navbar";
 
 
@@ -32,9 +31,8 @@ export const HeaderProvider: React.FC<HeaderProviderProps> = ({ children }) => {
   return (<>
         <style jsx>{styles}</style>
     <HeaderContext.Provider value={headerState}>
-      <div className='header__container'>
+      <div className='header__container' id="header-container">
         <Navbar />
-        <span className='header__container--divider'/>
         <Header />
       </div>
       {children}
@@ -48,13 +46,6 @@ const Header: React.FC = () => {
   const [headerState, setHeaderState] = useState<HeaderProps | null>(null);
   const [route, setRoute] = useState<string | null>(null);
   const router = useRouter();
-  const h = (t: string): any => {
-    return t
-      .split(" ")
-      .map((str: string) => capitalize(str))
-      .join(" ");
-  };
-  // Update headerState when context changes
   useEffect(() => {
     setHeaderState(context);
     setRoute(router.asPath);
@@ -68,13 +59,12 @@ const Header: React.FC = () => {
       setRoute(router.asPath);
     }
   }, [  setContext, headerState]);
-  // }, [router.asPath, route, setContext]);
 
   return (
     <>
       <style jsx>{styles}</style>
         {headerState && <>
-      <div className="header" id="header">
+      <div className="header">
           <div className="header-content">
             <div className="header-left">
               <BreadCrumbs links={headerState.breadcrumbs} />

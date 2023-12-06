@@ -1,7 +1,6 @@
 // Relative Path: ./AdminCustomer.tsx
 import React, { useEffect, useState } from 'react';
 import styles from './AdminCustomer.scss';
-import UiTabsLayout from '@webstack/layouts/UiTabsLayout/UiTabsLayout';
 import AdminCustomerAdd from '../views/AdminCustomerAdd/AdminCustomerAdd';
 import AdminCustomerList from '../views/AdminCustomerList/AdminCustomerList';
 import AdminCustomerModify from '../views/AdminCustomerModify/AdminCustomerModify';
@@ -17,9 +16,10 @@ const AdminCustomer: React.FC = () => {
       setView(e);
     }
     else if (e?.id) {
-      // console.log(e)
-      setData(e.id);
-      setView('modify');
+      const sd = async () => {
+        return setData(e.id);
+      }
+      sd().then(()=>setView('modify'))
     };
   };
 
@@ -28,17 +28,18 @@ const AdminCustomer: React.FC = () => {
     'add': <AdminCustomerAdd />,
     'modify': <AdminCustomerModify customerId={data} />,
   }
-
-  useEffect(() => { }, [handleView]);
+  
+  useEffect(() => {}, [setData]);
   return (
     <>
-      <style jsx>{styles}</style>view: {view}
+      <style jsx>{styles}</style>
+      {/* {JSON.stringify(data)} */}
       <div className='admin-customer'>
         <div className='admin-customer__header'>
           <div className='admin-customer__actions'>
             <div className='admin-customer__actions'>
             </div>
-            <UiButton onClick={()=>handleView('list')}>customers</UiButton>
+            <UiButton traits={{afterIcon:'fa-circle-user'}} onClick={()=>handleView('list')}>customers</UiButton>
             <UiButton onClick={()=>handleView('add')}>add</UiButton>
           </div>
         </div>

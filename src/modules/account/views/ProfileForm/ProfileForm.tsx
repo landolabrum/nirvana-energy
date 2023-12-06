@@ -1,15 +1,18 @@
+
 import { useEffect, useState } from 'react';
 import styles from './ProfileForm.scss';
 import { getService } from '@webstack/common';
 import IMemberService from '~/src/core/services/MemberService/IMemberService';
 import { useNotification } from '@webstack/components/Notification/Notification';
-import UiForm from '@webstack/components/UiForm/UiForm';
+import UiForm from '@webstack/components/UiForm/controller/UiForm';
 import { IFormField } from '@webstack/components/UiForm/models/IFormModel';
 import { phoneFormat } from '@webstack/helpers/userExperienceFormats';
+import UiMarkdown from '@webstack/components/UiMarkDown/UiMarkDown';
 
 const ProfileForm = ({ user, open = false }: any) => {
   const memberService = getService<IMemberService>('IMemberService');
   const [notifiication, setNotification]=useNotification();
+  const [busy, setBusy]=useState(false);
   const initialFields: IFormField[] = [
     { name: 'first_name', label: 'first name', required: true },
     { name: 'last_name', label: 'last name', required: true },
@@ -53,47 +56,46 @@ const ProfileForm = ({ user, open = false }: any) => {
     }));
   };
   const onSubmit = async (form:any)=>{
-    const findField:any= (name:string)=>fields.find(f=>f.name == name);
-    let request:any = {}
-    form.forEach((field: IFormField) => {
-      if(field.value == undefined)return;
-      if(field.name == 'first_name'){
-        field.name = 'name';
-        const lN = findField('last_name')?.value;
-        if(lN != undefined)field.value = `${field.value} ${lN}`;
-      }
-      else if(field.name=='phone'){
-        field.value = phoneFormat(String(field.value), 'US', true);
-      }
-      request[field.name]=field.value;
-    });
+    setBusy(true);
+    const findField:any= (name:string)=>fields.find(f=>f.name == name)?.value;
+    let request:any = {
+      name: `${findField('first_name')} ${findField('last_name')}`,
+      email: findField('email'),
+      phone: phoneFormat(String(findField('phone')), 'US', true)
+    }
     try{
       const response = await memberService.updateMember(user.id, request);
-
-      console.log('[ SUCCESS ]', response);
+      if(response.object == 'customer')setNotification({
+        active: true,
+        list:[
+          {label: 'success', message:<UiMarkdown text={`Updated Member: *${response?.name}*`}/>}
+        ]
+      })
+      // console.log('[ SUCCESS ]', response);
     }catch(e){
       console.log('[ EROR ]', e);
     }
-
-   console.log('[ request ]', request);
+    setBusy(false);
   }
   useEffect(() => {
     // Check if the user object is present and if the fields have not been updated yet
     if (user && JSON.stringify(fields) === JSON.stringify(initialFields)) {
       onUser();
     }
-  }, [user, fields]);
+  }, [user, setFields]);
   
-  if (!user) return <></>;
   return (
     <>
       <style jsx>{styles}</style>
+      <div className='profile-form'>
       <UiForm
+        title="update profile"
         fields={fields}
         onChange={onChange}
         onSubmit={onSubmit}
+        loading={busy}
       />
-
+      </div>
     </>
   );
 };

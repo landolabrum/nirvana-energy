@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { useUser, useClearance } from "~/src/core/authentication/hooks/useUser";
+import environment from "~/src/environment";
 
 export type SelectableRoute = {
   href: string;
@@ -23,10 +24,19 @@ export interface HandleRouteProps {
   items?: SelectableRoute[] | undefined;
   active?: boolean;
 }
-
+// CLEARANCES
+// 1 - 5 Customer
+// 6 Tennant
+// 7 + Admin
+const merchantName = environment.merchant?.name || 'deepturn';
 export const routes: IRoute[] = [
   // { label: "dashboard", href: "/dashboard", icon: "fal-guage", active: true, clearance: 1 },
-  { label: "configure", href: "/configure", icon: "fa-tags", active: true },
+  {
+    label: environment.merchant.name,
+    icon: `${environment.merchant.name}-logo`,
+    href:"/",
+  },
+  // { label: "configure", href: "/configure", icon: "fa-tags", active: true },
   { label: "products", href: "/products", icon: "fa-tags", active: true },
   // {
   //   label: "Store",
@@ -37,18 +47,21 @@ export const routes: IRoute[] = [
   //   ],
   // },
   // {
-  //   label: "social",
+  //   label: "Social",
   //   icon: "fa-biohazard",
   //   href: '/social',
+  //   clearance: 10,
   //   items: [
   //     { label: "instagram", href: "/social?platform=instagram", icon: "fa-instagram", active: true },
   //   ],
   // },
   // {
-  //   label: "home",
+  //   label: "Home",
   //   icon: "fa-home",
+  //   href:"/home",
+  //   clearance: 6,
   //   items: [
-  //     { label: "stream",  href: "/stream", icon: "fa-camera-security", active: true },
+  //     { label: "stream",  href: "home?vid=surveillance", icon: "fa-camera-security", active: true },
   //     { label: "lights", href: "/lights", icon: "fa-lightbulb-on", active: true },
   //   ],
   // },
@@ -80,36 +93,41 @@ export const routes: IRoute[] = [
 
 export const useClearanceRoutes = () => {
   const user = useUser();
-  // const [level, setLevel] = useState(0);
   const level = useClearance();
   const [access, setAccess] = useState<IRoute[]>([]);
+
   useEffect(() => {
-    // user && user?.metadata?.clearance && setLevel(user?.metadata?.clearance);
     const filterRoutes = (routeItems: IRoute[]) => {
-      // console.log('[ LEVEL ]', level)
       return routeItems
         .filter(route => {
-          // If the route doesn't have clearance property or the user's clearance level is greater than or equal to the route's clearance level
-          // console.log('[ clearance ]: ', route.clearance, level, user)
-          return route.clearance == undefined ||
-            Boolean(user && route?.clearance && route?.clearance <= level && route.clearance != 0) || Boolean(!user && route?.clearance == 0)
+          // If the route doesn't have a clearance property or the user's clearance level is greater than or equal to the route's clearance level
+          return route.clearance === undefined ||
+            (user && route.clearance && route.clearance <= level) ||
+            (!user && route.clearance === 0);
         })
         .map(route => {
+          // Filter sub-items (if any) based on clearance
           if (route.items) {
             return {
               ...route,
-              items: route.items.filter(item => !item.clearance || item.clearance <= level),
+              items: route.items.filter(item => 
+                item.clearance === undefined ||
+                (user && item.clearance && item.clearance <= level) ||
+                (!user && item.clearance === 0)
+              ),
             };
           }
           return route;
         });
     };
+    
 
-    setAccess(filterRoutes(routes));
+    setAccess(filterRoutes(routes).reverse());
   }, [user]);
 
   return access;
 };
+
 
 export const pruneRoutes = (pruneLabels: string[]) => {
   const pruned: IRoute[] = [];

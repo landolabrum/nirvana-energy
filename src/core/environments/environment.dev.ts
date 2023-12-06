@@ -3,9 +3,12 @@ const serverUrl ="http://localhost:8000"
 const devEnvironment: IEnvironment = {
   useMockApi: false,
   isProduction: false,
+  site:{
+    url: 'http://localhost:3000'
+  },
   merchant:{
-    name:"nirvana energy",
-    mid: "us",
+    name:"nirvana",
+    mid: "nirv1",
   },
   legacyJwtCookie: {
     name: "auth-token",

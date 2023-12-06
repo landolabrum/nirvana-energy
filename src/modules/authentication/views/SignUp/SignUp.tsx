@@ -4,9 +4,11 @@ import { useUser } from "~/src/core/authentication/hooks/useUser";
 import { getService } from "@webstack/common";
 import IMemberService from "~/src/core/services/MemberService/IMemberService";
 import useUserAgent from "~/src/core/authentication/hooks/useUserAgent";
-import UiForm from "@webstack/components/UiForm/UiForm";
+import UiForm from "@webstack/components/UiForm/controller/UiForm";
 import keyStringConverter from "@webstack/helpers/keyStringConverter";
 import { IFormField } from "@webstack/components/UiForm/models/IFormModel";
+import environment from "~/src/environment";
+import { useRouter } from "next/router";
 
 const DEFAULT_RESPONSE = { response: "", message: "" };
 const authResponseMessages: any = {
@@ -26,7 +28,9 @@ export interface ISignUp {
 const form = [
   { name: "first_name", label: "first name", placeholder: 'first name', required: true },
   { name: "last_name", label: "last name", placeholder: 'last name', required: true },
-  { name: "email", type: 'email', label: "email", placeholder: 'your@email.com', required: true },
+  { name: "email", type: 'email', label: "email", placeholder: 'your@email.com', required: true, 
+  // error: 'email exists' 
+},
   { name: "password", label: "password", type: 'password', placeholder: 'password', required: true },
   { name: "confirm_password", label: "confirm password", type: 'password', placeholder: 'confirm password', required: true }
 ];
@@ -35,7 +39,6 @@ const SignUp = ({ setView }: ISignUp) => {
   const user = useUser();
   const memberService = getService<IMemberService>("IMemberService");
   const user_agent = useUserAgent();
-
   const [fields, setFields] = useState<any>(form);
 
   const changeField = (fieldName: string, key: string, value: string) => {
@@ -88,37 +91,43 @@ const SignUp = ({ setView }: ISignUp) => {
     });
     return hasError;
   }
+  const { asPath } = useRouter();
+  const origin =
+      typeof window !== 'undefined' && window.location.origin
+          ? window.location.origin
+          : '';
 
+  const URL = `${origin}${asPath}`;
   const handleChange = (e: any) => {
     const {name, value}=e.target;
     changeField(name, 'value', value);
   };
   const handleSubmit = async () => {
-    if (!handleErrors()) {
+    setLoading(true);
+    const errors = handleErrors();
+    if (!errors) {
       let request = fields.reduce((acc: any, obj: any) => {
         acc[obj.name] = obj.value;
         return acc;
       }, {});
       request.name = `${request.first_name} ${request.last_name}`
       request.user_agent = user_agent;
+      request.referrer_url = URL;
+      // console.log('[ REQ ]', request)
       try {
         const resp = await memberService.signUp(request);
-        if (resp.status == 'created' && resp.email != undefined && setView) setView(resp.email);
+        if (resp.status == 'created' && resp.email != undefined && setView) setView(resp.email);setLoading(false);
       } catch (_e: any) {
         const e = JSON.parse(JSON.stringify(_e));
         if (e.name === "AuthenticationError") {
+          alert(JSON.stringify(e))
           // console.log("[ ERROR 1 ]", e);
         }
         if (e.error) {
           if (e.detail?.fields) {
             const errorFields = e.detail?.fields;
             const newFields = fields.map((field: IFormField) => {
-              // console.log('[ field ]', field);
-              const isError = errorFields.find((f: IFormField) => {
-                // console.log('[ isE ]',f)
-                return field.name == f.name
-              })
-              // console.log('[ isError ]', isError, );
+              const isError = errorFields.find((f: IFormField) => {return field.name == f.name});
               if(isError)field.error = isError.message;
               return field
             })
@@ -132,9 +141,8 @@ const SignUp = ({ setView }: ISignUp) => {
   return (
     <>
       <style jsx>{styles}</style>
-      {/* {JSON.stringify(fields)} */}
       {!user && <UiForm fields={fields} onSubmit={handleSubmit} loading={loading} onChange={handleChange} btnText='sign up' />}
-      {user}
+      {/* {user} */}
       <div className="authentication__authentication-status">
         {loading?.message}
       </div>
@@ -144,102 +152,3 @@ const SignUp = ({ setView }: ISignUp) => {
 }
 
 export default SignUp;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{/* <div className="sign-up__login">
-      <UiButton traits={{ width: "100%" }} onClick={handleSignIn} busy={isSubmitting}>
-        Create Account
-      </UiButton>
-      </div> */}
-
-
-
-
-
-{/* <form className="sign-up">
-        {fields.map((field) => (
-          <UiInput
-            key={field}
-            type={field.includes("password")?"password":"text"}
-            autoComplete={field === "email" ? "username" : "current-password"}
-            name={field}
-            variant={["bad-email", "password required", "no credentials provided"].includes(signInResponse) ? "invalid": undefined}
-            placeholder={keyStringConverter(field)}
-            label={keyStringConverter(field)}
-            value={formData[field]}
-            onChange={handleCredentials}
-          />
-        ))}
-      </form> */}
-
-
-// function handleCredentials(e: any) {
-//   console.log('[ handleCredentials ]', e)
-//   // setFormData({ ...formData, [e.target.name]: e.target.value });
-// }
-
-// const authResponse = (error: any) => authResponseMessages[error] || authResponseMessages.default;
-
-// async function handleSignIn() {
-//   setIsSubmitting(true);
-//   const hasAllFields = fields.every((key) => {return formData.hasOwnProperty(key) && formData[key] !== ""});
-//   if (hasAllFields) {
-//     if(formData.password != formData.confirm_password){
-//       setIsSubmitting(false);
-//       setSignInResponse({ code: "non-same-passwords", message: authResponse("non-same-passwords")});
-//       return;
-//     };
-
-//     try {
-//       const resp = await memberService.signUp({
-//         email: formData.email,
-//         password: formData.password,
-//         name: `${formData.first_name} ${formData.last_name}`,
-//         user_agent,
-//       });
-//       if(resp.status == 'created' && resp.email != undefined)setView(resp.email)
-//     } catch (e: any) {
-//       const error = JSON.parse(JSON.stringify(e));
-//       if (error.name === "AuthenticationError") {
-//         setSignInResponse({ response: error.code, message: authResponse(error.code) });
-//       }
-//       if (error.message) {
-//         setSignInResponse(error.message);
-//       }
-//     }
-//   } else {
-//     setSignInResponse({ code: "no-credentials", message: authResponse(fields.filter((key) => !formData.hasOwnProperty(key))) });
-//   }
-//   setIsSubmitting(false);
-// }
-
-// useEffect(() => {
-
-//   if (userResponse && userResponse.memberType !== "staff") {
-//     setSignInResponse({ code: "non-staff", message: authResponse("non-staff") });
-//     setIsSubmitting(false);
-//   }
-// }, [userResponse, setFormData]);

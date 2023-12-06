@@ -36,7 +36,7 @@ export const LinkProvider: FC<ILinkProvider> = ({ href, target, children, rel, f
     </>
   );
 };
-interface IButton extends IFormControl {
+export interface IButton extends IFormControl {
   onClick?: (e: any) => void;
   disabled?: boolean;
   busy?: boolean;
@@ -58,15 +58,17 @@ const ButtonContext = ({ context }: IButtonContext) => {
   return (
     <>
       <style jsx>{styles}</style>
+     {/* | uib {JSON.stringify(traits?.disabled)} */}
       <FormControl label={context.label} variant={context.variant} traits={traits}>
         <button
+          data-element='button'
           type={context?.type && context?.type}
           className={context?.variant ? context?.variant : ""}
           onClick={context?.onClick}
           disabled={context?.disabled || context?.variant == "disabled"}
         >
           {context?.busy && (
-            <div className="busy-spinner">
+          <div className="busy-spinner">
               <UiIcon icon="spinner" />
             </div>
           )}

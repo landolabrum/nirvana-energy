@@ -3,12 +3,17 @@ import UiInput from "@webstack/components/UiInput/UiInput";
 import type { NextComponentType } from "next";
 import TwoFactorAuth from "./components/TwoFactorAuth/TwoFactorAuth";
 import UiButton from "@webstack/components/UiButton/UiButton";
-import { useUser } from "~/src/core/authentication/hooks/useUser";
+import { useClearance, useUser } from "~/src/core/authentication/hooks/useUser";
 import { getService } from "@webstack/common";
 import IMemberService from "~/src/core/services/MemberService/IMemberService";
 import useUserAgent from "~/src/core/authentication/hooks/useUserAgent";
 import styles from "./SignIn.scss";
 import { useNotification } from "@webstack/components/Notification/Notification";
+import { useLoader } from "@webstack/components/Loader/Loader";
+import { useModal } from "@webstack/components/modal/contexts/modalContext";
+import { UiIcon } from "@webstack/components/UiIcon/UiIcon";
+import environment from "~/src/environment";
+import { useRouter } from "next/router";
 
 const DEFAULT_RESPONSE = { response: "", message: "" };
 const defaultCodeValue = "------";
@@ -39,7 +44,7 @@ const SignIn = ({ email }: { email: string | undefined }) => {
   }
   const [notif, setNotif]=useNotification();
   const [signInResponse, setSignInResponse] = useState<any>(DEFAULT_RESPONSE);
-
+  const { closeModal, openModal } = useModal();
   const userResponse = useUser();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const memberService = getService<IMemberService>("IMemberService");
@@ -49,8 +54,27 @@ const SignIn = ({ email }: { email: string | undefined }) => {
   function handleCredentials(e: any) {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
   }
-
-  const authResponse = (error: any) => authResponseMessages[error] || authResponseMessages.default;
+  const Success = (response: any) =>{
+    const router = useRouter();
+    const level = useClearance();
+   const handleRoute = (route: string) =>{
+    closeModal();
+    router.push(route);
+   }
+    return <>
+          <style jsx>{styles}</style>
+          <div className='sign-in__status'>
+            <div className='sign-in__status--success'>
+              <div className='sign-in__status--success--header'>
+                <UiIcon icon={`${environment.merchant.name}-logo`}/>
+                {`Welcome, ${response.data?.name}`}
+              </div>
+              <UiButton  variant='primary' onClick={()=>handleRoute('/account')}>Account</UiButton>
+              {level > 9 && <UiButton   onClick={()=>handleRoute('/admin')}>Admin</UiButton>}
+            </div>
+          </div>
+        </>
+  }
 
   async function handleSignIn() {
     setIsSubmitting(true);
@@ -59,12 +83,17 @@ const SignIn = ({ email }: { email: string | undefined }) => {
       try{
         const signInResponse = await memberService.signIn({
           email: credentials.email,
-          password: credentials.password,
+          password: credentials.password.replace(/\s+/g, ''),
           ...(validTFA && { code: credentials.code }),
           user_agent,
         });
+        if(signInResponse){
+          const response = {status:'success', data:signInResponse}
+          openModal(<Success {...response} />);
+        }
         // console.log(`[  signInResponse]:`, signInResponse);
       }catch(e:any){
+        // onSubmit({status:'error', data:signInResponse, error:e})
         if(e.detail!=undefined){
           e.detail?.fields && setNotif({
             active: true,
@@ -110,9 +139,9 @@ const SignIn = ({ email }: { email: string | undefined }) => {
           <TwoFactorAuth code={credentials.code} setCode={(e) => { handleCredentials({ target: { value: e, name: "code" } }) }} />
         }
       </form>
-      <div className="authentication__authentication-status">
+      <div className="sign-in__authentication-status">
         {signInResponse?.message !== "" && (
-          <div className="authentication__signin-response">
+          <div className="sign-in__signin-response">
             {/* {signInResponse.message} */}
             {signInResponse?.detail &&
               <ul className='sign-in__signin-response-details'>
@@ -126,7 +155,7 @@ const SignIn = ({ email }: { email: string | undefined }) => {
 
       </div>
       <div className="sign-in__login">
-        <UiButton variant='glow' traits={{ width: "100%" }} onClick={handleSignIn} busy={isSubmitting}>
+        <UiButton variant='glow' onClick={handleSignIn} busy={isSubmitting}>
           login
         </UiButton>
       </div>

@@ -1,6 +1,6 @@
 // Variables
-$button_height: calc(var(--default-element-height) - 2px);
-$actColorClose: var(--color-gray-30);
+$button_height: calc(var(--element-height) - 2px);
+$actColorClose: var(--gray-30);
 
 // Mixins
 @mixin flexCenter {
@@ -18,7 +18,7 @@ $wid: calc(100%);
     100% {
         color: $startColor;
         --ui-icon-color: $startColor;
-        border-bottom: solid 1px var(--color-gray-70);
+        border-bottom: solid 1px var(--gray-70);
     }
 
     50% {
@@ -59,22 +59,22 @@ $wid: calc(100%);
 }
 
 @keyframes openAction {
-    @include actionAnimation($actColorClose, var(--color-gray-40), $actColorClose);
+    @include actionAnimation($actColorClose, var(--gray-40), $actColorClose);
 }
 
 @keyframes closeAction {
-    @include actionAnimation($actColorClose, var(--color-gray-60), $actColorClose);
+    @include actionAnimation($actColorClose, var(--gray-60), $actColorClose);
 }
 
 @keyframes openBody {
     0% {
         transform: translateY(-100%);
-        height: var(--default-element-height);
+        height: var(--element-height);
     }
 
     100% {
         transform: translateY(0);
-        margin-top: calc(var(--default-element-height) - 2px);
+        margin-top: calc(var(--element-height) - 2px);
         height: max-content;
     }
 }
@@ -86,7 +86,7 @@ $wid: calc(100%);
     }
 
     100% {
-        transform: translateY(-100%);
+        transform: translateY(calc(-100% + var(--element-height)));
         height: 0;
     }
 }
@@ -98,24 +98,25 @@ $wid: calc(100%);
 
 .collapse {
     width: 100%;
-    border: solid 1px var(--color-gray-70);
-    // padding: 0 $pad;
-    // width: calc(100% - calc($pad * 2) - 2px);
+    border: solid 1px var(--gray-70);
     position: relative;
     z-index: 1;
-    border-radius: var(--default-border-radius);
+    border-radius: var(--border-radius);
     overflow: hidden;
-    color: var(--color-gray-60);
+    color: var(--gray-60);
     flex-direction: column;
     @include flexCenter;
     height: $button_height;
     min-height: $button_height;
-    background-color: var(--color-gray-90);
+    background-color: var(--gray-90);
 
     @media(max-width:900px) {
         padding: 0;
     }
 
+    &__opened {
+        height: max-content;
+    }
     &__open {
         animation: openCollapse 1s forwards;
     }
@@ -125,7 +126,7 @@ $wid: calc(100%);
     }
 
     &__action {
-        background-color: var(--color-gray-90);
+        background-color: var(--gray-70);
         position: absolute;
         top: 0;
         left: 0;
@@ -135,8 +136,8 @@ $wid: calc(100%);
         height: $button_height;
         @include flexCenter;
         text-transform: capitalize;
-        font-size: var(--s-6);
-
+        font-size: var(--s-5);
+        font-weight: 700;
         @media(max-width:1100px) {
             font-size: var(--s-5);
         }
@@ -149,20 +150,36 @@ $wid: calc(100%);
         line-height: 1;
 
         &:hover {
-            background-color: var(--color-gray-80);
+            background-color: var(--gray-80);
         }
-
+        &__opened {
+            color: var(--gray-40);
+        }
         &__open {
             animation: openAction 1s forwards;
-            animation-play-state: running;
         }
 
         &__closed {
             animation: closeAction 1s forwards;
-            animation-play-state: running;
         }
     }
+    &__document{
+        .collapse__body {
+            $btm: var(--element-height);
+            $nbtm: calc($btm * -1);
+            box-shadow: inset 0 $nbtm $btm $nbtm var(--gray-100), inset 0 8px 8px -8px var(--gray-90);
+            width: 100%;
+            max-height: 800px;
+            overflow-x: none;
+            border: solid 1px var(--gray-70);
+            overflow-y: scroll;
+        }
+        .collapse__action{
+        background: var(--primary-opaque);
+            backdrop-filter: blur(4px);
 
+        }
+    }
     &__flat {
         padding: 0;
         width: $wid;
@@ -173,33 +190,39 @@ $wid: calc(100%);
         border-radius: 0;
         .collapse__action {
             border-radius: unset;
-            // background-color: var(--color-gray-100);
-            ---ui-icon-color: var(--color-gray-50);
+            // background-color: var(--gray-100);
+            ---ui-icon-color: var(--gray-50);
             &:hover{
-                background-color: var(--color-gray-80);
+                background-color: var(--gray-80);
             }
-            &__open {
-                background-color: var(--color-primary);
+            &__open, &__opened {
+                background-color: var(--primary);
             }
         }
         
         .collapse__body {
             width: 100%;
             padding: 0 !important;
-            background-color: var(--color-gray-80);
-            &__open {
-                padding-top: var(--default-element-height);
+            background-color: var(--gray-80);
+            &__open, &__opened {
+                padding-top: var(--element-height);
             }
         }
     }
 }
 
 .collapse__body {
-    width: calc(100% - var(--default-padding));
-    height: var(--default-element-height);
-    padding: var(--default-padding) 0;
+    width: calc(100% - var(--padding));
+    height: var(--element-height);
+    padding: var(--padding) 0;
     &__open {
+
         animation: openBody 1s forwards;
+    }
+    &__opened {
+        transform: translateY(0);
+        margin-top: calc(var(--element-height) - 2px);
+        height: max-content;
     }
     &__close {
         animation: closeBody 1s forwards;

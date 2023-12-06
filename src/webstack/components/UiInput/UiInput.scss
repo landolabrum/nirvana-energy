@@ -1,15 +1,19 @@
-input {
+input, textarea {
   // Define your custom styles for the input elements/
   width: 100%;
   height: inherit;
   font-size: inherit;
+  font-style: inherit;
+  font-family: inherit;
+  letter-spacing: 1.5px;
+  // font-weight: 300;
   outline: none;
   color: inherit;
   border: none;
   background-color: transparent;
-  &:not(.nav-item, .nav-item__active){
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-  }
+  // &:disabled{
+  //   cursor: not-allowed;
+  // }
   // ARROWS for TYPE='number'
   /* Chrome, Safari, Edge, Opera */
   &::-webkit-outer-spin-button,
@@ -31,13 +35,13 @@ input {
 
   // Override the autofilled input styles
   &:-webkit-autofill,
-  // &:-webkit-autofill:hover,
+  &:-webkit-autofill:hover,
   &:-webkit-autofill:focus,
   &:-webkit-autofill:active,
   &:-internal-autofill-selected
   {
     background-color: transparent !important;
-    -webkit-text-fill-color: var(--color-primary) !important;
+    -webkit-text-fill-color: var(--primary) !important;
     -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
     transition: background-color 5000s ease-in-out 0s !important;
   }
@@ -47,18 +51,17 @@ input {
   &.center {
     text-align: center;
     text-indent: 0;
-    min-height: var(--default-element-height);
+    min-height: var(--element-height);
     height: 100%;
-    width: var(--default-element-height);
-
+    width: max-content;
     @media(max-width: 900px) {}
 
     &:focus {
-      background-color: var(--color-gray-70);
+      background-color: var(--gray-70);
     }
 
     &:hover {
-      background-color: var(--color-gray-70-opaque);
+      background-color: var(--gray-70-opaque);
     }
   }
 
@@ -68,30 +71,50 @@ input {
     z-index: 2;
     text-decoration: underline dashed;
     border-width: 0px 0px 2px 0px;
-    border-bottom-color: var(--color-invalid-border);
+    border-bottom-color: var(--invalid-border);
   }
   // &:focus,
   // &:-webkit-autofill:focus{
   //   background-color: #f30 !important;
   // }
-}
+  &.signature{
+    padding-left: var(--s-3);
+    ::placeholder {
+      color: var(--gray-70);
+      padding: 0;
+      font-size: var(--s-2);
+    }
+    &::placeholder:hover{
+      color: var(--gray-10);
+    }
+    &::placeholder:focus-within:not(&:hover) {
+      &::before {
+          color: var(--gray-40);
+      }
+      &::after {
+          border-top-color: var(--gray-40);
+      }
+  }
 
+    font-size: var(--s-2);
+    font-family: 'Ephesis', cursive;
+  }
+}
 input::placeholder {
   font-style: italic;
-  color: var(--default-placeholder-color);
   padding: 0;
-  font-size: 16px;
+  filter: brightness(.8);
 }
 
 .input__message{
   align-items: flex-start;
   justify-content: flex-start;
   width: 100%;
-  color: var(--color-orange);
-  height: var(--default-element-height);
+  color: var(--orange);
+  height: var(--element-height);
   line-height: 1;
   display: none;
-  text-indent: var(--default-padding);
+  text-indent: var(--padding);
   &.input__message-show{
     display: flex;
   }

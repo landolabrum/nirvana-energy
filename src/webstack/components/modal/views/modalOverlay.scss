@@ -13,7 +13,7 @@
     left: 0;
 }
 
-.modal-overlay {
+.modal__overlay {
     @extend .d-flex;
     @extend .p-fix;
     width: 100%;
@@ -24,14 +24,14 @@
     backdrop-filter: blur(5px);
     cursor: pointer;
     z-index: 998;
-    background: var(--color-gray-90-opaque);
-    backdrop-filter: blur(6.6px);
+    background: var(--gray-90-opaque);
     -webkit-backdrop-filter: blur(6.6px);
-    min-height: 100vh;
 }
 
 .modal {
-    $width: calc(100% - 40px);
+    min-height: 500px;
+    $hundredWidth: calc(100% - 10px);
+    $maxWidth: 900px;
     position: fixed;
     top: 0;
     left: 0;
@@ -40,41 +40,71 @@
     z-index: 999;
     @extend .d-flex;
     align-items: flex-start;
-    width: $width;
-    margin: 0 20px 0;
+    width: $hundredWidth;
+    margin: var(--element-height) 5px 0;
     height: max-content;
-    @media(min-width: 1100px){
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    @media (orientation: portrait) {
+        height: 100vh;
+        /* Limit the modal height to 80% of the viewport height */
+    }
+
+    @media(min-width: 1100px) {
         width: 800px; // Set a fixed width for larger screens
         // max-width: 90%; // Add a max-width to ensure it doesn't get too wide on very large screens
         height: auto; // Height can be auto for scrollable content
-        transform: translate(calc(50vw - 400px), 200px); // Center the modal
+        margin: var(--element-height) auto;
+
+        @media (orientation: landscape) {
+            height: calc(100vh - 90px);
+        }
+
+        @media (orientation: portrait) {
+            // margin-top: 100px;
+            margin: 0;
+            // max-width: $hundredWidth;
+            transform: translate(calc(50vw - 400px), 200px); // Center the modal
+        }
+
+        &__fullscreen {
+            transform: unset;
+        }
+    }
+
+    &__fullscreen {
+        width: 100vw;
+        height: auto;
+        margin: 0;
     }
 
     &__content {
-
+        position: relative;
         @extend .d-flex;
         flex-direction: column;
         width: 800px;
-        /* Set width */
         height: auto;
-        /* Set height */
-        color: var(--color-gray-30);
-        border: solid 1px var(--color-gray-70);
-        background-color: var(--color-gray-100);
-        border-radius: var(--default-border-radius);
-        padding: calc(var(--default-padding) * 1.5) var(--default-padding);
-        box-shadow: var(--default-box-shadow-xl);
+        backdrop-filter: blur(5px);
+        color: var(--gray-30);
+        border: solid 1px var(--gray-70);
+        background: var(--gray-100-opaque);
+        border-radius: var(--border-radius);
+        padding: calc(var(--padding) * 1.5) var(--padding);
+        box-shadow: var(--box-shadow-xl);
         min-height: max-content;
         transition: all 1s;
 
         &::-webkit-scrollbar-thumb {
-            background-color: var(--color-blue);
+            background-color: var(--blue);
             border-radius: 5px;
         }
-        &:hover{
+
+        &:hover {
             transition: all 1s;
-            background-color: var(--color-gray-100);
+            background-color: var(--gray-100);
         }
+
         &::-webkit-scrollbar {
             width: 10px;
             aspect-ratio: 1/1;
@@ -82,38 +112,86 @@
         }
 
         @media(max-width:1260px) {
-            margin-top: 100px;
-
-            max-width: calc(100vw - 60px);
+            @media (orientation: portrait) {
+                margin-top: 100px;
+                max-width: $hundredWidth;
+            }
         }
+
         @media(max-width:900px) {
-            min-width: 100%;
-            min-height: calc(100vh - 55px);
-            margin:var(--default-padding);
-            background-color: var(--color-gray-100-opaque);
+            margin: var(--s-9);
+            // background-color: var(--gray-100-opaque);
             justify-content: flex-start;
         }
 
-        .modal-overlay__header {
-            @extend .d-flex;
-            align-self: flex-start;
-            justify-content: space-between;
-            width: 100%;
-            font-size: var(--s-4);
-            .modal-overlay__icon {
-                --ui-icon-color: var(--color-gray-60);
-                &:hover {
-                    cursor: pointer;
-                    --ui-icon-color: var(--color-gray-30);
-                }
+        &__fullscreen {
+            width: 100vw;
+            padding: 0;
+
+            &:hover {
+                background-color: #ffffff00;
+            }
+        }
+
+    }
+
+    &__header {
+        @extend .d-flex;
+        align-self: flex-start;
+        justify-content: space-between;
+        width: 100%;
+        font-size: var(--s-4);
+
+        .modal-overlay__icon {
+            --ui-icon-color: var(--gray-40);
+
+            &:hover {
+                cursor: pointer;
+                --ui-icon-color: var(--primary);
+            }
+        }
+
+        &__fullscreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 2;
+            padding: 0 var(--padding);
+            width: calc(100% - calc(var(--padding) * 2));
+            min-height: var(--element-height);
+
+            &:hover {
+                background-color: var(--gray-100);
             }
         }
     }
-    .modal-overlay__body {
+
+    &__body {
         word-wrap: break-word;
         width: 100%;
-        @media(max-width: 900px){
-            padding-top: var(--default-element-height);
+        max-height: calc(100vh - var(--element-height));
+        /* Limit the modal body height to 75% of the viewport height */
+        overflow-y: auto;
+
+        @media(max-width: 900px) {
+            max-height: calc(100vh - 60px);
+            /* Adjust the height to account for other modal elements */
+        }
+
+        &__fullscreen {
+            z-index: 1;
+        }
+
+        .modal-overlay__confirm {
+            width: 100%;
+            margin: var(--element-height) 0 var(--padding);
+            @extend .d-flex;
+            flex-direction: column;
+            gap: var(--padding);
+            &-btn{
+                width: 100%;
+            }
         }
     }
 }

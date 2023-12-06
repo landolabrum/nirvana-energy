@@ -6,6 +6,7 @@ import FormControl from "../FormControl/FormControl";
 import UiMenu, { UiMenuProps } from "../UiMenu/UiMenu";
 import UiInput from "../UiInput/UiInput";
 import { capitalize } from "lodash";
+import { IVariant } from "../AdapTable/models/IVariant";
 type TitleProps = { text?: string | number; preIcon?: string; postIcon?: string } | string | React.ReactElement;
 
 export interface SelectProps extends UiMenuProps {
@@ -15,7 +16,7 @@ export interface SelectProps extends UiMenuProps {
   openDirection?: "up" | "down" | "left" | "right";
   onToggle?: (isOpen: boolean) => void;
   title?: TitleProps;
-  openState?: boolean;
+  openState?: string;
   search?: boolean;
   setSearch?: (value: string) => void;
 }
@@ -53,9 +54,28 @@ const UiSelect: React.FC<SelectProps> = ({
   ): title is { text?: string | number; preIcon?: string; postIcon?: string } => {
     return typeof title === "object" && !React.isValidElement(title);
   };
+
+  const postIconHandler = (title:any, variant: any) =>{
+    const isNavItem = variant && variant.includes('nav-item');
+    if(!isNavItem && isTitleObject(title) && title.postIcon){
+      if(  bOpen){
+        return "fa-xmark";
+      }else{
+        return `fa-chevron-${openDirection}`
+      }
+    } 
+    else if(isNavItem){
+      if(!bOpen)return traits?.afterIcon;
+      else return "fa-xmark";
+    }
+    return;
+   }
+
+
   useEffect(() => {
     if (openState !== undefined) {
-      setIsOpen(openState?"open":"closed");
+      setIsOpen(openState);
+      // setIsOpen(openState?"open":"closed");
     }
   }, [openState]);
 
@@ -72,9 +92,11 @@ const UiSelect: React.FC<SelectProps> = ({
     // Set Width if Available
     // if (width && ref.current) ref.current.style.width = `${width}px`;
   }, [isOpen]);
+
   return (
     <>
       <style jsx>{styles}</style>
+
         <div
           className={`select ${openDirection}`}
           style={traits?.width?{width:`${traits.width}px`}:{}}
@@ -82,13 +104,14 @@ const UiSelect: React.FC<SelectProps> = ({
           >
             {/* t: {title_} | s: {selectedOption} */}
           <UiInput 
+            data-element='select'
             type="button"
             label={label}
             variant={hasOptions && variant !== 'disabled'? variant:"select__disabled"}
             value={typeof value === 'string'? capitalize(value): title_ || selectedOption || "Select"}
             traits={{
               beforeIcon: isTitleObject(title) && title.preIcon ? title.preIcon: undefined,
-              afterIcon: isTitleObject(title) && title.postIcon ? title.postIcon: variant !== 'disabled' && bOpen ? "fa-xmark" : `fa-chevron-${openDirection}`
+              afterIcon: postIconHandler(traits, variant)
             }}
             />
           {bOpen && variant !== 'disabled' && (

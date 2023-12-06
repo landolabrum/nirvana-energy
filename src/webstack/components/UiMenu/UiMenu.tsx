@@ -37,7 +37,7 @@ const UiMenu: FC<UiMenuProps> = ({ options, variant, onSelect, value, search, se
     onSelect && onSelect(option);
   };
   const currValue = (option: any)=>{
-    return typeof option === "string" ? option : option?.href
+    return ["string",'number'].includes(typeof option) ? option : option?.href
   }
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const UiMenu: FC<UiMenuProps> = ({ options, variant, onSelect, value, search, se
         ) : (
           <>
             {filteredOptions?.map((option: any, index: number) => {
-              const label = typeof option === "string" ? option : option?.label;
+              const label = ["string",'number'].includes(typeof option)? option : option?.label;
               const currentValue = currValue(option);
               if (currentValue)
                 return (
@@ -72,7 +72,6 @@ const UiMenu: FC<UiMenuProps> = ({ options, variant, onSelect, value, search, se
                   >
                     <UiButton variant='flat' traits={{
                       beforeIcon: option?.icon,
-                      width: '100%',
                       afterIcon: value?.includes(currentValue) ? {icon:'fa-check'} : ''
                     }}>
                       {label}

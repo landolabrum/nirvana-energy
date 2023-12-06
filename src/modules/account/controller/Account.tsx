@@ -1,29 +1,43 @@
 import type { NextComponentType, NextPageContext } from "next";
 import styles from "./Account.scss";
 import AccountMethods from "../views/AccountMethods/controller/AccountMethods";
-import { useUser } from "~/src/core/authentication/hooks/useUser";
+import { useClearance, useUser } from "~/src/core/authentication/hooks/useUser";
 import ProfileForm from "../views/ProfileForm/ProfileForm";
 import UiSettingsLayout from "@webstack/layouts/UiSettingsLayout/UiSettingsLayout";
+import Subscriptions from "../views/Subscriptions/controller/Subscriptions";
+import Documents from "../views/Documents/controller/Documents";
+import { useEffect, useState } from "react";
 
 interface Props { }
 
 const Account: NextComponentType<NextPageContext, {}, Props> = ({ }: Props) => {
   const user = useUser();
-  const views: any = {
+  const level = useClearance();
+  const vs: any = {
     "edit profile": <ProfileForm user={user} open />,
+    'billing': <AccountMethods open='opened' />,
     "email notification": "email notification",
     "privacy & security": "privacy & security",
-    'billing': <AccountMethods open />
   };
+  const [views, setViews]=useState(vs);
+  
+  useEffect(() => {
+    if(level && [7,10].includes(Number(level))){
+      const tenantViews = {
+        'documents': <Documents user={user} />,
+        'subscriptions': <Subscriptions user={user} />,
+      };
+      setViews({...views, ...tenantViews})
+    }
+  }, [level, setViews]);
     return (
       <>
         <style jsx>{styles}</style>
         <UiSettingsLayout
-          defaultView={views[0]}
+          defaultView='edit profile'
           name='account'
           variant="full-screen"
           views={views}
-          setViewCallback={console.log}
         />
       </>
     );

@@ -2,10 +2,13 @@ import { IEnvironment } from "./environment.interface";
 const serverUrl ="https://tiktok.soy"
 const prodEnvironment: IEnvironment = {
   useMockApi: false,
-  isProduction: false,
+  isProduction: true,
+  site:{
+    url: 'https://nirvanaenergy.net'
+  },
   merchant:{
-    name:"nirvana energy",
-    mid: "us",
+    name:"nirvana-energy",
+    mid: "nirv1",
   },
   legacyJwtCookie: {
     name: "auth-token",

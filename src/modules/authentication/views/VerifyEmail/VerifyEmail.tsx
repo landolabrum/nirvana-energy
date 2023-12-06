@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import styles from './VerifyEmail.scss';
 import { getService } from '@webstack/common';
 import IMemberService from '~/src/core/services/MemberService/IMemberService';
-import UiLoader from '@webstack/components/UiLoader/UiLoader';
+import UiLoader from '@webstack/components/UiLoader/view/UiLoader';
 import keyStringConverter from '@webstack/helpers/keyStringConverter';
-import UiForm from '@webstack/components/UiForm/UiForm';
+import UiForm from '@webstack/components/UiForm/controller/UiForm';
 import { IFormField } from '@webstack/components/UiForm/models/IFormModel';
 
 // Remember to create a sibling SCSS file with the same name as this component

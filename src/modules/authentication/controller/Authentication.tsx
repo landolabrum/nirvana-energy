@@ -9,12 +9,17 @@ import { useRouter } from "next/router";
 import VerifyEmail from "../views/VerifyEmail/VerifyEmail";
 import { useNotification } from "@webstack/components/Notification/Notification";
 import UiButton from "@webstack/components/UiButton/UiButton";
+import { useLoader } from "@webstack/components/Loader/Loader";
+import { useClearance } from "~/src/core/authentication/hooks/useUser";
+import environment from "~/src/environment";
 
 
 
 const Authentication: React.FC<any> = (props: any) => {
   const [newCustomerEmail, setNewCustomerEmail] = useState<string | undefined>();
   const [view, setView] = useState<string>(props?.view || "sign-in");
+  const [loader, setLoader] = useLoader();
+
   const router = useRouter();
   const handleView = () => {
     switch (view) {
@@ -35,6 +40,7 @@ const Authentication: React.FC<any> = (props: any) => {
     }
   }
 
+
   const [notification, setNotification] = useNotification();
   useEffect(() => {
     //  if(router.pathname.includes('authentication')){setNotification({
@@ -53,46 +59,45 @@ const Authentication: React.FC<any> = (props: any) => {
       setNewCustomerEmail(view);
     }
     if (newCustomerEmail != undefined) setView("sign-in");
-  }, [ newCustomerEmail])
+  }, [])
 
   return (
     <>
       <style jsx>{styles}</style>
-        <div className={`authentication ${view == 'sign-in'?' authentication__sign-in':''}`}>
+      <div className={`authentication ${view == 'sign-in' ? ' authentication__sign-in' : ''}`}>
 
-          {/* <span style={{color: "#fff" }} >{view}</span> */}
-          
-          <div className='authentication__view-header'>
-            <div className="authentication__logo">
-              <UiIcon icon="nirvana-logo" />
-            </div>
-            <div className='authentication__view-name'>
-              {keyStringConverter(view)}
-            </div>
+        {/* <span style={{color: "#fff" }} >{view}</span> */}
+
+        <div className='authentication__view-header'>
+          <div className="authentication__logo">
+            <UiIcon icon={`${environment.merchant.name}-logo`} />
           </div>
-          {view.includes("@") && <div className='authentication'>
-            An email has been sent to {view}, click the link in the email to continue.
-          </div>}
-          {view == 'sign-in' && <SignIn email={newCustomerEmail} />}
-          {view == 'sign-up' && <SignUp setView={setView} />}
-          {view == 'verify' && router.query.token && <VerifyEmail token={router.query.token} onSuccess={setNewCustomerEmail} />}
-          <div className="authentication__view-action">
-            <div className="authentication__view-label">
-              {view == 'sign-in' && "no account?"}
-              {view == 'sign-up' && "already have an account?"}
-            </div>
-            <div>
-
-              <UiButton
-                onClick={handleView}
-                variant="link"
-              >
-                {view == 'sign-in' && "Sign Up"}
-                {view == 'sign-up' && "Login"}
-              </UiButton>
-            </div>
+          <div className='authentication__view-name'>
+            {keyStringConverter(view)}
           </div>
         </div>
+        {view.includes("@") && <div className='authentication__email-verify'>
+          <div>An email has been sent to</div>
+          <UiButton variant='link'>{view}</UiButton>, <div>click the link in the email to continue.</div>
+        </div>}
+        {view == 'sign-in' && <SignIn email={newCustomerEmail} />}
+        {view == 'sign-up' && <SignUp setView={setView} />}
+        {view == 'verify' && router.query.token && <VerifyEmail token={router.query.token} onSuccess={setNewCustomerEmail} />}
+        <div className="authentication__view-action">
+          <div className="authentication__view-label">
+            {view == 'sign-in' && "no account?"}
+            {view == 'sign-up' && "already have an account?"}
+          </div>
+
+          <UiButton
+            onClick={handleView}
+            variant="link"
+          >
+            {view == 'sign-in' && "Sign Up"}
+            {view == 'sign-up' && "Login"}
+          </UiButton>
+        </div>
+      </div>
     </>
   );
 };

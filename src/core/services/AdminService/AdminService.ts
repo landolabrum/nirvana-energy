@@ -8,6 +8,7 @@ import UserContext from "~/src/models/UserContext";
 import ApiService, { ApiError } from "../ApiService";
 
 import IAdminService from "./IAdminService";
+import { decryptString } from "@webstack/helpers/Encryption";
 const STORAGE_TOKEN_NAME = environment.legacyJwtCookie.name;
 export default class AdminService
   extends ApiService
@@ -23,9 +24,20 @@ export default class AdminService
 
   public async getCustomer(customerId: string): Promise<any> {
     if (customerId) {
-
       try {
         const customer = await this.get<any>(`/usage/admin/customer?id=${customerId}`);
+        return customer;
+      } catch (error: any) {
+        return error;
+      }
+    }else{
+      throw new ApiError("No Token Provided", 400, "MS.SI.02");
+    }
+  };
+  public async deleteCustomer(customerId: string): Promise<any> {
+    if (customerId) {
+      try {
+        const customer = await this.get<any>(`/usage/admin/customer/delete?id=${customerId}`);
         return customer;
       } catch (error: any) {
         return error;
@@ -48,15 +60,9 @@ export default class AdminService
 
   public async updateMember(id: string, memberData: any): Promise<any> {
     if (id && memberData) {
-
-      const res = await this.put<any, any>(
-        `api/customer?id=${id}`,
+      return await this.put<any, any>(
+        `/usage/admin/customer?id=${id}`,
         memberData);
-      const memberJwt: any = res;
-      this.saveMemberToken(memberJwt);
-      this.saveLegacyCookie(memberJwt);
-      return this._getCurrentUser(true)!;
-
     }
     if (!id) {
       throw new ApiError("NO ID PROVIDED", 400, "MS.SI.02");

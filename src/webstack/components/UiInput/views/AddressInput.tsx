@@ -1,6 +1,7 @@
 // Relative Path: ./AddressInput.tsx
 import React, { useEffect } from 'react';
 import styles from '../UiInput.scss';
+import aStyles from './AddressInput.scss';
 import { Loader } from '@googlemaps/js-api-loader';
 import FormControl, { ITraits } from '@webstack/components/FormControl/FormControl';
 
@@ -23,7 +24,6 @@ const AutocompleteAddressInput = ({ address, setAddress, traits, inputClasses, l
     const google = await loader.load();
     const inputElement = document.getElementById('autocomplete-address');
     const autocomplete = new google.maps.places.Autocomplete(inputElement);
-
     autocomplete.addListener('place_changed', () => {
       const place = autocomplete.getPlace();
       if (place && place.address_components) {
@@ -44,7 +44,6 @@ const AutocompleteAddressInput = ({ address, setAddress, traits, inputClasses, l
       }
     });
   };
-  useEffect(()=>{initAutocomplete()}, [address]);
   const addressDisplay = address != undefined ?
     `${address?.line1 ? address?.line1 + ', ' : ''
     }${address?.line2 ? address?.line2 + ' ' : ''
@@ -52,8 +51,11 @@ const AutocompleteAddressInput = ({ address, setAddress, traits, inputClasses, l
     }${address?.state ? address?.state + ', ' : ''
     }${address?.postal_code ? address?.postal_code + ', ' : ''
     }${address?.country ? address?.country : ''}` : undefined;
+  useEffect(()=>{initAutocomplete()}, [address]);
+
   return (<>
     <style jsx>{styles}</style>
+    <style jsx>{aStyles}</style>
     <FormControl
           error={error}
           label={label}
@@ -61,10 +63,11 @@ const AutocompleteAddressInput = ({ address, setAddress, traits, inputClasses, l
             ...traits,
           }}>
       <input
+        data-element='input'
         className={inputClasses}
         id="autocomplete-address"
         type="text"
-        placeholder="Enter your address"
+        placeholder="Enter address"
         defaultValue={addressDisplay}
         name="address"
       />

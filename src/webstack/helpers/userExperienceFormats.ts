@@ -21,6 +21,8 @@ export function stringToKebab(str?: string) {
 }
 
 // PHONE FORMAT
+
+
 export const phoneFormat = (
   phoneNumber: string,
   countryCode: string = 'US',
@@ -30,8 +32,12 @@ export const phoneFormat = (
   let formattedNumber: string = phoneNumber;
 
   if (reverse) {
-    // Remove anything that's not a number
-    return `+${phoneNumber.replace(/\D/g, '')}`;
+    const cleanedNumber = phoneNumber.replace(/\D/g, '');
+    if (cleanedNumber.startsWith('1')) {
+      return `+${cleanedNumber}`;
+    } else {
+      return `+1${cleanedNumber}`;
+    }
   }
 
   try {
@@ -115,6 +121,12 @@ export function stateFormat(stateISO: string) {
 }
 
 // DATES
+// let monthFull = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+// let dayFull = [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ];
+
+export const dowArray = [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ];
+export const monthArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 export function getYearsArray(length: number, asStrings = true): (string | number)[] {
   const currentYear = new Date().getFullYear();
   return Array.from({ length: length }, (_, i) => asStrings ? (currentYear + i).toString() : currentYear + i);

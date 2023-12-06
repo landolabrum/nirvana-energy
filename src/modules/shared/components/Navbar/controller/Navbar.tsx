@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useMemo } from "react";
 import styles from "./Navbar.scss";
 import { UiIcon } from "@webstack/components/UiIcon/UiIcon";
@@ -6,149 +5,142 @@ import { IRoute, useClearanceRoutes } from "../data/routes";
 import useWindow from "@webstack/hooks/useWindow";
 import useRoute from "~/src/core/authentication/hooks/useRoute";
 import UiButton from "@webstack/components/UiButton/UiButton";
-import environment from "~/src/environment";
-import NavButton from "../views/NavButton/NavButton";
-import NavSelect from "../views/NavSelect/NavSelect";
 import Authentication from "~/src/pages/authentication";
-import  { useCartTotal } from "~/src/modules/ecommerce/cart/hooks/useCart";
+import { useCartTotal } from "~/src/modules/ecommerce/cart/hooks/useCart";
 import { useModal } from "@webstack/components/modal/contexts/modalContext";
+import UiSelect from "@webstack/components/UiSelect/UiSelect";
+import MobileNav from "../views/MobileNav/MobileNav";
+import Router, { useRouter } from "next/router";
+import environment from "~/src/environment";
 
 const Navbar = () => {
-  const width = useWindow().width;
-  const [sideNav, setSideNav] = useState(true);
-  const [open, setOpen] = useState<string | null | undefined | number>(null);
-  const [hide, setHide] = useState<boolean>(false);
-  const [user, route, setRoute]: any = useRoute(closeSideNavOnWidthChange);
-
+  const [user, current, setRoute]: any = useRoute();
   const routes = useClearanceRoutes();
-  const { openModal, closeModal } = useModal();
-  const handleRoute = (item: any)=>{
-    if(!item?.modal){
-     setRoute(item);
-    }else{
-      openModal(<Authentication/>);
-    }
+  const { openModal, closeModal, isModalOpen } = useModal();
+  const [currentRoutes, setCurrentRoutes] = useState<IRoute[] | undefined>(undefined);
+  const [toggled, setToggled] = useState<string | null>(null);
+  const width = useWindow()?.width;
 
+
+
+  // Handle mobile navigation click
+  const handleMobileClick = (selectedRoute: IRoute) => {
+    closeModal();
+    if (selectedRoute?.href && !selectedRoute.items) {
+      setRoute(selectedRoute.href);
+    }
+    else if (selectedRoute?.modal) {
+      openModal(modals[selectedRoute?.modal]);
+    } else if (selectedRoute.items) {
+      openModal(<MobileNav routes={selectedRoute.items} handleClick={handleMobileClick} onBack={handleBackButtonClick} />);
+    }
+  };
+
+  // Function to go back to the original routes in mobile view
+  const handleBackButtonClick = () => {
+    setCurrentRoutes(routes);
+    handleTrigger();
+  };
+  const handleToggle = (label: string) => {
+    setToggled(label);
   }
-  function closeSideNavOnWidthChange() {
-    if (width < 1100) setSideNav(false);
-    setOpen(null);
-  }
-  function handleHide() {
-    setHide(!hide);
-  }
+  // Handle click events for routes and modals
+  const handleClick = (route: any) => {
+    if (typeof route === 'string') {
+      setRoute(route);
+    } else if (route?.href) {
+      setRoute(route?.href);
+    } else if (route?.modal && !isModalOpen) {
+      openModal(modals[route.modal]);
+    }
+  };
+
+  // Toggle mobile navigation or modal
+  const handleTrigger = () => {
+    currentRoutes !== undefined && openModal(<MobileNav routes={currentRoutes} handleClick={handleMobileClick} />);
+  };
+
+  // Compute user display name
   const displayName = useMemo(() => {
-    if (user) {
-      const [firstName, lastName] = user.name.split(" ");
-      return `${firstName} ${lastName.substring(0, 1)}.`;
-    }
-    return "";
+    return user ? `${user.name.split(" ")[0]} ${user.name.split(" ")[1][0]}.` : "";
   }, [user]);
-  useEffect(() => {
-    if(user)closeModal();
-  },[user]);
-  useEffect(() => {
-    if (open === "sidenav") setSideNav(true);
-    if (open === "!sidenav") setSideNav(false);
-  }, [open]);
-  useEffect(() => {
-    sideNav && closeSideNavOnWidthChange();
-  }, [width > 1100, routes]);
-  const isOpenEqualSideNav = open == 'sidenav';
-  const cartTotal = useCartTotal();
-  const cartRoute = routes.find((r: any) => r.href == '/cart')
-  if (!hide) {
-    return (
-      <>
-        <style jsx>{styles}</style>
-        {/* <h1 color="#f30" className='dev'>c{JSON.stringify(cartTotal)}</h1> */}
-        <nav id="nav-bar" style={sideNav ? { bottom: "0" }:undefined}>
-          <div className="navbar__nav-content">
-            <div className="navbar__nav-trigger" onClick={() => setOpen(!isOpenEqualSideNav ? "sidenav" : "!sidenav")}>
-              {sideNav ? <UiIcon icon="fa-xmark" /> : <UiIcon icon="fa-bars" />}
-            </div>
-            <div className="navbar__brand-logo">
-              <div className="navbar__hide_show">
-                <UiIcon 
-                // onClick={handleHide}
-                icon="nirvana-logo" />
-              </div>
-              <UiButton variant="flat" onClick={() => handleRoute({ href: "/" })}>
-                {environment?.merchant?.name}
-              </UiButton>
-            </div>
-            {/* u:{JSON.stringify(cart)} */}
-            <div className={
-              `navbar__nav-items ${
-                user ?'navbar__nav-items__user':''
-              } ${
-                cartTotal ?'navbar__nav-items__cart':''
-              } ${
-                sideNav ? "navbar__nav-items-show" : ""}`
-              }>
-              <div className="navbar__side-nav-overlay" onClick={() => setOpen("!sidenav")} />
-              {/* <Authentication/> */}
-              {routes &&
-                routes.map((item: IRoute, key: number) => {
-                  return (
-                    <div key={key} className={`navbar__nav-item-container ${item?.label && `navbar__nav-item-container__${String(item.label).toLowerCase()}`}`}>
-                      {item?.items && (
-                        <div
-                          onDoubleClick={() =>
-                            item?.href && handleRoute({ href: item.href })}
-                        >
-                          <NavSelect
-                            routes={routes}
-                            // user={user}
-                            width={width}
-                            open={open}
-                            setOpen={setOpen}
-                            handleRoute={handleRoute}
-                            item={item}
-                            displayName={displayName}
-                            route={route}
-                          />
-                        </div>
-                      )}
 
-                      {!item.items && item.href !== '/cart' && <NavButton
-                        active={open === item?.label || route.replaceAll("/", "") === item?.label}
-                        item={item}
-                        handleRoute={handleRoute}
-                        setOpen={setOpen}
-                      />}
-                    </div>
-                  );
-                })}
-            </div>
-            {cartRoute && <NavButton
-              active={open === cartRoute?.label || route.replaceAll("/", "") === cartRoute?.label}
-              item={cartRoute}
-              handleRoute={handleRoute}
-              setOpen={setOpen}
-            />}
-          </div>
-          {/* <div className='dev' style={{top:'unset', bottom:'0', position:'fixed'}}>
-            {JSON.stringify(routes)}
-          </div> */}
-        </nav>
-      </>
-    );
-  }
-  if (hide)
-    return (
-      <>
-        <style jsx>{styles}</style>
-        <div className="navbar__brand-logo">
-          <div className="navbar__hide_show">
-            <UiIcon onClick={handleHide} icon="nirvana-logo" />
-          </div>
-          <UiButton variant="flat" onClick={() => handleRoute({ href: "/" })}>
-            {environment?.merchant?.name}
-          </UiButton>
+  const cartTotal = useCartTotal();
+  const cartRoute = routes.find((r: any) => r.href === '/cart');
+
+  // Mobile navigation component
+
+  const modals: any = {
+    login: <Authentication />,
+  };
+  useEffect(() => {
+    if (routes) {
+      const newRoutes = routes
+        .filter(r => !(r.href === '/cart' && cartTotal === 0))
+        .map(r => r);
+
+      setCurrentRoutes(newRoutes.reverse());
+    }
+    toggled != null && setToggled(null);
+  }, [routes, setCurrentRoutes, ]);
+  useEffect(() => {
+    width > 1100 && closeModal();
+  }, [width]);
+  return (
+    <>
+      <style jsx>{styles}</style>
+      <nav id="nav-bar">
+        <div className='navbar__trigger'>
+          <UiIcon
+            icon={isModalOpen ? 'fa-xmark' : 'fa-bars'}
+            onClick={handleTrigger}
+          />
         </div>
-      </>
-    );
-  return <></>;
+       <div className='nav-bar__nav-items'>
+       {currentRoutes && currentRoutes.map((route, key) => (
+          <div
+          key={key}
+          className={
+            `nav__nav-item nav__nav-item--${
+              // ROUTE CLASS DEFINITIONS
+              String(route?.label).toLowerCase()
+            }${
+              // IS THE ROUTE CURRENT VIEW
+              toggled == route.label ?' nav__nav-item__active':''
+            }`
+          }
+          onDoubleClick={() => route?.href && handleClick({ href: route.href })}
+          >
+            {!route?.items ? (
+              <UiButton
+                traits={
+                  route?.icon && { afterIcon: { icon: route.icon } } || undefined
+                }
+                variant={toggled == route.label || current == '/' && route.label?.toLowerCase() == environment.merchant.name ? 'nav-item__active':'nav-item'}
+                onClick={() => handleClick(route)}
+              >
+                {route.label}
+              </UiButton>
+            ) : (
+              <UiSelect
+              traits={
+                route?.icon && { afterIcon: { icon: route.icon } } || undefined
+              }
+                openState={Boolean(toggled && toggled == route.label) && 'open' || 'closed'}
+                variant={toggled == route.label? 'nav-item__active':'nav-item'}
+                value={route.label === 'account' ? displayName : route.label}
+                options={route?.items}
+                onSelect={handleClick}
+                onToggle={() => route.label && handleToggle(route.label)}
+              />
+            )}
+          </div>
+        ))}
+        </div>
+
+      </nav>
+    </>
+  );
 };
+
 export default Navbar;

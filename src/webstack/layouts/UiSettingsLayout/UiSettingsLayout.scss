@@ -1,132 +1,137 @@
+$actionsBg: var(--gray-90);
+
 .d-flex {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
+@keyframes borderAnimation {
+    0% {
+        border-color: #ff303040;
+    }
+
+    25% {
+        border-color: #ff990050;
+    }
+
+    50% {
+        border-color: #0099ff90;
+    }
+
+    75% {
+        border-color: #0f00ff;
+    }
+
+    100% {
+        border-color: #ff303040;
+    }
+}
+
+
 .settings {
-
-    width: calc(100% - 20px);
-    background-color: var(--color-dark-opaque);
-
-    @media(max-width:1100px) {
-        width: 100vw;
-        height: 100vh;
+    width: 100%;
+    transform: translateY(-2px);
+    min-height: inherit;
+    height: inherit;
+    z-index: 999;
+    @media(min-width:1100px) {
+        padding-top: var(--padding);
+        background-color: $actionsBg;
     }
-
-    @media(max-width:900px) {
-        width: 100vw;
-        height: 100vh;
-    }
-
-    &__full-screen {
-        position: fixed;
-        left: 0;
-        right: 90px;
-        top: 176px;
-        width: 100vw;
-        justify-content: flex-start;
-
-        @media(max-width:900px) {
-            top: 170px;
-            left: 0;
-            align-items: center;
-            right: 0;
-            padding: var(--default-padding);
-            width: calc(100vw - calc(var(--default-padding) * 3));
-            margin: var(--default-element-height) 0 0;
-        }
-
-    }
-
+    
     &__content {
         @extend .d-flex;
-        justify-content: flex-start;
-
-        min-height: calc(100vh - 190px);
+        justify-content: stretch;
         align-items: stretch;
-        /* Updated to stretch */
-        width: 100%;
+        height: inherit;
+        min-height: inherit;
 
-        @media(max-width:1100px) {}
-
-        @media(max-width:900px) {
-            flex-direction: column;
-            min-height: unset;
+        @media(min-width: 1100px) {
+            gap: var(--s-9);
+            margin-left: var(--s-9);
         }
-    }
-
-    .settings__actions {
-        background-color: var(--color-dark);
-        border-right: solid 1px var(--color-primary);
-        position: relative;
-
-        &::after {
-            position: absolute;
-            content: '';
-            top: 0;
-            width: 1px;
-            right: -2px;
-            height: 100%;
-            background-color: var(--color-primary-opaque);
-        }
-
-        // outline: solid 2px 
-        width: 400px;
 
         @media(max-width:1100px) {
-            border-right: unset;
-            width: 300px;
-        }
-
-        @media(max-width:900px) {
-            width: 100%;
+            height: 100%;
+            flex-direction: column;
         }
     }
 
+    // ACTIONS
+    .settings__actions {
+        height: inherit;
+        position: relative;
+        background-color: $actionsBg;
+
+
+        &--content {
+            border-bottom: solid 1px var(--gray-70);
+            background-color: var(--gray-80);
+
+            border-radius: var(--border-radius);
+            border: solid 1px var(--gray-60);
+            @extend .d-flex;
+            width: 100%;
+            @media(min-width:2100px) {
+                margin-left: auto;
+                max-width: 350px;
+            }
+        }
+
+        @media(min-width:1100px) {
+            min-height: auto;
+        }
+
+        @media(max-width:1100px) {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1px var(--s-9) var(--padding);
+            width: auto;
+            height: max-content;
+            border-bottom: solid 1px var(--gray-70);
+            overflow: visible;
+        }
+    }
+
+    // VIEW
     .settings__view {
-        border-style: solid;
-        border-color: #ff303040 #ff990050 #0099ff50 #0f00ff;
-        border-radius: var(--s-5);
-        border-width: 1px;
-        box-shadow: 10px 10px 30px var(--color-gray-100);
-        background-color: var(--color-gray-90);
-        padding: var(--default-padding) var(--default-padding) calc(var(--s-1) * 1.3);
-        margin: var(--default-padding);
-        // margin-right: var(--default-padding);
-        @extend .d-flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        height: max-content;
-        color: var(--color-gray-40);
+        width: 100%;
+        color: var(--gray-40);
+        background-color: var(--gray-100);
+        height: auto;
+        overflow: hidden;
+        @media(min-width: 1100px) {
+            min-height: 100%;
+            justify-content: flex-start;
+            align-items: flex-start;
+            position: unset;
+            border-top: solid 1px;
+            border-left: solid 1px;
+            border-radius: var(--border-radius) 0 0 0;
+            animation: borderAnimation 5s infinite alternate;
+        }
 
         @media(max-width:1100px) {
             border-left: unset;
-        }
-        @media(min-width:1260px) {
-            max-width: 1260px;
-            margin: var(--default-padding) auto;
+            min-height: inherit;
         }
 
-        @media(max-width:900px) {
-            margin: var(--s-7) auto;
-            height: max-content;
-            overflow: visible;
-            padding: var(--s-9);
-            width: calc(100% - calc(var(--s-9)*2));
+        &__content {
+            z-index: 1000;
+            height: calc(100% - calc(var(--s-5) * 2));
+            @extend .d-flex;
+            flex-direction: column;
+            width: auto;
+            padding: var(--s-4) var(--s-5);
+            @media(max-width: 1100px) {
+                padding: var(--s-5) var(--s-8);
+            }
+
+            @media(max-width: 900px) {
+                padding: var(--s-7) var(--s-9);
+            }
         }
-
-        .settings__view__title {
-            font-size: var(--s-1);
-            line-height: 2.5;
-            text-transform: capitalize;
-            color: var(--color-gray-40);
-        }
-
-        overflow-y: auto;
-
-        width: 100%;
-        // &__content {}
     }
 }
