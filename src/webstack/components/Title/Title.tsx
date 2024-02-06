@@ -4,21 +4,27 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import environment from '~/src/environment';
-import capitalize from '@webstack/helpers/Capitalize';
+import capitalize, { capitalizeAll } from '@webstack/helpers/Capitalize';
+import useDarkMode from "@webstack/hooks/useDarkMode";
 
 const Title: React.FC = () => {
-  const [title, setTitle] = useState<string>(String(environment.merchant.name));
-  
   const router = useRouter();
+  const merchantName = capitalizeAll(String(environment.merchant.name).replaceAll('-',' '));
+  const path = capitalize(router.pathname.replace('/',''));
+
+  const [title, setTitle] = useState<string>(merchantName);
+  
   useEffect(() => {
-    const merchantName = capitalize(String(environment.merchant.name));
-    const path = capitalize(router.pathname.replace('/',''));
     setTitle(`${merchantName}${path?.length? ' | ' + path: ''}`);
-  }, [router.pathname]);
+  }, [path]);
   
   return (
     <Head>
       <title>{title}</title>
+      {useDarkMode() ? (
+        // servers/Deepturn/public/merchant/nirv1/favicon-lite.ico
+        <link rel="shortcut icon" href={`/merchant/${environment.merchant.mid}/favicon-lite.ico`} />
+      ) : <link rel="shortcut icon" href={`/merchant/${environment.merchant.mid}/favicon-dark.ico`} />}
     </Head>
   );
 };

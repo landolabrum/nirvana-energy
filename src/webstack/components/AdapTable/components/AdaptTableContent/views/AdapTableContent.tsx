@@ -8,7 +8,7 @@ import AdapTableAlternateView from "../components/AdapTableAlternateView/AdapTab
 import useScroll  from "@webstack/hooks/useScroll";
 import UiButton from "@webstack/components/UiButton/UiButton";
 import { TableOptions } from "@webstack/components/AdapTable/views/AdapTable";
-import { IVariant } from "@webstack/components/AdapTable/models/IVariant";
+import { IFormControlVariant } from "@webstack/components/AdapTable/models/IVariant";
 import useTable from "../hooks/useTable";
 import AdaptTableCellHover from "../components/AdaptTableCellHover/AdaptTableCellHover";
 import useDocument from "@webstack/hooks/useDocument";
@@ -20,7 +20,7 @@ export interface TableContentProps extends TableFunctionProps {
   data?: any;
   startIndex?: any;
   options?: TableOptions;
-  variant?: IVariant;
+  variant?: IFormControlVariant;
   onRowClick?: (e: any) => void;
   hideHeader?: boolean;
 }
@@ -73,6 +73,7 @@ const viewportHeight = useDocument()?.viewport.height;
     setResizeColumnIndex(columnIndex);
     setResizeStartX(e.clientX);
   };
+  const rowRefs = useRef<any>([]);
 
   const handleResize = (e:any) => {
     if (isResizing && resizeColumnIndex >= 0) {
@@ -88,6 +89,27 @@ const viewportHeight = useDocument()?.viewport.height;
 
   const handleResizeEnd = () => {
     setIsResizing(false);
+  };
+
+  const handleDoubleClick = (columnIndex:number) => {
+    let maxWidth = 0;
+    rowRefs.current.forEach((row:any) => {
+      if (row && row.children[columnIndex]) {
+        // console.log('[width]: ',row.children[columnIndex])
+        maxWidth = Math.max(maxWidth, row.children[columnIndex].offsetWidth);
+      }
+    });
+    const newColumnWidths = { ...columnWidths, [Object.keys(data[0])[columnIndex]]: maxWidth + "px" };
+    setColumnWidths(newColumnWidths);
+  };
+ 
+
+  const setRowRef = (row:any, index:number) => {
+    if (rowRefs.current.length <= index) {
+      // Expand the array if necessary
+      rowRefs.current = [...rowRefs.current, ...new Array(index + 1 - rowRefs.current.length)];
+    }
+    rowRefs.current[index] = row;
   };
   useEffect(() => {
     status && setView(status);
@@ -107,7 +129,6 @@ const viewportHeight = useDocument()?.viewport.height;
       onRowClick?.(item);
     }
   };
-
   const handleScrollToTop = () => {
     scrollToPosition(undefined, 0, 'top');
   };
@@ -124,7 +145,7 @@ const viewportHeight = useDocument()?.viewport.height;
           }
         >
           <thead className={hideHeader && 'hide-header' || ''}>
-            <tr>
+            <tr >
               {index !== 0 && <th className="index">#</th>}
               {data &&
                 data[0] &&
@@ -135,6 +156,7 @@ const viewportHeight = useDocument()?.viewport.height;
                     !options?.hideColumns?.includes(key) && (
                       <th
                         key={key}
+                        onDoubleClick={() => handleDoubleClick(columnIndex)}
                         style={{ width: columnWidths[key] || "auto" }}
                         className={`resizeable ${resizeColumnIndex === columnIndex ? "resizing" : ""
                           }`}
@@ -154,18 +176,19 @@ const viewportHeight = useDocument()?.viewport.height;
           <tbody>
             {data &&
               data[0] &&
-              data.map((item: ItemType, i_: number) => (
-                <tr
+              data.map((item: ItemType, i_: number) =>{
+                if(item)return   <tr
                   className={`${variant ? variant : ""}`}
                   key={startIndex + i_}
                   onClick={(e) => handleRowClick(e, item)}
+                  ref={(el) => (rowRefs.current[i_] = el)}
                 >
                   {index !== 0 && (
                     <td data-key="#" className="index">
                       {index + i_}
                     </td>
                   )}
-                  {Object.entries(item).map(
+                  { Object.entries(item).map(
                     ([key, value], index) =>
                       key !== "keywords" &&
                       !options?.hideColumns?.includes(key) && (
@@ -178,7 +201,8 @@ const viewportHeight = useDocument()?.viewport.height;
                       )
                   )}
                 </tr>
-              ))}
+                }
+              )}
           </tbody>
         </table>
         {["error", "empty", "loading"].includes(view) && (

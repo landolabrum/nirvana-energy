@@ -2,16 +2,12 @@ import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import styles from "./ProductsListing.scss";
 import { getService } from "@webstack/common";
-import UiSelect from "@webstack/components/UiSelect/UiSelect";
-import UiButton from "@webstack/components/UiButton/UiButton";
 import ProductSlider from "../views/ProductSlider/ProductSlider";
 import { dateFormat, numberToUsd } from "@webstack/helpers/userExperienceFormats";
 import { useUser } from '~/src/core/authentication/hooks/useUser';
 import IShoppingService from "~/src/core/services/ShoppingService/IShoppingService";
-import BannerProduct from "../views/BannerProduct/BannerProduct";
 import ProductChapters from "../views/ProductChapters/ProductChapters";
-import environment from "~/src/environment";
-import UiLoader from "@webstack/components/UiLoader/view/UiLoader";
+import { useLoader } from "@webstack/components/Loader/Loader";
 
 interface Filter {
   [key: string]: {
@@ -20,11 +16,11 @@ interface Filter {
 }
 
 const ProductsListing: NextPage = () => {
+  const [loader, setLoader]=useLoader();
   const user = useUser();
   const [filters, setFilters] = useState<Filter>({ categories: {}, types: {} });
   const [products, setProducts] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
   const shoppingService = getService<IShoppingService>("IShoppingService");
   const getSelectedCategories = (filter: any) => {
     const selectedEntries = Object.entries(filter).filter(([, value]: any) => value.selected);
@@ -42,19 +38,15 @@ const ProductsListing: NextPage = () => {
     }));
   };
   useEffect(() => {
-    setLoading(true);
+    setLoader({active:true, body:'loding products', animation: true});
     const fetchProducts = async () => {
       try {
         const memberResponse = await shoppingService.getProducts();
         const fetchedProducts: any = memberResponse?.data;
         if (fetchedProducts) {
-          // First, filter the products
-          const filteredProducts = fetchedProducts.filter((product: any) => 
-            product.metadata.mid === environment.merchant.mid
-          );
-  
-          // Then, map the filtered products to format them
-          const formatted = filteredProducts.map((product: any) => ({
+          const formatted = fetchedProducts
+          // .filter((product: any)=>product?.metadata?.mid == merchantId)
+          .map((product: any) => ({
             id: product.id,
             description: product.description,
             name: product.name,
@@ -65,28 +57,27 @@ const ProductsListing: NextPage = () => {
             price: numberToUsd(product.price?.unit_amount),
             metadata: product.metadata
           }));
-  
+
           setHasMore(memberResponse.has_more);
           setProducts(formatted);
         }
       } catch (error) {
         console.error("Error fetching products:", error);
-      } finally {
-        setLoading(false);
-      }
+      } 
+      finally {  setLoader({active:false});}
     };
-  
-    if (!products.length) fetchProducts();
-  }, [setLoading]);
-  
 
-  return loading ? (
-    <UiLoader />
-  ) : (<>
+    if (!products.length) fetchProducts();
+  }, []);
+
+  // return loading ? (
+  //   <UiLoader />
+  // ) : (<>
+  return (<>
   <style jsx>{styles}</style>
     <div className="product-listing">
-      {products?.length && <ProductChapters products={products}/>}
-      <div className="product-listing__header">
+      {/* <ProductChapters/> */}
+      {/* <div className="product-listing__header">
         <div className="product-listing__filters">
           {['categories', 'types'].map(filterKey => (
             <UiSelect
@@ -100,11 +91,8 @@ const ProductsListing: NextPage = () => {
             />
           ))}
         </div>
-      </div>
+      </div> */}
       <ProductSlider products={products} />
-      <div className="product-listing__footer">
-        <UiButton disabled={!hasMore} variant="dark" onClick={() => {/* Pagination code here */ }}>Next</UiButton>
-      </div>
     </div>
   </>
   );

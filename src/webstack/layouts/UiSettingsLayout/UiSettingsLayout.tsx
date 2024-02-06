@@ -1,5 +1,5 @@
 // Relative Path: ./SettingsView.tsx
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect,  useState } from 'react';
 import styles from './UiSettingsLayout.scss';
 import { default as Div } from "@webstack/components/UiDiv/UiDiv";
 import UiMenu from '../../components/UiMenu/UiMenu';
@@ -10,28 +10,28 @@ import { useRouter } from 'next/router';
 import useClass from '@webstack/hooks/useClass';
 import useWindow from '@webstack/hooks/useWindow';
 import keyStringConverter from '@webstack/helpers/keyStringConverter';
+import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
 
 // Remember to create a sibling SCSS file with the same name as this component
 interface ISettingsLayout {
   views: any;
   setViewCallback?: (e: any) => void;
-  variant?: string;
-  name?: string;
+  variant?: 'fullwidth';
+  title?: string;
   defaultView?: string
 }
 const UiSettingsLayout: React.FC<ISettingsLayout> = ({
   views,
   setViewCallback,
   variant,
-  name,
+  title,
   defaultView
 }: ISettingsLayout) => {
+const {width }=useWindow();
   const router = useRouter();
   const queryViewId = router?.query?.vid && router.query.vid;
   const [view, setView] = useState<string | undefined>(defaultView);
-  const { width, height } = useWindow();
   const [actionStyles, setActionStyles] = useState({ width: 350 });
-  const containerRef = useRef<any>();
   const handleView = (view: string) => {
     router.push({
       pathname: router?.pathname,
@@ -43,37 +43,24 @@ const UiSettingsLayout: React.FC<ISettingsLayout> = ({
     )
     setViewCallback && setViewCallback(view);
   }
-  const containerClass = useClass('settings', undefined, variant);
-  const contentClass = useClass('settings__content', undefined, variant);
-  const viewClass = useClass('settings__view', undefined, variant);
-  const handleLayout = () => {
-    setTimeout(() => {
-      const headerElem: any = document.getElementById('header-container');
-      if (headerElem) {
-        const style = headerElem.firstChild && window.getComputedStyle(headerElem.firstChild);
-         if( width >= 1100){
-           if(headerElem.offsetHeight && containerRef.current)containerRef.current.style.marginTop=`${Number(headerElem.offsetHeight + 15)}px`;
-          }else if(width < 1100){
-           if(headerElem.offsetHeight && containerRef.current)containerRef.current.style.marginTop=undefined;
-         }
-        // CREATE WIDTH & ADJUST FOR GAP
-        const mL = Number(style.marginLeft.replace('px', '')) - 14;
-        let newActionStyles: any = { width: width > 1700 ? mL : 300 };
+  const containerClass = useClass({cls:'settings',variant:variant });
+  const contentClass = useClass({cls:'settings__content',variant:variant });
+  const viewClass = useClass({cls:'settings__view',variant:variant });
 
-        setActionStyles(newActionStyles);
-      } else {
-        console.log('headerContainer not found or width > 1100');
-      }
-    }, 100);
-  }
 
-  const optionViews = (dashed:boolean = true) => Object.keys(views).map(v => {
+const [hide, setHide]=useState('');
+const handleHide = () =>{
+  if(hide == '')setHide('hide');
+  else if(hide == 'hide')setHide('show');
+  else if(hide == 'show')setHide('hide');
+  else setHide('');
+}
+  const optionViews = (dashed: boolean = true) => Object.keys(views).map(v => {
     return keyStringConverter(v, dashed)
   });
-  // useEffect(() => {
-  //   handleLayout();
-  // }, [width, height]);
+  
   useEffect(() => {
+    if(width < 1100 && hide == 'hide')setHide('show');
     if (views) {
       const firstView = queryViewId || defaultView || Object.keys(views)[0];
       firstView && setView(String(firstView));
@@ -83,11 +70,16 @@ const UiSettingsLayout: React.FC<ISettingsLayout> = ({
   return (
     <>
       <style jsx>{styles}</style>
-      <div ref={containerRef} id="settings-container" className={containerClass}>
-
+      <div id="settings-container" className={containerClass}>
         <div className={contentClass}>
-
-          <div className="settings__actions">
+        <div className={`settings--icon ${`settings--icon--${hide}`}`}>
+            {/* {hide == 'show'?'hide':'show'} */}
+                <UiIcon 
+                  icon={hide==''?"fa-xmark" : hide=='hide'?'fa-bars':'fa-xmark'}
+                  onClick={handleHide}
+                />
+                  </div>
+          <div className={`settings__actions ${hide!==''?`settings__actions--${hide}`:''}`}>
             <Div maxWidth={1100} style={actionStyles}>
               <div className="settings__actions--content">
                 <UiMenu
@@ -97,6 +89,7 @@ const UiSettingsLayout: React.FC<ISettingsLayout> = ({
                   onSelect={handleView}
                 />
               </div>
+       
             </Div>
 
             <Div minWidth={1100} >
@@ -111,8 +104,17 @@ const UiSettingsLayout: React.FC<ISettingsLayout> = ({
             </Div>
 
           </div>
-          <div className={viewClass}>
+   
+          <div id='settings-view' className={viewClass}>
+          {title && <div className={`settings__view--header${
+                  hide==''?' settings__view--header--init':hide=='show'?' settings__view--header--show':' settings__view--header--hide'}`}>
+      
 
+                  <div className='settings__view--header--title'>
+                    {title} 
+                  </div>
+                  {/* <BreadCrumbs defaultLink={{label: title}}/> */}
+              </div>}
             <div className='settings__view__content'>
               {view && views[view]}
             </div>

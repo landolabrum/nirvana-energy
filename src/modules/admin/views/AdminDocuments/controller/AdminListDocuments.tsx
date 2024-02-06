@@ -3,36 +3,25 @@ import styles from './AdminListDocuments.scss';
 import { getService } from '@webstack/common';
 import IDocumentService from '~/src/core/services/DocumentService/IDocumentService';
 import UiButton from '@webstack/components/UiButton/UiButton';
+import { useLoader } from '@webstack/components/Loader/Loader';
+import UiLoader from '@webstack/components/UiLoader/view/UiLoader';
 
-const AdminListDocuments = () => {
+const AdminListDocuments = ({docs}:any) => {
     const docService = getService<IDocumentService>("IDocumentService");
-    const [documents, setDocuments] = useState([]);
+    const [documents, setDocuments] = useState<any | undefined
+    >();
+    const [currentDoc, setCurrentDoc] = useState<any>(null);
+    const [loader, setLoader] = useLoader();
 
-    useEffect(() => {
-        const getDocs = async () => {
-            try {
-                const documentsList = await docService.listDocuments();
-                setDocuments(documentsList.data);
-            } catch (error) {
-                console.error("Error fetching documents:", error);
-            }
-        };
-
-        if (documents.length === 0) {
-            getDocs();
-        }
-    }, [documents.length]);
-
-    const downloadFile = async (fileId: string) => {
+    const downloadFile = async (fileUrl: string, fileName: string) => {
         try {
-            const response = await fetch(`/api/download-stripe-file/${fileId}`);
+            const response = await fetch(fileUrl);
             if (!response.ok) throw new Error('Network response was not ok');
-
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = fileId; // You can give a more meaningful filename here
+            a.download = fileName; // Use the extracted filename
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
@@ -42,32 +31,89 @@ const AdminListDocuments = () => {
         }
     };
 
-    const renderFile = (doc:any) => {
-        const fileUrl = `/api/fetch-stripe-file/${doc.id}`;
-    
-        if (doc.type === 'pdf') {
-            return <iframe src={fileUrl} title={doc.filename} width="100%" height="500px"></iframe>;
-        } else if (doc.type === 'png' || doc.type === 'jpeg') {
-            return <img src={fileUrl} alt={doc.filename} />;
+    const retreive = async (fileId: string) => {
+        try {
+            const retrieved = await docService.retrieveDocument(fileId);
+            setCurrentDoc(retrieved);
+            console.log('[ DOCUMENT ]', retrieved);
+        } catch (error) {
+            console.log('[ DOCUMENT (error) ]', error);
         }
-    
-        return <p>No preview available</p>;
     };
+
+    const RenderFile = () => {
+        if (currentDoc) {
+            if (currentDoc.type === 'pdf') {
+                return (
+                    <embed
+                        src={currentDoc.url}
+                        type="application/pdf"
+                        width="100%"
+                        height="500px"
+                    />
+                );
+            } else if (currentDoc.type === 'png' || currentDoc.type === 'jpeg') {
+                return <img src={currentDoc.url} alt={currentDoc.filename} />;
+            }
+        }
+
+        return null; // No document to render
+    };
+
+    useEffect(() => {
+        const getDocs = async () => {
+            if(!docs){
+                try {
+                    const documentsList = await docService.listDocuments();
+                    setDocuments(documentsList.data);
+                } catch (error) {
+                    setDocuments(false);
+                    console.error("Error fetching documents:", error);
+                }
+            }else{
+                setDocuments(docs);
+            }
+        };
+
+        if (documents === undefined) {
+            setLoader({ active: true, body: 'Getting admin documents' });
+            getDocs().then(() => setLoader({ active: false }));
+        }
+    }, [ setCurrentDoc]);
 
     return (
         <>
             <style jsx>{styles}</style>
-            <h1>Admin List Docs</h1>
+            {!docs && <h1>Admin List Docs</h1>}
             <div className='admin-list-documents'>
-                {documents.length > 0 ? (
-                    documents.map((doc:any, index:number) => (
-                        <div key={index} className='admin-list-documents__list'>
-                            {/* ... existing document details ... */}
-                            <UiButton onClick={() => downloadFile(doc.id)}>Download</UiButton>
-                        </div>
-                    ))
-                ) : (
-                    <p>No documents found.</p>
+                {currentDoc?.id === (currentDoc && currentDoc.id)  && (
+                    <RenderFile />
+                )}
+                {documents ? (
+                    documents.map((doc: any, index: number) => {
+                        return (
+                            <div key={index} className='admin-list-documents__list'>
+                                <div className='admin-list-documents__list--item'>
+                                    <div className='admin-list-documents__list--item-content'>
+                                        <strong>file: </strong>
+                                        {doc?.filename}<br/><br/>
+                                        <strong>porpose:</strong>
+                                        {doc?.purpose}
+                                        </div>
+                                    <div className='admin-list-documents__list--item-action'>
+
+                                    <UiButton
+                                        onClick={() => retreive(doc.id)}
+                                        >Download</UiButton>
+                                        </div>
+                                </div>
+                            </div>
+                        )
+                    })
+                ) : (<>
+                    {documents === false  && <p>No documents found.</p>}
+                    {documents === undefined  && <UiLoader />}
+                    </>
                 )}
             </div>
         </>

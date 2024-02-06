@@ -2,10 +2,11 @@ import React, { useEffect } from "react";
 import styles from "./UiButton.scss";
 import { UiIcon } from "@webstack/components/UiIcon/UiIcon";
 import type { NextComponentType, NextPageContext } from "next";
-import FormControl, { IFormControl as IFormControl } from "../FormControl/FormControl";
+import FormControl, { IFormControl as IFormControl, IFormControlSize } from "../FormControl/FormControl";
 import Link from "next/link";
 import type { FC } from "react";
-import { IVariant } from "../AdapTable/models/IVariant";
+import { IFormControlVariant } from "../AdapTable/models/IVariant";
+import { useRouter } from "next/router";
 
 interface ILinkProvider {
   href?: string;
@@ -42,8 +43,9 @@ export interface IButton extends IFormControl {
   busy?: boolean;
   href?: string;
   target?: string;
-  type?: "button" | "submit" | "reset";
-  variant?: IVariant;
+  size?: IFormControlSize;
+  type?: "button" | "submit" | "reset" | 'tel' | 'email';
+  variant?: IFormControlVariant;
 }
 
 interface IButtonContext extends IButton {
@@ -53,22 +55,25 @@ interface IButtonContext extends IButton {
 const ButtonContext = ({ context }: IButtonContext) => {
   let traits = context.traits ? context.traits : {};
   traits['disabled'] = context.disabled;
-  
-  useEffect(() => {}, [traits, context.disabled]);
+  const handleClick = (e:any) =>{
+    context?.onClick && context?.onClick(e)
+  }
+  if(context?.disabled)context.variant='disabled';
+  const _type: any = context?.type && !['tel', 'email'].includes(context.type) && context.type;
+  useEffect(() => {}, [context]);
   return (
     <>
       <style jsx>{styles}</style>
-     {/* | uib {JSON.stringify(traits?.disabled)} */}
-      <FormControl label={context.label} variant={context.variant} traits={traits}>
+      <FormControl label={context.label} size={context.size} variant={context.variant} traits={traits}>
         <button
           data-element='button'
-          type={context?.type && context?.type}
+          type={_type || undefined}
           className={context?.variant ? context?.variant : ""}
-          onClick={context?.onClick}
+          onClick={handleClick}
           disabled={context?.disabled || context?.variant == "disabled"}
         >
           {context?.busy && (
-          <div className="busy-spinner">
+            <div className="busy-spinner">
               <UiIcon icon="spinner" />
             </div>
           )}
@@ -89,19 +94,25 @@ const UiButton: NextComponentType<NextPageContext, {}, IButton> = ({
   busy,
   traits,
   label,
-  type
+  type,
+  size
 }: IButton) => {
+  const router = useRouter();
+  if(href && href !== '/' && router.pathname.includes(href)){
+    disabled = true
+  }
+
   if (href)
     return (
       <>
         <style jsx>{styles}</style>
         <LinkProvider href={href} target={target} formControl={false}>
-          <ButtonContext context={{ onClick, children, variant, disabled, busy, traits, label }} />
+          <ButtonContext context={{ type, onClick, children, variant,size, disabled, busy, traits, label }} />
         </LinkProvider>
       </>
     );
 
-  return <ButtonContext context={{ onClick, children, variant, disabled, busy, traits, label }} />;
+  return <ButtonContext context={{ onClick, children, variant,size, disabled, busy, traits, label }} />;
 };
 
 export default UiButton;

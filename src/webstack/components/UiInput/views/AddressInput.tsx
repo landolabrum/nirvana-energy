@@ -38,9 +38,13 @@ const AutocompleteAddressInput = ({ address, setAddress, traits, inputClasses, l
           city: addressComponents.locality || '',
           state: addressComponents.administrative_area_level_1 || '',
           postal_code: addressComponents.postal_code || '',
-          country: addressComponents.country || ''
+          country: addressComponents.country || '',
+          lat: place.geometry?.location?.lat() || 0,
+          lng: place.geometry?.location?.lng() || 0
         };
-        setAddress({ target: { name: "address", value: formattedAddress } });
+        const addressValue ={ target: { name: "address", value: formattedAddress } };
+        console.log('[ addressValue ]',addressValue)
+        setAddress(addressValue);
       }
     });
   };
@@ -51,7 +55,7 @@ const AutocompleteAddressInput = ({ address, setAddress, traits, inputClasses, l
     }${address?.state ? address?.state + ', ' : ''
     }${address?.postal_code ? address?.postal_code + ', ' : ''
     }${address?.country ? address?.country : ''}` : undefined;
-  useEffect(()=>{initAutocomplete()}, [address]);
+  useEffect(()=>{initAutocomplete()}, []);
 
   return (<>
     <style jsx>{styles}</style>

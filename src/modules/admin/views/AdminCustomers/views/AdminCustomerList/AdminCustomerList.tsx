@@ -7,6 +7,7 @@ import IAdminService from '~/src/core/services/AdminService/IAdminService';
 import { phoneFormat } from '@webstack/helpers/userExperienceFormats';
 import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
 import AdaptTableCell from '@webstack/components/AdapTable/components/AdaptTableContent/components/AdaptTableCell/AdaptTableCell';
+import environment from '~/src/environment';
 
 // Remember to create a sibling SCSS file with the same name as this component
 interface ICustomer {
@@ -69,6 +70,7 @@ interface IShipping {
 
 const AdminCustomerList: React.FC<any> = ({onRowClick}:any) => {
   const [customers, setCustomers]=useState<ICustomer | null>(null);
+  const [hasMore, setHasMore]=useState(false);
   const adminService = getService<IAdminService>('IAdminService');
 
   const hideColumns = ['extras','id'];
@@ -76,13 +78,12 @@ const AdminCustomerList: React.FC<any> = ({onRowClick}:any) => {
   const getCustomerList = async () => {
     let customerList = await adminService.listCustomers();
     if (customerList?.object === 'list') {
+      setHasMore(customerList.has_more)
       customerList = customerList.data;
   
       // Use a for loop or reduce function to transform the customer data
       const transformedCustomerList = customerList.map((customer: ICustomer) => {
-        const address: any = customer?.address && typeof customer.address !== 'string'
-          ? `${customer.address.line1 || ''} ${customer.address.line2 || ''} ${customer.address.city || ''} ${customer.address.state || ''} ${customer.address.postal_code || ''} ${customer.address.country || ''}`
-          : customer.address;
+
   
         // Create a new dictionary for each customer
         const extras = {
@@ -102,14 +103,15 @@ const AdminCustomerList: React.FC<any> = ({onRowClick}:any) => {
             email: customer.email,
           }}/>,
           id: customer.id,
-          address: address ? address.trim() : '',
-          phone: customer.phone && phoneFormat(customer.phone),
+          name: customer.name,
           balance: customer.balance,
           created: <AdaptTableCell cell='date' data={customer.created}/>,
-          default_source: customer.default_source && <UiIcon icon='fas-circle-check'/>,
-          delinquent: customer.delinquent,
+          default_source:  <AdaptTableCell cell='check' data={Boolean(customer.default_source)}/>,
+          // delinquent: customer.delinquent,
           tax_exempt: <AdaptTableCell cell='check' data={Boolean(customer.tax_exempt == 'exempt')}/>,
-          extras:extras
+          clearance: <AdaptTableCell cell='id' data={customer?.metadata?.clearance}/>,
+          extras:extras,
+          request: customer.metadata && <AdaptTableCell cell='check' data={Boolean( Object.entries(customer.metadata).find((f:any)=>String(f).includes(String(environment.merchant.mid))))}/>,
         };
       });
   
@@ -122,6 +124,7 @@ const AdminCustomerList: React.FC<any> = ({onRowClick}:any) => {
   
   useEffect(() => {
      getCustomerList();
+    //  console.log(hasMore)
   }, []);
   return (
     <>
@@ -129,6 +132,11 @@ const AdminCustomerList: React.FC<any> = ({onRowClick}:any) => {
       <div className='admin-customer-list'>
       <div className='admin-customer-list__table'>
       <AdapTable 
+        // page={1}
+        // limit={5}
+        // total={Number(Object(customers)?.length)}
+        // setPage={console.log}
+        // setLimit={console.log}
         options={{
           hideColumns:hideColumns,
           tableTitle:'customer list'

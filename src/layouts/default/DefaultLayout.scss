@@ -1,6 +1,18 @@
 main {
-  width: 100%;
+  width: var(--padding-width);
   overflow-y: visible;
-  min-height: inherit;
   position: relative;
+  margin: 0 auto 0;
+  @media(min-width: 1260px){
+    max-width: 1260px;
+    inline-size: var(--padding-width);
+  }
+  // @media(min-width: 1280px){
+  //   max-width: calc(1260px - calc(var(--padding) * 2));
+  //   padding: 0;
+  // }
+  @media(max-width: 900px){
+    padding: 0 0 100px;
+    width: 100%;
+  }
 }

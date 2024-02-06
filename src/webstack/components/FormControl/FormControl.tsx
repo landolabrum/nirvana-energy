@@ -2,7 +2,7 @@ import type { NextComponentType, NextPageContext } from "next";
 import styles from "./styles/FormControl.scss";
 import elStyles from "./styles/FormControlElement.scss";
 import iStyles from "./styles/FormControlIcon.scss";
-import { IVariant } from "@webstack/components/AdapTable/models/IVariant";
+import { IFormControlVariant } from "@webstack/components/AdapTable/models/IVariant";
 import React, { Children, cloneElement, useEffect, useRef } from "react";
 import { IOverlay, useOverlay } from "@webstack/components/Overlay/Overlay";
 import { UiIcon } from "@webstack/components/UiIcon/UiIcon";
@@ -26,15 +26,17 @@ export type ITraits = {
   disabled?: boolean;
   [key: string]: any;
 } | undefined;
-
+export type IFormControlSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 export interface IFormControl {
   label?: string | React.ReactElement;
-  variant?: IVariant;
+  variant?: IFormControlVariant;
+  size?: IFormControlSize,
   overlay?: boolean;
   setOverlay?: (e: IOverlay) => void;
   children?: string | React.ReactElement | React.ReactFragment | number;
   traits?: ITraits;
   error?: string | null;
+  type?: string;
 }
 
 // FormControl component for rendering form controls with label, icons, and overlay support
@@ -43,8 +45,10 @@ const FormControl: NextComponentType<NextPageContext, {}, IFormControl> = ({
   children,
   variant,
   overlay,
+  size,
   setOverlay,
   traits,
+  type,
   error
 }: IFormControl) => {
   const ref = useRef<any>(null);
@@ -53,25 +57,25 @@ const FormControl: NextComponentType<NextPageContext, {}, IFormControl> = ({
   useEffect(() => {
     if (!traits) return;
     let formElement = ref.current.querySelector('.form-control__element');
-    // if (variant === 'link') ref.current.style.width = 'max-content';
-
-    // Apply styles from traits
     if (formElement) {
       Object.keys(traits).forEach(key => {
         if (key in formElement.style) {
           formElement.style[key] = traits[key];
         }
       });
-
       // Apply outline, disabled and responsive styles
       if (typeof traits.outline === "string") formElement.style.outline = traits.outline;
-      formElement.classList.toggle('form-control__element-disabled', traits?.disabled != undefined);
-      if (traits?.responsive) formElement.classList.add('form-control__element-responsive');
+      // formElement.classList.toggle('form-control__element-disabled', traits?.disabled != undefined);
 
+      if (traits?.disabled)formElement.classList.add('form-control__element--disabled');
+      if (traits?.responsive) formElement.classList.add('form-control__element-responsive');
+      if(error)formElement.classList.add('form-control__element--error');
       // Special handling for USABLE elements
       const hasDataElem:any = Object.values(formElement.children)
       .find((e:any) => e.getAttribute('data-element') && ['button', 'input', 'select', 'textarea'].includes(e.getAttribute('data-element')));
-      if(hasDataElem)formElement.classList.add(`form-control__element--${hasDataElem.getAttribute('data-element')}`);
+      if(hasDataElem)formElement.classList.add(
+        `form-control__element--${hasDataElem.getAttribute('data-element')}${type && type=='color'?'-color':''}`
+      );
     }
 
     // Overlay management
@@ -86,11 +90,10 @@ const FormControl: NextComponentType<NextPageContext, {}, IFormControl> = ({
     }
   }, [overlay, traits, variant, setOverlay, setOverlayState]);
 
-  const varClasses = (className: string) => {
-    const createElemIconClass = () => {
-      if (traits?.beforeIcon && traits?.afterIcon) return ` ${className}--has-icon`;
-      else if (traits?.beforeIcon) return ` ${className}--before-icon`;
-      else if (traits?.afterIcon) return ` ${className}--after-icon`;
+  const propClasses = (className: string) => {
+    const createIconClass = () => {
+      if (traits?.beforeIcon ) return ` ${className}--before-icon`;
+      else if ( traits?.afterIcon) return ` ${className}--after-icon`;
       return ''
     }
     const createVariantClass = () => {
@@ -99,29 +102,41 @@ const FormControl: NextComponentType<NextPageContext, {}, IFormControl> = ({
         return acc.includes(variantClass) ? acc : `${acc} ${variantClass}`.trim();
       }, className);
     }
-    if (!variant) return `${className}${createElemIconClass()}`;
-    return `${createVariantClass()}${createElemIconClass()}`
+    const createSizeClass = () =>{
+      if(!size)return'';
+      return ` ${className}-${size}`
+    }
+    const isColor = () =>{
+      if(type != 'color' )return'';
+      return className=='form-control'?' form-control--maxY':` ${className}-input-color`;
+    }
+    if (!variant) return `${className}${createIconClass()}${createSizeClass()}${isColor()}`;
+    return `${createVariantClass()}${createIconClass()}${createSizeClass()}${isColor()}`
   };
+
 
   return (
     <>
       <style jsx>{styles}</style>
       <style jsx>{elStyles}</style>
-      <div className={`form-control ${variant ? `form-control--${variant}` : ''}`} ref={ref}>
+      <div 
+        className={propClasses('form-control')}
+        ref={ref}
+      >
         {label && (
           <div className='form-control__header'>
             <label>{typeof label === 'string' ? <UiMarkdown text={label} /> : label}</label>
           </div>
         )}
-        <div className={varClasses('form-control__element')}>
-          {renderIcon(traits?.beforeIcon, 'before')}
+        <div className={propClasses('form-control__element')}>
+          {renderIcon(traits?.beforeIcon, 'before', size)}
           {Children.map(children, (child: any) => cloneElement(child))}
           {traits?.badge && (
             <div className="form-control__badge">
               <div className="form-control__badge-content">{traits.badge}</div>
             </div>
           )}
-          {renderIcon(traits?.afterIcon, 'after')}
+          {renderIcon(traits?.afterIcon, 'after', size)}
           {error && (
             <div className='form-control__invalid'>
               <UiMarkdown text={error} />
@@ -133,15 +148,16 @@ const FormControl: NextComponentType<NextPageContext, {}, IFormControl> = ({
   );
 };
 
-function renderIcon(iconProps: FormIconProps | undefined, position: string) {
+function renderIcon(iconProps: FormIconProps | undefined, position: string, size?: string) {
   if (!iconProps) return null;
   const icon = typeof iconProps === 'string' ? iconProps : iconProps.icon;
   const onClick = typeof iconProps === 'object' ? iconProps.onClick : undefined;
   const color = typeof iconProps === 'object' ? iconProps.color : undefined;
   const iCls = 'form-control-icon';
+  
   return (<>
     <style jsx>{iStyles}</style>
-    <div className={`${iCls} ${iCls}__${position}`}>
+    <div className={`${iCls} ${iCls}__${position} ${size ?` ${iCls}-${size}`:""}`}>
       <UiIcon
         icon={icon}
         onClick={onClick}

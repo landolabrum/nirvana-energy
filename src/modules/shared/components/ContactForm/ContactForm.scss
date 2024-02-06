@@ -1,0 +1,19 @@
+.d-flex{
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
+.contact-form {
+    width: 100%;
+    @extend .d-flex;
+    align-items: flex-start;
+    flex-direction: column;
+&__title{
+    font-size: var(--s-4);
+    text-transform: capitalize;
+    margin-bottom: var(--element-height);    
+}
+    &--action {
+        --ui-icon-color: var(--gray-20);
+    }
+}

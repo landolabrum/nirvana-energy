@@ -26,9 +26,9 @@
 button {
   display: flex;
   align-items: inherit;
-  justify-content: center;
+  justify-content: inherit;
   color: inherit;
-  background-color: inherit;
+  background-color: transparent;
   outline: none;
   border: none;
   height: inherit;
@@ -41,22 +41,30 @@ button {
   animation: inherit;
   font-weight: inherit;
   font-family: inherit;
+  text-align: inherit;
   cursor: inherit;
   // border-radius: inherit;
   padding: 0;
   &.flat {
     margin: 0;
-    
+  }
+  &.fit-text{
+    padding: var(--s-9) 0;
   }
   &.lite{
     text-decoration: none;
+  }
+  &.link, &.lowercase{
+    text-transform: lowercase;
+    width: max-content;
   }
   &.link,
   &.flat {
     padding: 0;
   }
   &.miniactive, &.mini {
-    padding: 0;
+    padding-right: var(--s-7);
+    // padding: 0;
     // aspect-ratio: 4/5;
   }
 

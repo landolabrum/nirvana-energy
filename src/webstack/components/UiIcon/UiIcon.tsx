@@ -16,6 +16,7 @@ interface Props {
   width?: number | string | undefined;
   height?: number | string | undefined;
   size?: number | string | undefined;
+  badge?: string | number;
 }
 
 interface State {
@@ -31,7 +32,7 @@ export class UiIcon extends React.Component<Props, State> {
   private currentColor: string | undefined;
 
   private _innerHtml = '';
-  // public renderedIconHTML: string | null = null;
+  public renderedIconHTML: string | null = null;
 
   constructor(props: Props) {
     super(props);
@@ -298,34 +299,47 @@ export class UiIcon extends React.Component<Props, State> {
   }
 
   render() {
-    let glowClass = '';
+    let classes = 'ui-icon'; // Base class name
 
     // Check if the 'glow' property is set
     if (this.props.glow === true) {
-      glowClass = 'iconGlow';  // this is the class name for the default glow effect
+      classes += ' iconGlow';  // Add class for the default glow effect
     } else if (typeof this.props.glow === 'string') {
-      // Parse string for custom glow, this is just a placeholder.
-      // You would need to parse and set the glow as inline style.
-      const [offsetX, offsetY, blurRadius, color] = this.props.glow.split(' ');
-      //...
+      // Add custom glow handling here
+    }
+
+    // Add spin class if spin prop is true
+    if (this.props.spin) {
+      classes += ' spinner'; // Assuming 'spin' is a CSS class that handles the spinning animation
     }
 
     // Merge iconStyles with glow styles, if any
     const combinedStyles = {
       ...this.state.iconStyles,
-      ...(glowClass ? { textShadow: `0 0 5px ${this.state.iconStyles.color || 'currentColor'}` } : {})
+      ...(this.props.glow ? { textShadow: `0 0 5px ${this.state.iconStyles.color || 'currentColor'}` } : {})
     };
 
+    const badgeElement = this.props.badge ? (
+      <>
+        <style jsx>{styles}</style>
+        <div className="ui-icon__badge">{this.props.badge}</div>
+      </>
+    ) : null;
+  
     return (
       <>
         <style jsx>{styles}</style>
         <div 
-          className={glowClass} // Adding the glow class conditionally
+          className={classes}
           onClick={e => this.buttonClicked(e)}
-          dangerouslySetInnerHTML={{ __html: this.state?.innerHtml }}
           style={combinedStyles}
           data-testid={this.getDataTestId()}
-        />
+        >
+          <div 
+          dangerouslySetInnerHTML={{ __html: this.state?.innerHtml }}
+           />
+          {badgeElement&& badgeElement||null} {/* Add the badge element here */}
+        </div>
       </>
     );
   }

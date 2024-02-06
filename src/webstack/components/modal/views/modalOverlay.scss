@@ -7,8 +7,8 @@
 
 .p-fix {
     position: fixed;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     top: 0;
     left: 0;
 }
@@ -16,93 +16,68 @@
 .modal__overlay {
     @extend .d-flex;
     @extend .p-fix;
-    width: 100%;
-    min-width: 100vw;
-    height: 100%;
-    min-height: 100vh;
-    filter: blur(5px);
-    backdrop-filter: blur(5px);
     cursor: pointer;
-    z-index: 998;
-    background: var(--gray-90-opaque);
-    -webkit-backdrop-filter: blur(6.6px);
+    z-index: 999;
+    background: var(--gray-70-opaque); // Adjusted for semi-transparent overlay
+    backdrop-filter: blur(5px);
+
+    &__dragging {
+        cursor: url('/icons/fa-hand-back-fist.svg'), auto;
+    }
 }
 
 .modal {
-    min-height: 500px;
-    $hundredWidth: calc(100% - 10px);
-    $maxWidth: 900px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    cursor: auto;
-    z-index: 999;
-    @extend .d-flex;
-    align-items: flex-start;
-    width: $hundredWidth;
-    margin: var(--element-height) 5px 0;
-    height: max-content;
-    overflow-y: auto;
+    position: fixed; // Use fixed to keep it relative to the viewport
+    z-index: 1000;
+    left: 50%; // Center horizontally
+    transform: translateX(-50%); // Adjust position to truly center the modal
+    overflow-y: auto; // Allow scrolling for overflow content
+    display: flex;
+    flex-direction: column;
     overflow-x: hidden;
+    background-color: var(--gray-90);
+    border: solid 1px var(--gray-70);
+    outline: solid 1px var(--gray-50);
+    border-radius: var(--border-radius);
 
-    @media (orientation: portrait) {
-        height: 100vh;
-        /* Limit the modal height to 80% of the viewport height */
+    @media(max-width: 900px) {
+        margin: 0 auto;
+        top: 70px;
+        width: var(--padding-width);
     }
 
-    @media(min-width: 1100px) {
-        width: 800px; // Set a fixed width for larger screens
-        // max-width: 90%; // Add a max-width to ensure it doesn't get too wide on very large screens
-        height: auto; // Height can be auto for scrollable content
-        margin: var(--element-height) auto;
-
-        @media (orientation: landscape) {
-            height: calc(100vh - 90px);
-        }
-
-        @media (orientation: portrait) {
-            // margin-top: 100px;
-            margin: 0;
-            // max-width: $hundredWidth;
-            transform: translate(calc(50vw - 400px), 200px); // Center the modal
-        }
-
-        &__fullscreen {
-            transform: unset;
-        }
+    &__dragging {
+        cursor: url('/icons/fa-hand-back-fist.svg'), auto;
+        filter: blur(3px);
     }
 
     &__fullscreen {
-        width: 100vw;
-        height: auto;
-        margin: 0;
+        top: 0;
+        height: 100%;
+        padding: 0;
     }
 
     &__content {
-        position: relative;
-        @extend .d-flex;
-        flex-direction: column;
-        width: 800px;
+        overflow: hidden;
+        padding: 0 var(--padding);
         height: auto;
+        margin: auto;
         backdrop-filter: blur(5px);
         color: var(--gray-30);
-        border: solid 1px var(--gray-70);
-        background: var(--gray-100-opaque);
-        border-radius: var(--border-radius);
-        padding: calc(var(--padding) * 1.5) var(--padding);
+        min-width: 600px;
+        min-height: 600px;
         box-shadow: var(--box-shadow-xl);
         min-height: max-content;
         transition: all 1s;
+        position: relative;
+
+        &:hover {
+            transition: all 1s;
+        }
 
         &::-webkit-scrollbar-thumb {
             background-color: var(--blue);
             border-radius: 5px;
-        }
-
-        &:hover {
-            transition: all 1s;
-            background-color: var(--gray-100);
         }
 
         &::-webkit-scrollbar {
@@ -111,23 +86,16 @@
             background-color: #00000033;
         }
 
-        @media(max-width:1260px) {
-            @media (orientation: portrait) {
-                margin-top: 100px;
-                max-width: $hundredWidth;
-            }
-        }
-
         @media(max-width:900px) {
-            margin: var(--s-9);
-            // background-color: var(--gray-100-opaque);
             justify-content: flex-start;
+            width: var(--padding-width);
+            min-width: unset;
         }
 
         &__fullscreen {
             width: 100vw;
             padding: 0;
-
+            margin: 0;
             &:hover {
                 background-color: #ffffff00;
             }
@@ -136,19 +104,60 @@
     }
 
     &__header {
+        position: absolute;
+        left: 0;
         @extend .d-flex;
-        align-self: flex-start;
         justify-content: space-between;
-        width: 100%;
-        font-size: var(--s-4);
+        padding: 0 var(--s-9);
+        width: calc(100% - calc(var(--s-9) * 2));
+
+        @media(max-width: 1100px) {
+            right: 0;
+        }
+
+        &:not(&__no-drag) {
+            &:hover {
+                cursor: url('/icons/fa-hand.svg'), auto;
+                background-color: var(--gray-80);
+
+            }
+
+            :focus,
+            &:focus-within,
+            &:visited,
+            &:active {
+                cursor: url('/icons/fa-hand-back-fist.svg'), auto;
+            }
+        }
+
+        &__dragging {
+            cursor: url('/icons/fa-hand-back-fist.svg'), auto;
+        }
+
+        &__no-drag {
+            cursor: default;
+        }
+
+        min-height: var(--element-height);
+        --ui-icon-color: var(--gray-40);
+        color: var(--gray-40);
+
+        .modal-overlay__title {
+            font-size: var(--s-4);
+            text-transform: capitalize;
+        }
 
         .modal-overlay__icon {
-            --ui-icon-color: var(--gray-40);
+            // @extend .d-flex;
 
-            &:hover {
-                cursor: pointer;
-                --ui-icon-color: var(--primary);
-            }
+            // --ui-icon-size: var(--s-5);
+            // cursor: pointer;
+            // width: var(--element-height);
+            // height: var(--element-height);
+            // &:hover {
+            //     background-color: var(--gray-60);
+            //     --ui-icon-color: var(--primary);
+            // }
         }
 
         &__fullscreen {
@@ -157,9 +166,11 @@
             left: 0;
             right: 0;
             z-index: 2;
-            padding: 0 var(--padding);
-            width: calc(100% - calc(var(--padding) * 2));
+            padding-right: var(--padding);
+            margin: 0;
             min-height: var(--element-height);
+            border-radius: unset;
+            border: unset;
 
             &:hover {
                 background-color: var(--gray-100);
@@ -169,27 +180,32 @@
 
     &__body {
         word-wrap: break-word;
-        width: 100%;
-        max-height: calc(100vh - var(--element-height));
-        /* Limit the modal body height to 75% of the viewport height */
         overflow-y: auto;
-
-        @media(max-width: 900px) {
-            max-height: calc(100vh - 60px);
-            /* Adjust the height to account for other modal elements */
-        }
+        margin-bottom: var(--padding);
+        overflow-x: hidden;
+        padding-top: var(--element-height);
 
         &__fullscreen {
             z-index: 1;
+            margin-bottom: 0;
+            padding: 0;
+            width: 100%;
         }
 
         .modal-overlay__confirm {
-            width: 100%;
-            margin: var(--element-height) 0 var(--padding);
             @extend .d-flex;
-            flex-direction: column;
-            gap: var(--padding);
-            &-btn{
+            gap: var(--s-9);
+            padding: var(--s-8) var(--s-9);
+            // background-color: var(--gray-70-opaque);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-top: var(--padding);
+
+            @media(max-width: 1100px) {
+                flex-direction: column;
+            }
+
+            &-btn {
                 width: 100%;
             }
         }

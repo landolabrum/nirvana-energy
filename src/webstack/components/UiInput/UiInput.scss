@@ -1,4 +1,5 @@
 input, textarea {
+
   // Define your custom styles for the input elements/
   width: 100%;
   height: inherit;
@@ -10,10 +11,8 @@ input, textarea {
   outline: none;
   color: inherit;
   border: none;
+  cursor: inherit;
   background-color: transparent;
-  // &:disabled{
-  //   cursor: not-allowed;
-  // }
   // ARROWS for TYPE='number'
   /* Chrome, Safari, Edge, Opera */
   &::-webkit-outer-spin-button,
@@ -21,6 +20,7 @@ input, textarea {
     -webkit-appearance: none;
   }
   &[type=button]{
+    cursor: pointer;
     display: flex;
     justify-content: flex-start;
   }
@@ -53,7 +53,8 @@ input, textarea {
     text-indent: 0;
     min-height: var(--element-height);
     height: 100%;
-    width: max-content;
+    min-width: var(--element-height);
+    
     @media(max-width: 900px) {}
 
     &:focus {
@@ -102,8 +103,9 @@ input, textarea {
 }
 input::placeholder {
   font-style: italic;
+  color: var(--placeholder-color);
   padding: 0;
-  filter: brightness(.8);
+  font-size: 16px;
 }
 
 .input__message{

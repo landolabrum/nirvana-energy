@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import styles from "./UiBar.scss";
 import { UiIcon } from "../../UiIcon/UiIcon";
-
 import { dateFormat } from "@webstack/helpers/userExperienceFormats";
+import keyStringConverter from "@webstack/helpers/keyStringConverter";
+import { debounce } from "lodash";
 
 interface BarProps {
   barCount: number;
@@ -11,23 +12,44 @@ interface BarProps {
   icon?: string;
   status?: string;
   timestamp?: string;
-  header?: string | React.ReactElement;
+  header?: string | React.ReactElement[] | React.ReactElement | string[];
+  onChange?: (newPercentage: number | string) => void;
 }
+// Define helper functions outside of the UiBar component
 
-const UiBar = ({ barCount, percentage, icon, status, timestamp, header }: BarProps) => {
-  function generateColorByPercentage(percentage: number) {
-    const greenStart = parseInt("ff", 16); // Red component at 100% (255 in decimal)
-    const greenEnd = parseInt("00", 16); // Red component at 0% (0 in decimal)
-    const redStart = parseInt("33", 16); // Green component at 100% (51 in decimal)
-    const redEnd = parseInt("ff", 16); // Green component at 0% (255 in decimal)
+const UiBar = ({
+  barCount,
+  percentage,
+  icon,
+  status,
+  timestamp,
+  header,
+  onChange
+}: BarProps) => {
+  const [localPercentage, setLocalPercentage] = useState(percentage);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-    const red = Math.round((redStart - redEnd) * (percentage / 100) + redEnd);
-    const green = Math.round((greenStart - greenEnd) * (percentage / 100) + greenEnd);
+  const debouncedOnChange = useRef(
+    debounce((newPercentage) => {
+      if (onChange) {
+        onChange(newPercentage);
+      }
+    }, 1000)
+  ).current;
 
-    const color = `#${red.toString(16).padStart(2, "0")}${green.toString(16).padStart(2, "0")}00`;
 
-    return color;
-  }
+const handleMouseDrag = (e: React.MouseEvent) => {
+  console.log('[ e ]',e )
+  if (!containerRef.current) return;
+  const bounds = containerRef.current.getBoundingClientRect();
+  const newPercentage = 100 - ((e.clientY - bounds.top) / bounds.height) * 100;
+  const clampedPercentage = Math.max(0, Math.min(newPercentage, 100));
+  setLocalPercentage(clampedPercentage);
+  debouncedOnChange(clampedPercentage.toFixed(0));
+};
+
+
+
 
   const renderBars = () => {
     const bars = [];
@@ -36,56 +58,49 @@ const UiBar = ({ barCount, percentage, icon, status, timestamp, header }: BarPro
       emptyBar: "bar__bars-bar-empty",
       partialBar: "bar__bars-bar-partial",
     };
-
+  
     for (let i = 0; i < barCount; i++) {
       let barClassName;
+      let barStyle: { backgroundColor?: string; height?: string } = {}; // Define barStyle with optional properties
+  
 
-      if (i < Math.floor((percentage * barCount) / 100)) {
+      if (i < Math.floor((localPercentage * barCount) / 100)) {
         barClassName = style.filledBar;
-      } else if (i === Math.floor((percentage * barCount) / 100)) {
-        const fillPercentage = (percentage * barCount) % 100;
+      } else if (i === Math.floor((localPercentage * barCount) / 100)) {
+        barStyle.height = `${(localPercentage * barCount) % 100}%`;
         barClassName = style.partialBar;
-        bars.push(
-          <div key={i}>
-            <style jsx>{styles}</style>
-            <div className="bar__bars-content">
-              <div
-                className={`bar__bars-bar ${barClassName}`}
-                style={{ height: `${fillPercentage}%`, backgroundColor: generateColorByPercentage(percentage) }}
-              ></div>
-            </div>
-          </div>
-        );
-        continue;
       } else {
+        delete barStyle.height
         barClassName = style.emptyBar;
       }
 
       bars.push(
-        <div key={i}>
+        <span key={i}>
           <style jsx>{styles}</style>
           <div className="bar__bars-content">
             <div
-              style={
-                barClassName !== "bar__bars-bar-empty" ? { backgroundColor: generateColorByPercentage(percentage) } : {}
-              }
               className={`bar__bars-bar ${barClassName}`}
+              style={barStyle}
             ></div>
           </div>
-        </div>
+        </span>
       );
     }
-
     return bars;
   };
 
+
+  useEffect(() => { 
+    setLocalPercentage(percentage)
+}, [percentage]);
   return (
     <>
       <style jsx>{styles}</style>
-      <div className={`bar ${styles.graphContainer}`}>
+      <div className='bar'>
         {timestamp && <div className="bar__timestamp">{dateFormat(timestamp, { time: true })}</div>}
         <div className="bar__container">
-          <div className="bar__header">
+          {header && <div className="bar__header">
+            {header}
             {icon && (
               <div className="bars__icon">
                 <UiIcon icon={icon} />
@@ -93,24 +108,24 @@ const UiBar = ({ barCount, percentage, icon, status, timestamp, header }: BarPro
             )}
             {status && (
               <div className="bars__status">
-                {status === "STATUS_LOW" && (
+                {["STATUS_LOW", 'low', 'high'].includes(status) && (
                   <div className="bars__status-low">
                     <UiIcon color="#f90" icon="fa-exclamation-triangle" />
-                    low
+                    {keyStringConverter(status)}
                   </div>
                 )}
               </div>
             )}
-            {header && (
-              <div className="bars__status">
-               {header}
-              </div>
-            )}
-          </div>
-          <div className={`bar__bars-container ${styles.barsContainer}`}>
+          </div>}
+          <div
+            className='bar__bars-container'
+            ref={containerRef}
+            onMouseDown={(e) => handleMouseDrag(e)}
+            onMouseMove={(e) => e.buttons === 1 && handleMouseDrag(e)}
+          >
             {renderBars()}
-            <div className={`bar__percentage ${styles.percentageText}`}>
-              <div>{percentage}%</div>
+            <div className="bar__percentage">
+              <div>{localPercentage.toString().split('.')[0]}%</div>
             </div>
           </div>
         </div>
@@ -118,11 +133,12 @@ const UiBar = ({ barCount, percentage, icon, status, timestamp, header }: BarPro
     </>
   );
 };
-
 UiBar.propTypes = {
   barCount: PropTypes.number.isRequired,
   percentage: PropTypes.number.isRequired,
+  isColor: PropTypes.bool,
   icon: PropTypes.string,
+  onChange: PropTypes.func,
 };
 
 export default UiBar;

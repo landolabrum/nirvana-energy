@@ -2,7 +2,16 @@ import UserContext from "~/src/models/UserContext";
 import { EventEmitter } from "@webstack/helpers/EventEmitter";
 import { ICartItem } from "~/src/modules/ecommerce/cart/model/ICartItem";
 import { IPaymentMethod } from "~/src/modules/account/model/IMethod";
-
+export interface IEncryptJWT{
+  tokenData: object,
+  secret: string,
+  algorithm:'HS256'
+}
+export interface IDecryptJWT{
+  token: string,
+  secret: string,
+  algorithm:'HS256'
+}
 
 export default interface IMemberService {
   // METHODS
@@ -26,7 +35,8 @@ export default interface IMemberService {
     email,
     password, 
     referrer_url,
-    user_agent
+    user_agent,
+    metadata
   }: any): Promise<any>;
   signOut(): Promise<string>;
   getCurrentUserToken(): string | undefined;
@@ -34,4 +44,6 @@ export default interface IMemberService {
   getMemberProfileInformation(memberId: string): Promise<any | null>;
   updateMember(id: string, memberData: any): Promise<any>;
   toggleDefaultPaymentMethod(paymentMethodId: string): Promise<any>;
+  encryptJWT({tokenData, secret, algorithm}:IEncryptJWT): Promise<any>;
+  decryptJWT({token, secret, algorithm}:IDecryptJWT): Promise<any>;
 }

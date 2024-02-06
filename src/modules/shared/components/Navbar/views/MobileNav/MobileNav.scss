@@ -6,11 +6,14 @@
 
 .navbar__mobile {
     display: none;
-    width: auto;
-    margin: var(--element-height) 0;
+    min-width: 600px;
+    margin:  0;
+    width: 100%;
     @media(max-width: 1260px) {
-        flex-direction: column;
+        min-width: unset;
+        margin: auto;
         display: flex;
+        flex-direction: column;
     }
     &--actions{
         @extend .d-flex;
@@ -20,14 +23,35 @@
         border-radius: var(--border-radius);
         display: flex;
         flex-direction: column;
-        gap: var(--s-9);
-        padding: var(--s-5) var(--padding);
-        width: auto;
+        gap: var(--padding);
+        justify-content: space-around;
+        width: 100%;
+        margin:  var(--element-height) auto;
+        &__brand{
+            gap: var(--s-9);
+            text-transform: capitalize;
+            font-size: var(--s-1);
+            width: 100%;
+            margin-bottom: var(--padding);
+            @extend .d-flex;
+            color:var(--gray-50);
+            --ui-icon-color:var(--gray-50);
+            // --ui-icon-width:var(--element-height);
+            --ui-icon-size: var(--s-1);
+            // --ui-icon-width: var(--s-1);
+            line-height: 1;
+            cursor: pointer;
+            &:hover{
+                color:var(--primary);
+                --ui-icon-color:var(--primary);
+            }
+       
+
+        }
         &__nav-item{
             @extend .d-flex;
             border: solid 1px var(--gray-70);
             border-radius: var(--border-radius);
-            width: 100%;
             &:hover{
                 background-color: var(--gray-90);
             }

@@ -171,6 +171,54 @@ $cell-height: 100%;
   overflow: visible;
   max-width: max-content;
 }
+.d-flex{
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
+.adapt-table-cell__address {
+  display: flex;
+  flex-wrap: wrap;
+  // display: grid;
+  // grid-template-rows: auto auto auto; // Adjust as needed
+  // grid-template-columns: auto auto auto; // Adjust as needed
+  // font-size: inherit;
+  &--line1, &--line2, &--city, &--state, &--postal_code, &--country {
+    font-size: inherit;
+    padding: 0 2px;
+    line-height: 1.2;
+    color: inherit;
+    overflow: hidden;
+    font-size: inherit;
+    text-overflow: ellipsis;
+  }
+
+  &--line1 {
+    font-weight: 900;
+  }
+
+  &--line2 {
+  }
+
+  &--city {
+    &::after {
+      content: ', ';
+    }
+  }
+
+  &--state {
+    &::after {
+      content: ', ';
+    }
+  }
+
+  &--postal_code {
+  }
+
+  &--country {
+  }
+}
+
 
 .adaptable-cell__wallet-address {
   position: relative;

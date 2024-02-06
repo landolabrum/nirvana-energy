@@ -50,6 +50,18 @@ $elPad: 14px;
   height: max-content;
   justify-content: space-around;
 
+&__badge{
+  @extend .d-flex;
+  top:0;
+  right:0;
+  position: absolute;
+    background-color: #f30;
+    width: var(--s-5);
+    height: var(--s-5);
+    font-size: var(--s-7);
+    color: var(--white);
+}
+
   .form-control__header {
     @extend .d-flex;
     justify-content: space-between;
@@ -71,11 +83,22 @@ $elPad: 14px;
       }
     }
   }
+  &-sm{
+    .form-control__header {
+      min-height: unset;
+      label{
+        text-indent: var(--s-9);
 
+        font-size: var(--s-9);
+      }
+  }
+  }
   &.form-control--inherit {
     @extend .inherit;
   }
-
+  &--maxY{
+    height: 100%;
+  }
   &.form-control--invalid {
     label {
       color: var(--orange);
@@ -84,15 +107,16 @@ $elPad: 14px;
 
   // VARIANT DEFINITIONS
   &--signature {
+    gap: var(--s-4);
     background-color: var(--gray-90);
-
+    height: max-content;
     &:hover {
       background-color: var(--gray-90);
     }
   }
 
-  &--link {
-    width: 100%;
+  &--link, &--checkbox {
+    width: auto;
   }
 
   &--dark {

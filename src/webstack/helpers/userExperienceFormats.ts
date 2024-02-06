@@ -24,15 +24,15 @@ export function stringToKebab(str?: string) {
 
 
 export const phoneFormat = (
-  phoneNumber: string,
+  phoneNumber?: string | null,
   countryCode: string = 'US',
   reverse: boolean = false
 ): string => {
   const phoneUtil = PhoneNumberUtil.getInstance();
-  let formattedNumber: string = phoneNumber;
-
+  let formattedNumber = phoneNumber;
+  if(formattedNumber == null )return 'n/a';
   if (reverse) {
-    const cleanedNumber = phoneNumber.replace(/\D/g, '');
+    const cleanedNumber = formattedNumber.replace(/\D/g, '');
     if (cleanedNumber.startsWith('1')) {
       return `+${cleanedNumber}`;
     } else {
@@ -42,7 +42,7 @@ export const phoneFormat = (
 
   try {
     const parsedNumber = phoneUtil.parseAndKeepRawInput(
-      phoneNumber,
+      formattedNumber,
       countryCode
     );
     formattedNumber = phoneUtil.format(
@@ -50,7 +50,7 @@ export const phoneFormat = (
       PhoneNumberFormat.NATIONAL
     );
   } catch (e) {
-    return phoneNumber;
+    return formattedNumber;
   }
 
   return formattedNumber;
@@ -184,7 +184,22 @@ export function dateFormat(
     }
   }
 }
+export function colorPercentage(percentage: number, colorReverse?: boolean, background?: { start: string, end: string }) {
+  // Extract color components from the background start and end if provided
+  const startRed = background ? parseInt(background.start.substring(0, 2), 16) : parseInt(colorReverse ? "ff" : "33", 16);
+  const startGreen = background ? parseInt(background.start.substring(2, 4), 16) : parseInt(colorReverse ? "00" : "ff", 16);
+  const endRed = background ? parseInt(background.end.substring(0, 2), 16) : parseInt(colorReverse ? "33" : "ff", 16);
+  const endGreen = background ? parseInt(background.end.substring(2, 4), 16) : parseInt(colorReverse ? "ff" : "00", 16);
 
+  // Calculate the red and green components based on the percentage
+  const red = Math.round((startRed - endRed) * (percentage / 100) + endRed);
+  const green = Math.round((startGreen - endGreen) * (percentage / 100) + endGreen);
+
+  // Construct the color string
+  const color = `#${red.toString(16).padStart(2, "0")}${green.toString(16).padStart(2, "0")}00`;
+
+  return color;
+}
 export function numberToUsd(amount: number) {
   if (!amount) return "loading"
   const formattedAmount = (amount / 100).toFixed(2);

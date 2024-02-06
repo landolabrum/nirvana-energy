@@ -19,19 +19,19 @@ export default class HomeService extends ApiService implements IHomeService {
   public async lights(
     ): Promise<any> {
       return await this.get<any>(
-        "/hue/lights",
+        "/api/home/hue/lights",
       );
     }
     public async lightsOn(
     ): Promise<any> {
       return await this.get<any>(
-        "/hue/all-on",
+        "/api/home/hue/all-on",
       );
     }
     public async lightsOff(
     ): Promise<any> {
       return await this.get<any>(
-        "/hue/all-off",
+        "/api/home/hue/all-off",
       );
     }
     public async stream(
@@ -41,12 +41,35 @@ export default class HomeService extends ApiService implements IHomeService {
         `/cam-${cameraId}`,
       );
     }
+    public async lightBrightness(
+      id: number, brightness: number
+    ): Promise<any> {
+      return this.post<any, any>(
+        `/api/home/hue/light-bri?id=${id}&bri=${brightness}`,
+        
+      );
+    }
     public async light(
       request: any
     ): Promise<any> {
       return this.post<any, any>(
         "/hue/light",
         request
+      );
+    }
+    public async lightToggle(
+      id: any
+    ): Promise<any> {
+      return this.get<any>(
+        `/api/home/hue/light_toggle?id=${id}`,
+      );
+    }
+    public async lightColor(
+      id: any,
+      hex: string
+    ): Promise<any> {
+      return this.get<any>(
+        `/api/home/hue/light-hex-color?id=${id}&hex=${hex.replaceAll('#','')}`,
       );
     }
     public async getVehicles(

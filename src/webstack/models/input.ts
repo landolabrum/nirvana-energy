@@ -1,5 +1,5 @@
-import { IVariant } from "@webstack/components/AdapTable/models/IVariant";
-import { IFormControl } from "@webstack/components/FormControl/FormControl";
+import { IFormControlVariant } from "@webstack/components/AdapTable/models/IVariant";
+import { IFormControl, IFormControlSize } from "@webstack/components/FormControl/FormControl";
 import { UserAddress } from "~/src/models/UserContext";
 
 export type ValueType = any;
@@ -7,6 +7,7 @@ export type ValueType = any;
 
 export interface IInput extends IFormControl {
   name?: string;
+  size?: IFormControlSize | 'sm';
   error?: string | null;
   label?: string;
   type?: string;
@@ -14,12 +15,14 @@ export interface IInput extends IFormControl {
   disabled?: boolean;
   value?: ValueType;
   defaultValue?: string | number | readonly string[] | undefined;
+  onClick?: (e:any)=>void;
   onPaste?: (e: any) => void;
   onChange?: (e: any) => void;
   onKeyDown?: (e: any) => void;
+  onDelete?: (e: any) => void;
   onKeyUp?: (e: any) => void;
   placeholder?: string;
-  variant?: IVariant;
+  variant?: IFormControlVariant;
   min?: number;
   max?: number;
   autoComplete?: string;

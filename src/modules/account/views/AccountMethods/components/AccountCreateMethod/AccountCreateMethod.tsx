@@ -15,7 +15,7 @@ interface IAccountCreateMethod {
 }
 
 
-const AccountCreateMethod = ({ onSuccess, open, collapse, user, shippable }: IAccountCreateMethod) => {
+const AccountCreateMethod = ({ onSuccess, user, shippable }: IAccountCreateMethod) => {
     const stripe = useStripe();
     const elements: any = useElements();
     const options = {
@@ -54,29 +54,10 @@ const AccountCreateMethod = ({ onSuccess, open, collapse, user, shippable }: IAc
                 }
             }
         } catch (e: any) {
-            alert(JSON.stringify(e))
+            console.error('[ Account Create Method (onsubmit) Error ]',JSON.stringify(e))
         }
     }, [ elements]);
-    // }, [stripe, elements, clientSecret]);
-    // const [isApplePaySupported, setIsApplePaySupported] = useState(false);
 
-    // useEffect(() => {
-    //     // Check if Apple Pay is supported
-    //     if (stripe) {
-    //         stripe.paymentRequest({
-    //             country: 'US',
-    //             currency: 'usd',
-    //             total: {
-    //                 label: 'Demo Total',
-    //                 amount: 199,
-    //             },
-    //             requestPayerName: true,
-    //             requestPayerEmail: true,
-    //         }).canMakePayment().then(result => {
-    //             setIsApplePaySupported(!!result?.applePay);
-    //         });
-    //     }
-    // }, [stripe]);
     const hasPayElem = elements?.getElement('payment') || false;
     useEffect(() => {
         if (elements && !hasPayElem) {

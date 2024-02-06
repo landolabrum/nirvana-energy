@@ -1,8 +1,15 @@
+import { IAccountsResponse } from "./adminModels/iAdminAccounts";
+
 export default interface IAdminService {
-  signOut(): Promise<string>;
-  getCurrentUserToken(): string | undefined;
-  listCustomers(): Promise<any>;
+  // ECOMMERCE
   getCustomer(customerId: string): Promise<any>;
+  createCustomer(customerData: any): Promise<any>;
+  listCustomers(): Promise<any>;
   deleteCustomer(customerId: string): Promise<any>;
-  updateMember(id: string, memberData: any): Promise<any>;
+  updateCustomer(id: string, memberData: any): Promise<any>;
+  
+  listAccounts(): Promise<IAccountsResponse>;
+  getAccount(accountId:string): Promise<any>;
+  // SYSTEM
+  getSystemInfo():Promise<any>;
 }

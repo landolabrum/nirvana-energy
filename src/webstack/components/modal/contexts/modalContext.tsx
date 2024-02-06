@@ -1,22 +1,30 @@
-import { IVariant } from '@webstack/components/AdapTable/models/IVariant';
-import { IButton } from '@webstack/components/UiButton/UiButton';
+import { IFormControlVariant } from '@webstack/components/AdapTable/models/IVariant';
 import { createContext, ReactNode, useContext, useState } from 'react';
+
 type IConfirm ={
   title?: string;
-  statements?: {text?: string, onClick?:(e:any)=>void, variant?: IVariant}[];
+  statements?: {text?: string, onClick?:(e:any)=>void, href?: string, variant?: IFormControlVariant}[];
 } | undefined;
+
+
 export type IModalContent = {
+  title?: string;
   children?: ReactNode | null | string;
+  footer?: ReactNode;
   variant?: "popup" | 'fullscreen';
   confirm?: IConfirm;
+  zIndex?: number;
+  draggable?: boolean;
 } | ReactNode | null;
 
-interface ModalContextType {
+export interface ModalContextType {
   isModalOpen: boolean;
   openModal: (content: IModalContent) => void;
   closeModal: () => void;
   modalContent: IModalContent;
+  replaceModal: (content: IModalContent) => void; // Add this line
 }
+
 
 export const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
@@ -26,7 +34,8 @@ interface Props {
 
 export const ModalProvider: React.FC<Props> = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [modalContent, setModalContent] = useState<IModalContent>(null); // Updated type here
+  const [modalContent, setModalContent] = useState<IModalContent>(null);
+  
   const openModal = (content: IModalContent) => {
     setIsModalOpen(true);
     setModalContent(content);
@@ -37,15 +46,20 @@ export const ModalProvider: React.FC<Props> = ({ children }) => {
     setModalContent(null);
   };
 
+  const replaceModal = (content: IModalContent) => { // Implement replaceModal function
+    setModalContent(content);
+  };
+
   return (
-    <ModalContext.Provider value={{ isModalOpen, openModal, closeModal, modalContent }}>
+    <ModalContext.Provider value={{ isModalOpen, openModal, closeModal, modalContent, replaceModal }}>
       {children}
     </ModalContext.Provider>
   );
 };
 
+
 export const useModal = () => {
-  const context = useContext(ModalContext);
+  const context = useContext<ModalContextType | undefined>(ModalContext);
 
   const defaultContext: ModalContextType = {
     isModalOpen: false,
@@ -54,6 +68,9 @@ export const useModal = () => {
     },
     closeModal: () => {
       console.warn('closeModal called before ModalProvider is ready.');
+    },
+    replaceModal: () => {
+      console.warn('replaceModal called before ModalProvider is ready.');
     },
     modalContent: null,
   };

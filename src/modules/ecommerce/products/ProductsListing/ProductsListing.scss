@@ -6,12 +6,11 @@
 }
 $space: var(--s-7);
 .product-listing{
-    margin: auto;
-    max-width: 1260px;
+    margin: var(--padding) 0;
+    height: 100%;
     @extend .d-flex;
     justify-content: flex-start;
-    width: auto;
-    padding: var(--padding);
+    gap: var(--element-height);
     .product-listing__header {
         width: 100%;
     }

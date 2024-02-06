@@ -3,9 +3,11 @@ import { IFormControl } from "../FormControl/FormControl";
 import styles from "./UiMenu.scss";
 import Input from "../UiInput/UiInput";
 import UiButton from "../UiButton/UiButton";
+import { IRoute, SelectableRoute } from "@shared/components/Navbar/data/routes";
+export type IMenuOption = string | IRoute | number | React.ReactElement | SelectableRoute;
 
-export interface UiMenuProps extends IFormControl {
-  options?: any;
+export interface IMenu extends IFormControl {
+  options?: IMenuOption[];
   onSelect?: (value: any) => void;
   value?: string;
   search?: boolean;
@@ -13,7 +15,7 @@ export interface UiMenuProps extends IFormControl {
   traits?: any;
 }
 
-const UiMenu: FC<UiMenuProps> = ({ options, variant, onSelect, value, search, setSearch, traits }) => {
+const UiMenu: FC<IMenu> = ({ options, variant, onSelect, value, search, setSearch, size, traits }) => {
   const [searchValue, setSearchValue] = useState("");
   const typesBypass: any = options;
   const hasOptions = !Boolean(typesBypass?.every((element: any) => element === undefined));
@@ -37,6 +39,7 @@ const UiMenu: FC<UiMenuProps> = ({ options, variant, onSelect, value, search, se
     onSelect && onSelect(option);
   };
   const currValue = (option: any)=>{
+    if(option.name && option.value)return option;
     return ["string",'number'].includes(typeof option) ? option : option?.href
   }
 
@@ -46,7 +49,7 @@ const UiMenu: FC<UiMenuProps> = ({ options, variant, onSelect, value, search, se
   return (
     <>
       <style jsx>{styles}</style>
-      <div className={`menu ${variant ? `menu__${variant}` : ""}`} style={traits && traits?.height ? { ...traits, overflowY: "auto" } : traits ? traits : {}}>
+      <div className={`menu ${variant ? `menu__${variant}` : ""}${size?` menu-${size}`:''}`} style={traits && traits?.height ? { ...traits, overflowY: "auto" } : traits ? traits : {}}>
         {search && (
           <div className="menu__search">
             <Input type="text" variant={variant} value={searchValue} placeholder="Search" name="search" onChange={handleSearch} />
@@ -57,7 +60,7 @@ const UiMenu: FC<UiMenuProps> = ({ options, variant, onSelect, value, search, se
         ) : (
           <>
             {filteredOptions?.map((option: any, index: number) => {
-              const label = ["string",'number'].includes(typeof option)? option : option?.label;
+              const label = ["string",'number'].includes(typeof option)? option : option?.label?option?.label: option?.name;
               const currentValue = currValue(option);
               if (currentValue)
                 return (
@@ -67,10 +70,13 @@ const UiMenu: FC<UiMenuProps> = ({ options, variant, onSelect, value, search, se
                       option?.active === false ? "disabled" : ""
                     }${
                       value?.includes(currentValue)? ' active':''
+                    }${
+                      size?` menu__option-${size}`:''
+                    }
                     }`}
                     onClick={() => currentValue && option?.active !== false && handleSelect(currentValue)}
                   >
-                    <UiButton variant='flat' traits={{
+                    <UiButton variant='flat' size={size} traits={{
                       beforeIcon: option?.icon,
                       afterIcon: value?.includes(currentValue) ? {icon:'fa-check'} : ''
                     }}>

@@ -48,7 +48,7 @@ export default function AdaptGrid({
   align,
   backgroundColor,
 }: GridProps) {
-  const windowSize = useWindow();
+  const {width} = useWindow();
   const ref = useRef<any>(null);
 
   function findClosestDictionary(target: number, data: FindClosestProps[]) {
@@ -71,7 +71,7 @@ export default function AdaptGrid({
 
     if (focus) handleFocus();
     const style = {
-      gridTemplateColumns: `repeat(${findClosestDictionary(windowSize.width, [
+      gridTemplateColumns: `repeat(${findClosestDictionary(width, [
         { id: "xs", breakpoint: 600, value: xs },
         { id: "sm", breakpoint: 900, value: sm },
         { id: "md", breakpoint: 1100, value: md },
@@ -79,7 +79,7 @@ export default function AdaptGrid({
         { id: "xl", breakpoint: 1600, value: xl },
       ])}, 1fr)`,
       gridColumnGap: `${gapX ? gapX : gap}px`,
-      gridRowGap: `${gapY ? gapX : gap}px`,
+      gridRowGap: `${gapY ? gapY : gap}px`,
       paddingTop: `${gap ? gap / 2 : 0}px`,
       paddingBottom: `${gap ? gap / 2 : 0}px`,
       margin: `${margin ? margin : "0px"}`,
@@ -89,7 +89,7 @@ export default function AdaptGrid({
 
     Object.assign(gridElement.style, style);
   }, [
-    windowSize.width,
+    width,
     gap,
     gapX,
     gapY,

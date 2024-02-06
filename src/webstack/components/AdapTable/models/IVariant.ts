@@ -1,5 +1,6 @@
-export type IVariant =
+export type IFormControlVariant =
   | ""
+  | "lowercase"
   | "inherit"
   | "left"
   | "card"
@@ -7,6 +8,7 @@ export type IVariant =
   | "dark"
   | "glow"
   | "lite"
+  | "warning"
   | "center dark"
   | "account"
   | "active"
@@ -15,6 +17,7 @@ export type IVariant =
   | "center"
   | "disabled"
   | "select__disabled"
+  | "fit-text"
   | "disabled-icon"
   | "false"
   | "bump"
@@ -27,6 +30,7 @@ export type IVariant =
   | "invalid"
   | "link"
   | "mini"
+  | "checkbox"
   | "miniactive"
   | "nav-item"
   | "center nav-item"

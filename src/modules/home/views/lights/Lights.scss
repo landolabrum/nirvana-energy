@@ -1,0 +1,41 @@
+.d-flex{
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
+.lights {
+    width: var(--padding-width);
+    padding: var(--padding);
+    height: max-content;
+    &__light {
+        @extend .d-flex;
+        flex-direction: column;
+        gap: var(--s-9);
+        border: solid 1px var(--gray-80);
+        border-radius: var(--border-radius);
+        background-color: var(--gray-90);
+        padding: var(--s-9);
+        &-header{
+            @extend .d-flex;
+            gap: var(--s-9);
+            justify-content: space-between;
+            text-transform: capitalize;
+            &--action{
+                cursor: pointer;
+                min-height: var(--element-height);
+                @extend .d-flex;
+                justify-content: flex-end;
+                gap: var(--s-9);
+                --ui-icon-color: var(--gray-40);
+                &:hover{
+                    --ui-icon-color: var(--gray-20);
+                }
+            }
+            &-title{
+                min-height: var(--element-height);
+                gap: var(--s-9);
+                @extend .d-flex;
+            }
+        }
+    }
+}

@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import styles from './MobileNav.scss';
 import { IRoute } from '../../data/routes';
 import UiButton from '@webstack/components/UiButton/UiButton';
+import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
 
 // Remember to create a sibling SCSS file with the same name as this component
 interface IMobileNav {
@@ -24,16 +25,36 @@ const MobileNav: React.FC<IMobileNav> = ({ routes, handleClick, onBack, }) => {
                     </div>
                 </div>}
                 <div className='navbar__mobile--content'>
-                    {routes && routes.map((route: IRoute, key: number) => (
-                        <div key={key} className='navbar__mobile--content__nav-item' 
+                    {routes && routes.reverse().map((route: IRoute, key: number) => 
+                       {
+                        if(route?.hide)return;
+                        if(route?.href == '/')return <div 
+                            key={key}
+                            className='navbar__mobile--content__brand'
                             onClick={() => handleClick(route)}
                         >
-                            <UiButton
-                                traits={{beforeIcon:route?.icon}}
-                                variant='nav-item'
-                            >{route.label}</UiButton>
-                        </div>
-                    ))}
+                            <div>
+                                <UiIcon icon={route?.icon} width={100} height={100}/> 
+                            </div>
+                            <div>
+                                {route.label}
+                            </div>
+                        </div>;
+                        return (
+                            <div 
+                                key={key} 
+                                className='navbar__mobile--content__nav-item' 
+                                onClick={() => handleClick(route)}
+                            >
+                                <UiButton
+                                    traits={{beforeIcon:route?.icon}}
+                                    variant='nav-item'
+                                >
+                                    {route.label}{route?.href =='/cart' ?'cart':''}
+                                </UiButton>
+                            </div>
+                        )}
+                    )}
                 </div>
             </div>
         </>
