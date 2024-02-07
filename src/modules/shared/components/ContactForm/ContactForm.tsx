@@ -48,7 +48,6 @@ const ContactForm: React.FC<IContactFormProps> = ({ onSubmit, user }) => {
     const onChangeErrors = () => {
         const noValue = () => `${name} cannot be blank.`;
         if (e.target.error) return e.target.error;
-        console.log('[name, value]',name, value)
         switch (name) {
             case 'firstName':
             case 'lastName':
@@ -70,28 +69,26 @@ const ContactForm: React.FC<IContactFormProps> = ({ onSubmit, user }) => {
         }
     };
 
-    const updatedContact = fields.map((contactField: any) => {
-        if (contactField.name === name) {
-            return {
-                ...contactField,
-                value: value,
-                ...(handleErrors && { error: onChangeErrors() })
-            };
+
+    const updateFieldz = () => {
+      const newFieldz: IFormField[] = [];
+      const fieldError = onChangeErrors();
+      fields.forEach((field: IFormField) => {
+        if(field.name === name){
+          if(fieldError)field.error = fieldError;
+          else if(field.error)delete field.error;
+          field.value = value;
         }
-        return contactField;
-    });
-    console.log('[ updatedContact ]',updatedContact)
-    setFields(updatedContact);
+        newFieldz.push(field);
+      });
+      return newFieldz
+    }
+    setFields(updateFieldz());
 };
 const handleFormSubmit = (userFields?: any) => {
   let firstName = '';
   let lastName = '';
   const fieldsToUse = userFields ? userFields : fields;
-  console.log('[ handleFOrmSubmiot ]', {
-    fieldsToUse:fieldsToUse,
-    userFields:userFields,
-    fields:fields
-  })
   const fieldsObject = fieldsToUse.reduce((obj: any, field: IFormField) => {
     if (field.name === 'firstName') {
       firstName = String(field.value);
