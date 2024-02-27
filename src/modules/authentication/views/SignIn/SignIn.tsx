@@ -5,16 +5,12 @@ import TwoFactorAuth from "./components/TwoFactorAuth/TwoFactorAuth";
 import UiButton from "@webstack/components/UiButton/UiButton";
 import { useClearance, useUser } from "~/src/core/authentication/hooks/useUser";
 import { getService } from "@webstack/common";
-import IMemberService from "~/src/core/services/MemberService/IMemberService";
+import ICustomerService from "~/src/core/services/CustomerService/ICustomerService";
 import useUserAgent from "~/src/core/authentication/hooks/useUserAgent";
 import styles from "./SignIn.scss";
 import { useNotification } from "@webstack/components/Notification/Notification";
-import { useLoader } from "@webstack/components/Loader/Loader";
 import { useModal } from "@webstack/components/modal/contexts/modalContext";
-import { UiIcon } from "@webstack/components/UiIcon/UiIcon";
-import environment from "~/src/environment";
 import { useRouter } from "next/router";
-import { promises } from "dns";
 
 const DEFAULT_RESPONSE = { response: "", message: "" };
 const defaultCodeValue = "------";
@@ -50,7 +46,7 @@ const SignIn = ({ email }: { email: string | undefined }) => {
   const [signInResponse, setSignInResponse] = useState<any>(DEFAULT_RESPONSE);
   const userResponse = useUser();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const memberService = getService<IMemberService>("IMemberService");
+  const CustomerService = getService<ICustomerService>("ICustomerService");
   const user_agent = useUserAgent();
   const [credentials, setCredentials] = useState<any>(defaultCredentials);
 
@@ -64,7 +60,7 @@ const SignIn = ({ email }: { email: string | undefined }) => {
     if (credentials.email && credentials.password) {
       const validTFA = /^\d{6}$/.test(credentials.code);
       try {
-        const resp = await memberService.signIn({
+        const resp = await CustomerService.signIn({
           email: credentials.email,
           password: credentials.password.replace(/\s+/g, ''),
           ...(validTFA && { code: credentials.code }),

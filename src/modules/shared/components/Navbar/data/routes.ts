@@ -1,5 +1,5 @@
 import keyStringConverter from "@webstack/helpers/keyStringConverter";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useUser } from "~/src/core/authentication/hooks/useUser";
 import environment from "~/src/environment";
 
@@ -47,7 +47,7 @@ export const routes: IRoute[] = [
   
 
   // { label: "dashboard", href: "/dashboard", icon: "fal-guage", active: true, clearance: 1 },
-  { label: "configure", href: "/configure", icon: "fa-gear", active: true },
+  // { label: "configure", href: "/configure", icon: "fa-gear", active: true },
   { label: "products", href: "/product", icon: "fa-tags", active: true },
   // {
   //   label: "Social",
@@ -69,12 +69,12 @@ export const routes: IRoute[] = [
     ],
   },
   {
-    label: "account",
+    label: "profile",
     icon: 'fal-circle-user',
     clearance: 1,
     items: [
       { href: "/admin", label: "admin", clearance: 10},
-      { href: "/account", label: "account" , clearance: 1},
+      { href: "/profile", label: "profile" , clearance: 1},
       { href: "/authentication/signout", label: "logout", clearance: 1 },
     ],
   },
@@ -93,38 +93,31 @@ export const routes: IRoute[] = [
     clearance: 0,
   },
   { label: "", href: "/cart", icon: "fal-bag-shopping" },
+  { label: "", href: "/checkout", hide: true},
 ];
 export const useClearanceRoutes = () => {
   const user = useUser();
-  const [access, setAccess] = useState<IRoute[] | undefined>(undefined);
-
   const level = user?.metadata.clearance || 0;
 
-  const accessibleRouteFilter = (route: IRoute) => {
-    if (route.clearance === undefined) return true; // Allow routes without clearance requirements
-    else if (route.clearance === 0 && level === 0) return true;
-    else if (user && route?.clearance && route.clearance <= level) return true;
-    else return false;
-  };
-
-  const filterRoutes = (routeItems: IRoute[]) => {
-    return routeItems
-      .filter((route) => {
-        const isRouteAccessible = accessibleRouteFilter(route); // User's clearance meets or exceeds the route's clearance
-        if (isRouteAccessible && route.items) {
-          route.items = route.items.filter((item) => {
-            return accessibleRouteFilter(item); // User's clearance meets or exceeds the item's clearance
-          });
+  const access = useMemo(() => {
+    const filterRoutes = (routeItems: IRoute[]) => {
+      return routeItems.filter((route) => {
+        // Hide 'login' route if user exists
+        if (route.label === 'login' && route.clearance === 0 && user) {
+          return false;
         }
-        return isRouteAccessible;
+        const accessible = route.clearance === undefined || (route.clearance <= level);
+        if (accessible && route.items) {
+          route.items = route.items.filter(item => item.clearance === undefined || item.clearance <= level);
+        }
+        return accessible;
       });
-  };
+    };
 
-  useEffect(() => {
-    const accRoutes = filterRoutes(routes);
-    const sortedRoutes = accRoutes.sort((a, b) => {
-      // Prioritize 'login', 'account', and 'cart' to be at the end
-      const lastLabels = ['login', 'account'];
+    // Your existing sorting logic here
+    const sortedAndFilteredRoutes = filterRoutes(routes).sort((a, b) => {
+      // Prioritize 'login', 'profile', and 'cart' to be at the end
+      const lastLabels = ['login', 'profile'];
       const aIndex = a.label && lastLabels.includes(a.label) ? lastLabels.indexOf(a.label) : a.href === '/cart' ? lastLabels.length : -1;
       const bIndex = b.label && lastLabels.includes(b.label) ? lastLabels.indexOf(b.label) : b.href === '/cart' ? lastLabels.length : -1;
 
@@ -133,15 +126,12 @@ export const useClearanceRoutes = () => {
       if (bIndex !== -1) return -1; // Only b is in lastLabels, it goes after
       return 0; // Neither are in lastLabels, keep their original order
     });
-    setAccess(sortedRoutes.reverse());
-  }, [user, setAccess]);
+
+    return sortedAndFilteredRoutes.reverse();
+  }, [user, level]); // Update dependency array to include 'user'
 
   return access;
 };
-
-
-
-
 
 export const pruneRoutes = (pruneLabels: string[]) => {
   const pruned: IRoute[] = [];
@@ -155,4 +145,3 @@ export const pruneRoutes = (pruneLabels: string[]) => {
   });
   return pruned;
 };
-

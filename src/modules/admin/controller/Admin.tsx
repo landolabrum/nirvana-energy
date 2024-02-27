@@ -12,11 +12,14 @@ import AdminInvoices from '../views/AdminInvoices/controller/AdminInvoices';
 import AdminMesenger from '../views/AdminMesenger/AdminMesenger';
 import AdminMarketing from '../views/AdminMarketing/AdminMarketing';
 import AdminEarth from '../views/AdminEarth/AdminEarth';
+import { useRouter } from 'next/router';
+import AdminDashboard from '../views/AdminDashboard/controller/AdminDashboard';
 
 
 
 const Admin = () => {
   const initialViews = {
+    dashboard: <AdminDashboard />,
     globe: <AdminEarth />,
     customers: <AdminCustomers />,
     products: <AdminProducts />,
@@ -26,23 +29,27 @@ const Admin = () => {
     messenger: <AdminMesenger />,
     marketing: <AdminMarketing />,
   }
+  const router = useRouter();
   const level = useClearance();
   const [views, setViews] = useState<any | undefined>();
+  const [current, setCurrentView] = useState<string | undefined>('dashboard');
   useEffect(() => {
     if(views === undefined)setViews(initialViews);
     if (level >= 10 && views !== undefined) {
       views.accounts = <AdminAccounts />;
       setViews(views)
     }
-  }, [views, level]);
+    if(router.query?.vid && Object.keys(initialViews).includes(String(router.query?.vid)))setCurrentView(String(router.query?.vid));
+  }, [ level, router]);
   if(level < 10 || views === undefined)return <></>;
   return (
     <>
       <style jsx>{styles}</style>
       <UiSettingsLayout
-      variant='fullwidth'
-        defaultView='globe'
-        // title='admin'
+        variant={Boolean(current && ['globe',''].includes(current) ) && 'full' || undefined}
+        showMenu={Boolean(current && current !== 'globe')}
+        title={current}
+        setViewCallback={setCurrentView}
         views={views}
 
       />
@@ -50,4 +57,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default Admin;      

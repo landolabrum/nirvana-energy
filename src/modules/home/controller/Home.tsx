@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import styles from './Home.scss';
 import Surveillance from '../views/surveillance/controller/Surveillance';
 import UiSettingsLayout from '@webstack/layouts/UiSettingsLayout/UiSettingsLayout';
-import Lights from '../views/lights/Lights';
+import Lights from '../views/hue/controller/Lights';
 import { useUser } from '~/src/core/authentication/hooks/useUser';
 import capitalize from '@webstack/helpers/Capitalize';
 import UiLoader from '@webstack/components/UiLoader/view/UiLoader';
@@ -11,34 +11,36 @@ import UiLoader from '@webstack/components/UiLoader/view/UiLoader';
 // Remember to create a sibling SCSS file with the same name as this component
 
 const Home: React.FC<any> = ({ vid = undefined }: { vid: string | undefined }) => {
-  const user = useUser();
   const DefaultHome = () => {
     return <>
       <style jsx>{styles}</style>
       <div className='home__default'>
         <div className='home__default--title'>
-        {user && user?.name && capitalize(user.name) || ''}, Home Automation.
+          {user && user?.name && capitalize(user.name) || ''}, Home Automation.
         </div>
       </div>
     </>
   }
+  const user = useUser();
   const views = {
-    home: <DefaultHome/>,
+    home: <DefaultHome />,
     surveillance: <Surveillance />,
-    lights: <Lights  />
+    lights: <Lights />
   };
-  if(user)return (
+  if (user) return (
     <>
       <style jsx>{styles}</style>
-      <UiSettingsLayout
-        variant="fullwidth"
-        title='home'
-        defaultView='home'
-        views={views}
-      />
-
+      {/* <div className='home'> */}
+        <UiSettingsLayout
+          // variant="full"
+          // variant="full-width"
+          // title='home'
+          defaultView='home'
+          views={views}
+        />
+      {/* </div> */}
     </>
-  );return <><UiLoader/></>
+  ); return <><UiLoader /></>
 };
 
 export default Home;

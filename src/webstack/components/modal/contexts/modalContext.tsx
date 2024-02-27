@@ -1,14 +1,14 @@
 import { IFormControlVariant } from '@webstack/components/AdapTable/models/IVariant';
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext,  useState } from 'react';
 
-type IConfirm ={
+export type IConfirm ={
   title?: string;
   statements?: {text?: string, onClick?:(e:any)=>void, href?: string, variant?: IFormControlVariant}[];
 } | undefined;
 
 
 export type IModalContent = {
-  title?: string;
+  title?: string | ReactNode;
   children?: ReactNode | null | string;
   footer?: ReactNode;
   variant?: "popup" | 'fullscreen';
@@ -18,6 +18,7 @@ export type IModalContent = {
 } | ReactNode | null;
 
 export interface ModalContextType {
+  confirm?:any;
   isModalOpen: boolean;
   openModal: (content: IModalContent) => void;
   closeModal: () => void;
@@ -60,7 +61,7 @@ export const ModalProvider: React.FC<Props> = ({ children }) => {
 
 export const useModal = () => {
   const context = useContext<ModalContextType | undefined>(ModalContext);
-
+  const [open, setOpen]=useState(context?.isModalOpen);
   const defaultContext: ModalContextType = {
     isModalOpen: false,
     openModal: (content: IModalContent) => {
@@ -74,6 +75,9 @@ export const useModal = () => {
     },
     modalContent: null,
   };
-
+  
+  // useEffect(() => {
+  //   // console.log('[ context ]', context)
+  // }, [context?.isModalOpen]);
   return context ?? defaultContext;
 };

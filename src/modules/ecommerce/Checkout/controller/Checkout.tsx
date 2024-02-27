@@ -1,16 +1,18 @@
 // Relative Path: ./Checkout.tsx
 import React, { useEffect, useState } from 'react';
 import styles from './Checkout.scss';
-import { useRouter } from 'next/router';
 import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
 import CheckoutButton from '../views/CheckoutButton/CheckoutButton';
-import { ICartItem } from '../../cart/model/ICartItem';
 import useCart from '../../cart/hooks/useCart';
 import { useUser } from '~/src/core/authentication/hooks/useUser';
-import UiCollapse from '@webstack/components/UiCollapse/UiCollapse';
-import keyStringConverter from '@webstack/helpers/keyStringConverter';
-import Authentication from '~/src/pages/authentication';
-import AccountModify from '~/src/modules/account/views/AccountModify/AccountModify';
+
+import UiLoader from '@webstack/components/UiLoader/view/UiLoader';
+import SignUp from '~/src/modules/authentication/views/SignUp/SignUp';
+import { useRouter } from 'next/router';
+import UserMethods from '~/src/modules/user/views/UserMethods/controller/UserMethods';
+import UserCreateMethod from '~/src/modules/user/views/UserMethods/views/UserCreateMethod/controller/UserCreateMethod';
+import { getService } from '@webstack/common';
+import ICustomerService from '~/src/core/services/CustomerService/ICustomerService';
 // Remember to create a sibling SCSS file with the same name as this component
 interface ICheckout {
     cart: any;
@@ -18,52 +20,64 @@ interface ICheckout {
     isModal?: boolean;
 }
 const Checkout: React.FC<ICheckout> = () => {
-    const user = useUser();
-    const [view, setView] = useState<any>('create-account');
-    const [cart, _setCart] = useState<any>([]);
-
-    const { getCartItems, handleQtyChange } = useCart();
     const router = useRouter();
-    const setCart = (item: ICartItem) => {
-        handleQtyChange(item);
-    };
-    const handleView = (view: string)=>{
-        if(view.includes('@'))alert('')
+    const user = useUser();
+    const [view, setView] = useState<any>('sign-up');
+    const [cart, setCart] = useState<any>();
+    const [billing_details, set_billing_details] = useState<any>();
+    const { getCartItems, } = useCart();
+   const customerService = getService<ICustomerService>("ICustomerService");
+    const handleSignUp = (res: any) => {
+        console.log('[ CHECKOUT (HANDLE SIGNUP)[ 1 ] ]',res);
+        if(res.id){
+            customerService.updateCurrentUser(res);
+            set_billing_details(res);
+        }
+        else{
+            console.log('[ CHECKOUT (HANDLE SIGNUP)[ERROR] ]',res);
+        }
     }
-
+    const handleSuccess = (res: any) => {
+        console.log('[ CHECKOUT (HANDLE SUCCESS) ]',res);
+    }
+    const qry = router?.query || {setup_intent: undefined};
     useEffect(() => {
-        _setCart(getCartItems());
-        user && setView('create-method');
-    }, [user]);
+        if(!cart)setCart(getCartItems());
+        if (user && !billing_details)setView('user-methods');
+        if(!user && billing_details && !qry?.setup_intent)setView('card-details');
+    }, [billing_details,  user]); 
 
     return <>
         <style jsx>{styles}</style>
         <div className='checkout' id="main-checkout">
             <div className='checkout__title'>
-                Secure Checkout <UiIcon icon="fa-lock" />
+                Secure Checkout <UiIcon icon="fa-lock" /> {view}
             </div>
             <div className='checkout__button'>
-                {user && <CheckoutButton cart={cart} collect />}
+                {user?.methods?.length && cart && <CheckoutButton cart={cart} collect />}
+            </div>
+            <div className='checkout__button'>
+                Step {view === 'sign-up'?'1':'2'} of 2
             </div>
             <div className='checkout__body'>
-                {view == 'create-account' && !user && <i>* Create an account to proceed to checkout</i>}
-                <UiCollapse label={keyStringConverter(view)} open={true}>
-                    <>
-                        {view == 'create-account' && <Authentication view={'sign-up'}/>}
-                        {view == 'create-method' && <AccountModify user={user} open={user?.address == undefined} />}
-                    </>
-                </UiCollapse>
-                {/* <div className='checkout__body'> */}
-                {/* user?.methods */}
-                {/* <ProfileForm user={user} open={user?.address == undefined}/> */}
-                {/* <AccountMethods /> */}
-                {/* <CartList cart={cart} collapse={false} handleQty={setCart} /> */}
-            </div>
+                {view === 'sign-up' && <SignUp hasPassword={false} btnText='continue' onSuccess={handleSignUp}/>}
+                {view === 'user-methods' && <UserMethods selected='pm_1OoGorIodeKZRLDVPuXlifqP' onSelect={console.log}  {...user}/>}
+                {view == 'card-details' ?  (
+                    <UserCreateMethod
+                        user={billing_details}
+                        onSuccess={handleSuccess}
+                     />
+                ) || <UiLoader />:''}
+          
+                {/* secret: {JSON.stringify(clientSecret)} <br/>
+                 <br/> */}
+            </div> 
         </div>
-    </>;
+    </>; 
 
 };
 
 export default Checkout;
 
-// const C = { "id": "cus_OKcPMUAbaz17z7", "object": "customer", "address": { "city": "Holladay", "country": "US", "line1": "2743 Juniper Way", "line2": null, "postal_code": "84117", "state": "UT" }, "balance": 0, "created": 1690337407, "currency": null, "default_source": null, "delinquent": false, "description": null, "discount": null, "email": "lando@deepturn.com", "invoice_prefix": "FD6FCAD0", "invoice_settings": { "custom_fields": null, "default_payment_method": null, "footer": null, "rendering_options": null }, "livemode": false, "metadata": { "admin": "true", "clearance": "10", "password": null, "username": "lando" }, "name": "Landon Labrum", "next_invoice_sequence": 2, "phone": "+14356719245", "preferred_locales": [], "shipping": null, "tax_exempt": "none", "test_clock": null, "methods": { "object": "list", "data": [{ "id": "pm_1NoFf7IodeKZRLDVUfQQV1OP", "object": "payment_method", "billing_details": { "address": { "city": null, "country": null, "line1": null, "line2": null, "postal_code": null, "state": null }, "email": null, "name": null, "phone": null }, "card": { "brand": "visa", "checks": { "address_line1_check": null, "address_postal_code_check": null, "cvc_check": "pass" }, "country": "US", "exp_month": 4, "exp_year": 2024, "fingerprint": "EAKIZ5pVRt2vtnLd", "funding": "credit", "generated_from": null, "last4": "4242", "networks": { "available": ["visa"], "preferred": null }, "three_d_secure_usage": { "supported": true }, "wallet": null }, "created": 1694221717, "customer": "cus_OKcPMUAbaz17z7", "livemode": false, "metadata": {}, "type": "card" }], "has_more": false, "url": "/v1/payment_methods" }, "exp": 1694251119 }
+
+// http://localhost:3000/checkout?setup_intent=seti_1Onu6KIodeKZRLDVzd8NYO6z&setup_intent_client_secret=seti_1Onu6KIodeKZRLDVzd8NYO6z_secret_PdARUacGWwRvCG3ogBUyk4y7Qm9dobR&redirect_status=succeeded

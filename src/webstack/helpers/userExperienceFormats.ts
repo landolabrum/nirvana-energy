@@ -142,10 +142,19 @@ export function dateFormat(
   }
 ): string | string[] | React.ReactElement {
   if (options.isTimestamp === true && typeof (suppliedDate) === 'number') {
-    const dateObj = new Date(suppliedDate * 1000); // Convert seconds to milliseconds
-    const date = dateObj.toLocaleDateString();
-    const time = dateObj.toLocaleTimeString();
-    return `${date} ${time}`;
+    const date = new Date(suppliedDate);
+    const formattedDate = date.getFullYear() + "-" +
+    String(date.getMonth() + 1).padStart(2, '0') + "-" +
+    String(date.getDate()).padStart(2, '0') + " " +
+    String(date.getHours()).padStart(2, '0') + ":" +
+    String(date.getMinutes()).padStart(2, '0') + ":" +
+    String(date.getSeconds()).padStart(2, '0');
+
+    return formattedDate;
+    // const dateObj = new Date(suppliedDate * 1000); // Convert seconds to milliseconds
+    // const date = dateObj.toLocaleDateString();
+    // const time = dateObj.toLocaleTimeString();
+    // return `${date} ${time}`;
   }
   else if (options.server) {
     const date = new Date(suppliedDate);
@@ -209,8 +218,8 @@ export function calculateCartTotal(cart: any) {
   if (!cart) return 0;
   let total = 0;
   for (let product of cart) {
-    if (product.price_object && product.price_object.unit_amount && product.price_object.qty) {
-      total += product.price_object.unit_amount * product.price_object.qty;
+    if (product.price && product.price.unit_amount && product.price.qty) {
+      total += product.price.unit_amount * product.price.qty;
     }
   }
   return numberToUsd(total);

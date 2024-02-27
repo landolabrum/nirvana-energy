@@ -7,7 +7,7 @@
 .d-flex-col {
   @extend .d-flex;
   flex-direction: column;
-  gap: var(--padding);
+  gap: var(--s-padding);
 }
 
 .form {
@@ -17,10 +17,9 @@
   flex-wrap: wrap;
   gap: var(--s-8);
   &--mini{
-    border: solid 1px var(--gray-80);
-    border-radius: var(--border-radius);
-    padding: 9px 7px;
-    gap: 4px;
+    padding: var(--s-8) var(--s-padding);
+    width: var(--s-padding-width);
+    gap: var(--s-10);
     &__submit {
       border-top: unset !important;
     }
@@ -29,33 +28,74 @@
     background-color: var(--gray-90);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
-    padding: var(--padding);
-    width: var(--padding-width);
+    padding: var(--s-padding);
+    width: var(--s-padding-width);
   }
   &__title{
     text-transform: capitalize;
     font-size: var(--s-2);
-    height: var(--element-height);
+    height: var(--s-element);
     @extend .d-flex;
     line-height: 1;
     justify-content: flex-start;
     padding-bottom: var(--s-9);
   }
-  .form__field {
+
+  .form-field, .form-field__readonly {
       width: 100%;
       @extend .d-flex-col;
       align-items: flex-start;
-  }
 
+  }
+  .form-field__readonly{
+    border: solid 1px transparent;
+    overflow: hidden;
+    color: var(--gray-60);
+    --ui-icon-color: var(--gray-60);
+    gap: 0;
+    
+    border: solid 1px transparent;
+    &--label{
+      @extend .d-flex;
+      text-indent: var(--s-9);
+      text-transform: uppercase;
+      line-height: 2;
+      font-weight: bold;
+      font-size: var(--s-8);
+      -webkit-letter-spacing: 3px;
+      -moz-letter-spacing: 3px;
+      -ms-letter-spacing: 3px;
+      letter-spacing: 3px;
+    }
+    &--value{
+      text-indent: var(--s-9);
+      @extend .d-flex;
+      justify-content: flex-start;
+      width: inherit;
+      height: var(--s-element);
+    }
+    &:hover{
+      border-radius: var(--border-radius);
+      border-color: var(--gray-50);
+      background-color: var(--gray-80);
+      color: var(--gray-20);
+      --ui-icon-color: var(--gray-20);
+      .form-field__readonly--value{
+        color: var(--gray-80);
+        --ui-icon-color: var(--gray-80);
+        background-color: var(--gray-60);
+      }
+    }
+  }
   &__submit {
     // existing styles
     border-style: outset;
     border-color: transparent;
-    border-top-color: var(--gray-60);
-    border-width: 2px;
-    width: calc(100%);
-    margin-top: var(--padding);
-    padding-top: var(--element-height);
+    // border-top-color: var(--gray-40);
+    // border-width: 1px;
+    width: 100%;
+    margin-top: var(--s-padding);
+    padding-top: var(--s-element);
     &--mini{
       margin-top: 0;
       padding-top: var(--s-9);
@@ -65,7 +105,7 @@
 }
 input{
   @extend .d-flex;
-  width: var(--element-height);
+  width: var(--s-element);
   height: 100%;
   text-align: center;
   border: none;

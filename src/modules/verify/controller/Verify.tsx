@@ -33,12 +33,13 @@ const Verify = () => {
   };
 
   useEffect(() => {
+    // console.log("[ verify ]", query)
     if (typeof query.vid == 'string') setView(query.vid);
     if (typeof query.token == 'string') setToken(query.token);
-    if (newCustomerEmail) {
-      setView('sign-in');
-    }
-  }, [query, newCustomerEmail]);
+    // if (newCustomerEmail) {
+    //   setView('sign-in');
+    // }
+  }, [query, newCustomerEmail, setToken]);
 
   return (
     <>

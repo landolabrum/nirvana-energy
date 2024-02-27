@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./SignUp.scss";
 import { useUser } from "~/src/core/authentication/hooks/useUser";
 import { getService } from "@webstack/common";
-import IMemberService from "~/src/core/services/MemberService/IMemberService";
+import ICustomerService from "~/src/core/services/CustomerService/ICustomerService";
 import useUserAgent from "~/src/core/authentication/hooks/useUserAgent";
 import UiForm from "@webstack/components/UiForm/controller/UiForm";
 import keyStringConverter from "@webstack/helpers/keyStringConverter";
@@ -10,7 +10,8 @@ import useReferrer from "@webstack/hooks/useReferrer";
 
 
 export interface ISignUp {
-  setView: (e: any) => void;
+  setView?: (e: any) => void;
+  onSuccess?: (e: any) => void;
   hasPassword?: boolean;
   btnText?: string;
 }
@@ -23,10 +24,10 @@ const pwFields = [
   { name: "password", label: "password", type: 'password', placeholder: 'password', required: true },
   { name: "confirm_password", label: "confirm password", type: 'password', placeholder: 'confirm password', required: true }
 ]
-const SignUp = ({ setView, hasPassword = true, btnText }: ISignUp) => {
+const SignUp = ({ setView, hasPassword = true, btnText, onSuccess }: ISignUp) => {
   const [loading, setLoading] = useState<any>(false);
   const user = useUser();
-  const memberService = getService<IMemberService>("IMemberService");
+  const CustomerService = getService<ICustomerService>("ICustomerService");
   const user_agent = useUserAgent();
   const [fields, setFields] = useState<any>(form);
 
@@ -102,9 +103,10 @@ const SignUp = ({ setView, hasPassword = true, btnText }: ISignUp) => {
       request.referrer_url = URL;
   
       try {
-        const response = await memberService.signUp(request);
+        const response = await CustomerService.signUp(request);
         if(response?.status === 'created'){
-          setView && setView(response.email);
+          setView && setView(response.data.email);
+          onSuccess && onSuccess(response.data);
         }
       } catch(e:any) {
         if (e?.detail?.fields) {
@@ -119,6 +121,7 @@ const SignUp = ({ setView, hasPassword = true, btnText }: ISignUp) => {
     } else {
       console.error('[ SIGN UP ERRORS LOCAL ]', errors);
     }
+    setLoading(false);
   };
   
   
@@ -132,7 +135,7 @@ const SignUp = ({ setView, hasPassword = true, btnText }: ISignUp) => {
     <>
       <style jsx>{styles}</style>
       
-      {!user && <UiForm fields={fields} onSubmit={handleSubmit} loading={loading} onChange={handleChange} btnText={btnText || 'sign up'} />}
+      {!user && <UiForm fields={fields} onSubmit={handleSubmit} loading={loading} onChange={handleChange} submitText={btnText || 'sign up'} />}
       <div className="authentication__authentication-status">
         {loading?.message}
       </div>

@@ -1,302 +1,337 @@
 $actionsBg: var(--gray-90);
 
-@keyframes borderAnimation {
 
-    0%,
-    100% {
-        border-color: var(--dark);
-    }
-
-    25% {
-        border-color: var(--dark-opaque);
-    }
-
-    50% {
-        border-color: var(--primary);
-    }
-
-    75% {
-        border-color: var(--primary-opaque);
-    }
-}
 
 .d-flex {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+}
+
+// CONTAINER CLASS
+.settings {
+    height: 100%;
+    left: 0;
+    position: relative;
+    // width: calc(100% - 10px);
+    right: auto;
+    margin: auto;
+    width: 1005;
+    margin-top: calc(var(--s-element) + var(--s-padding));
+    @media (max-width: 1100px) {
+        width: auto;
+    }
+    &__full{
+        padding: 0;
+        margin-top: 0;
+        position: fixed;
+    }
+    &__full-width {
+        border-radius: var(--border-radius);
+    }
+    &__full, &__full-width {
+        width: 100vw;
+        min-height: 100vh;
+        &:not(&-width){
+            top: 0;
+        }
+        left: 0;
+        // overflow-y: auto;
+        // overflow: hidden;
+    }
 }
 
 
 
-.settings {
-    z-index: 999;
-    height: 100%;
-    left: 0;
-    z-index: 1;
+
+// CONTENT CLASS
+.settings__content {
+    @extend .d-flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: var(--s-9);
     position: relative;
-    padding: var(--padding) 0 0;
-    width: 100%;
-
-    &--icon {
-        @extend .d-flex;
-        --ui-icon-width: 100%;
-        --ui-icon-height: var(--s-5);
-
-        @media(min-width: 1100px) {
-            display: flex;
-        }
-
-        display: none;
-        position: absolute;
-
-        &--hide {
-            opacity: .5;
-            left: var(--s-5);
-        }
-
-        // &--hide {
-        //     opacity: .5;
-        //     left: var(--s-5);
-        // }
-
-        top: var(--s-4);
-        border-radius: var(--border-radius);
-        left: var(--padding);
-        z-index: 2;
-        color: var(--primary);
-        text-align: center;
-        height: var(--s-2);
-        width: var(--s-2);
-
-        line-height: 1;
-        font-size: var(--s-7);
-
-        &:hover {
-            border: solid 1px var(--gray-70);
-        }
+    @media (max-width: 1100px) {
+        height: 100%;
+        flex-direction: column;
     }
-
-    @media (min-width: 1100px) {
-        margin: var(--padding) 0;
-        padding: var(--padding);
-        width: var(--padding-width);
+    &__full {
+        gap: unset;
+        margin: 0;
     }
-
-    &__content {
-        @extend .d-flex;
-        justify-content: stretch;
-        align-items: flex-start;
-       width: inherit;
-        @media (min-width: 1100px) {
-            padding: var(--element-height) 0 0;
-        }
-
-        @media (max-width: 1100px) {
-            height: 100%;
-
-            flex-direction: column;
-
-        }
-
-        @media(max-width: 1260px) {
-            margin: auto;
-            justify-content: center;
-        }
-     
+    &__full-width {
+        flex-direction: column;
     }
+    //     gap: unset;
+    //     margin: var(--s-padding);
+    //     @media (max-width: 1100px) {
+    //         padding-top: var(--s-element);
+    //     }
+    // }
+}
 
+// ACTIONS CLASS
+.settings__actions {
     @keyframes hideActions {
         0% {
             transform: translateX(0);
             opacity: 1;
-            display: flex;
-            width: auto;
         }
-
-        10% {
-            opacity: 0.3;
-        }
-
-        65% {
-            opacity: 0;
-        }
-
-        98% {
-            display: flex;
-        }
-
-        100% {
+        
+        99% {
             opacity: 0;
             transform: translateX(-100%);
-            width: 0px;
         }
-
+        100%{
+            opacity: 0;
+            display: none;
+        }
     }
-    @keyframes hideActionsSm {
+    @keyframes showActions {
         0% {
+            display: none;
+        }
+        1% {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        
+        100% {
             transform: translateX(0);
             opacity: 1;
-            display: flex;
-            width: 100%;
         }
-
-
-        100% {
-            opacity: 0;
-            transform: translateX(-100%);
-            width: 0px;
-        }
-
     }
 
-    // ACTIONS
-    .settings__actions {
-        height: inherit;
-        position: relative;
-        z-index: 3;
-        margin-right: var(--padding);
-        
-        &--hide {
-            margin-right: unset;
-            animation: hideActions 1s ease-in-out forwards;
-            @media(max-width: 1100px){animation: hideActionsSm 1s ease-in-out forwards;}
+    z-index: 2;
+    // position: absolute;
+    top: calc(calc(var(--s-element) * 2) + var(--s-padding));
+    opacity: 0;
+    transform: translateX(-100%);
+    @extend .d-flex;
+    &--start {
+        display: none;
+    }
+    &--hide {
+        opacity: 1;
+        transform: translateX(0);
+        margin-left: 0;
+        margin-right: auto;
+        animation: hideActions 1s ease-out forwards;
+    }
+    &--show {
+        display: flex;
+        animation: showActions 1s ease-in forwards;
+        @media(max-width: 1100px) {
+            transform: translateX(0);
+            opacity: 1;
+            border: none;
         }
-        
-        &--show {
-            animation: hideActions 1s ease-in-out forwards reverse;
-            @media(max-width: 1100px){
-                animation: unset;
-                transform: translateX(0);
-                opacity: 1;
-                display: flex;
-                width: 100%;
-                border: none;
-            }
-        }
-
-        &--content {
-            border-radius: var(--border-radius);
-            @extend .d-flex;
-            width: 100%;
-            animation: borderAnimation 5s infinite alternate;
-            @media (min-width: 2100px) {
-                margin-left: auto;
-                max-width: 350px;
-            }
-            @media(max-width: 1100px) {
-                border-radius: var(--border-radius) var(--border-radius) 0 0;
-                border-bottom: solid 0px transparent !important;
-                padding: var(--padding) 0;
-            }
-            @media(max-width: 900px) {
-                padding: var(--padding);
-                width: var(--padding-width);
-                animation: unset;
-            }
-
-        }
-
-        @media (min-width: 1100px) {
-            min-height: auto;
-        }
-
-        @media (max-width: 1100px) {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: max-content;
-            overflow: visible;
-        }
-
     }
 
-    // VIEW
-    .settings__view {
-        color: var(--gray-40);
-        height: 100%;
-        width: 100%;
-        position: relative;
-        overflow-x: hidden;
-        overflow-y: auto;
-
-        border-style: solid;
-        border-width: 0 1px 1px 1px;
-
+    &--content {
         border-radius: var(--border-radius);
-        animation: borderAnimation 5s infinite alternate;
+        @extend .d-flex;
+        width: 100%;
+        // animation: viewBorderAnimation 5s infinite alternate;
+        @media (min-width: 2100px) {
+            margin-left: auto;
+            max-width: 350px;
+        }
 
+        @media(max-width: 1100px) {
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            border-bottom: solid 0px transparent;
+        }
+
+    }
+
+    @media (min-width: 1100px) {
+        min-height: auto;
+        // min-width: 350px;
+    }
+
+    @media (max-width: 1100px) {
+        height: max-content;
+        width: var(--s-padding-width);
+        margin-left: var(--s-padding);
+        margin-right: var(--s-padding);
+        overflow: visible;
+    }
+}
+
+
+// ICON CLASS
+.settings__trigger {
+    z-index: 2;
+    @extend .d-flex;
+    width: var(--s-element);
+    background-color: var(--gray-80-opaque);
+    height: var(--s-element);
+    --ui-icon-width: var(--s-5);
+    top: calc(calc(var(--s-element) + var(--s-9) ) * -1);
+    // aspect-ratio: 1;
+    --ui-icon-color:var(--white);
+    overflow: hidden;
+    position: absolute;
+    @media(max-width: 1100px) {
+    }
+    @media(max-width: 900px) {
+        margin-left: var(--s-9);
+    }
+    @media(min-width: 1100px) {
+    }
+
+
+    // &__hide {
+    // }
+    &__show {
+        display: none;
+    }
+    // &:hover {
+    // }
+    &__full, &__full-width {
+        left: var(--s-padding);
+        position: fixed;
+        top: calc(calc(var(--s-padding) * 1) + var(--s-element));
+        @media(max-width: 1100px){
+            left: unset;
+            top: var(--s-padding);
+            right: calc(calc(var(--s-padding) * 2) + var(--s-element));
+        }
+    }
+    &__full{
+        // top: calc(var(--s-element) * 2);
+        @media(min-width: 900px) {
+        }
+    }
+    &__full-width {
+        @media(max-width: 900px) {
+        }
+    }
+}
+
+// VIEW CLASS
+.settings__view {
+    @keyframes viewBorderAnimation {
+        0%,
+        100% {
+            border-color: var(--dark);
+        }
     
-        @media (min-width: 1100px) {
-            min-height: 100%;
-            justify-content: flex-start;
-            align-items: flex-start;
-            position: unset;
-            border-width: 1px;
-            background-color: var(--gray-100);
+        25% {
+            border-color: var(--dark-opaque);
         }
+    
+        50% {
+            border-color: var(--primary);
+        }
+    
+        75% {
+            border-color: var(--primary-opaque);
+        }
+    }
+    z-index: 1;
+    color: var(--gray-40);
+    height: 100%;
+    width: var(--s-padding-width);
+    position: relative;
+    overflow-x: hidden;
 
-        
-        @media (max-width: 1100px) {
-            border-radius: var(--border-radius);
-            border: solid 1px transparent;
-            animation:unset;
-            margin: auto;
-            width: calc(100% - 2px);
-            height: 100%;
-            overflow-y: hidden;
-        }
-        @media (max-width: 900px) {
-            width: calc(var(--padding-width) - 2px);
+    border-style: solid;
+    border-width: 0 1px 1px 1px;
 
+    border-radius: var(--border-radius);
+    animation: viewBorderAnimation 5s infinite alternate;
+    @extend .d-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    @media (min-width: 1100px) {
+        min-height: 100%;
+        justify-content: flex-start;
+        align-items: flex-start;
+        position: unset;
+        border-width: 1px;
+        gap: var(--s-padding);
+        background-color: var(--gray-100);
+        padding: var(--s-padding);
+    }
+
+
+    @media (max-width: 1100px) {
+        border-radius: var(--border-radius);
+        border: solid 1px transparent;
+        animation: unset;
+        margin: auto;
+        width: calc(100% - 2px);
+        height: 100%;
+        overflow-y: hidden;
+    }
+
+    @media (max-width: 900px) {
+        width: calc(var(--s-padding-width) - 2px);
+
+    }
+
+
+
+    &--header {
+        color: var(--gray-60);
+        width: 100%;
+        text-transform: capitalize;
+
+        &--title {
+            // margin-left: var(--s-9);
+            font-size: var(--s-1);
         }
-        &__fullwidth{
-            width: 100%;
-            .settings__view__content{
-                width: auto;
-                padding: 0;
-            }
-        }
-        &--header {
+    }
+
+    &__content {
+        @extend .d-flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        width: 100%;
+        min-height: 50vh;
+        position: relative;
+        &-background{
+            @extend .d-flex;
             position: absolute;
-            top: var(--s-5);
-            z-index: 999;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            --ui-icon-size: var(--s-padding-width);
+            --ui-icon-color: var(--gray-90-opaque);
+            width: 100%;
+            max-width: 550px;
+            z-index: -1;
+        }
+        // @media(min-width: 1100px){
+        // }
+    }
+
+    &__full, &__full-width {
+        width: 100%;
+        padding: 0;
+        overflow: hidden;
+        border: none;
+        border-radius: unset;
+        background-color: unset;
+        .settings__view--header {
+            position: absolute;
+            top: 0;
             color: var(--gray-30);
             text-transform: capitalize;
             @extend .d-flex;
-
-            @media (max-width: 1100px) {
-                display: none;
+            margin-left:var(--s-3);
+            &--show{
+                margin-left:calc(var(--s-element) + var(--s-3));
             }
-
-            &--title {
-                font-size: var(--s-1);
+            height: var(--s-element);
             }
-
-            z-index: -1;
-
-            &--hide {
-                transform: translateX(var(--element-height));
-            }
-        }
-
-        &__content {
-            z-index: 1000;
-            min-height: 600px;
-            @extend .d-flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: flex-start;
-            padding: var(--s-4) var(--s-5); 
-            height: 100%;
-         
-            @media (max-width: 1100px) {
-                padding: var(--s-5) var(--s-8);
-            }
-
-            @media (max-width: 900px) {
-                padding: var(--s-9) var(--s-9) var(--element-height);
-            }
+        .settings__view__content {
+            padding: 0;
+            height: max-content;
+            background-color: unset;
         }
     }
 }

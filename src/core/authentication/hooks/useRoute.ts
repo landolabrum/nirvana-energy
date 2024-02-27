@@ -1,12 +1,11 @@
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useClearance, useUser } from './useUser';
 import { IRoute, useClearanceRoutes } from '@shared/components/Navbar/data/routes';
 import UserContext from '~/src/models/UserContext';
 import { useHeader } from '@webstack/components/Header/controller/Header';
 import { capitalizeAll } from '@webstack/helpers/Capitalize';
 import { useModal } from '@webstack/components/modal/contexts/modalContext';
-import environment from '~/src/environment';
 
 type ORoute = [
   UserContext | undefined,
@@ -21,8 +20,8 @@ const useRoute = (): ORoute => {
   const [header, setHeader] = useHeader();
   const router = useRouter();
   const clearanceRoutes = useClearanceRoutes();
-
-  const handleHeader = (title?: string) => {
+  const level = useClearance();
+  const handleHeader = useCallback((title?: string) => {
     const rtTit = String(router.pathname)?.length && router.pathname.split('/')[1] || false;
     const headerContext = {
       title: rtTit || title,
@@ -34,13 +33,13 @@ const useRoute = (): ORoute => {
       ]
     };
     setHeader(headerContext);
-  };
+  }, [setHeader]);
+  const renderTriggers = [user, _user, setUser, clearanceRoutes, level, handleHeader];
 
   const explicitRouter = (route: IRoute) => {
     if (route?.href) router.push(route.href, undefined, { shallow: false });
   };
-  const level = useClearance();
-  const implicitRouter = () => {
+  const implicitRouter = useCallback(() => {
     if (user && !_user) setUser(user);
     if (clearanceRoutes) {
       const matchingRoute = clearanceRoutes.find(clearRoute => {
@@ -63,24 +62,35 @@ const useRoute = (): ORoute => {
         }
         return false;
       });
+      // if (router.asPath === '/authentication/signout') {
+      //   openModal({
+      //     confirm: {
+      //       title: "You've been logged out...",
+      //       statements: [
+      //         { text: 'go home', href: '/' }
+      //       ]
+      //     }
+      //   }
+      //   )
+      // }
       if (matchingRoute) {
-        handleHeader(matchingRoute?.label && capitalizeAll(matchingRoute?.label))
+        handleHeader(matchingRoute?.label && capitalizeAll(matchingRoute?.label));
         matchingRoute?.href && !router.asPath.includes(matchingRoute?.href) && router.push(matchingRoute.href, undefined, { shallow: true });
       } else if (router.asPath !== '/authentication/signout') {
-        let routerPath: string = router.asPath;
-        console.log('[ ROUTER PATH ]', routerPath)
-        if (routerPath.includes('/404?')) {
-          router.push(routerPath);
-        }else{
-          router.push(`/404?loc=${routerPath}`);
+        let currentPath: string = router.asPath;
+        if (currentPath.includes('/404?')) {
+          router.push(currentPath);
+        } else {
+          return router.push(`/404?loc=${currentPath}`);
         }
       }
-      
+
     }
-  };
+  }, [...renderTriggers]); // Add all dependencies used inside implicitRouter
+
   useEffect(() => {
     implicitRouter();
-  }, [clearanceRoutes]);
+  }, [clearanceRoutes, implicitRouter]);
 
   return [_user, router.pathname, explicitRouter];
 };

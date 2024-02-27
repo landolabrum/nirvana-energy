@@ -1,22 +1,58 @@
 $defSize: 10px;
 $el_spacing: 12px;
 $el_gap: 7px;
-
+.d-flex{
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
+.menu-container{
+  @extend .d-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background-color: transparent;
+  position: relative;
+  width: 100%;
+}
 .menu {
   color: var(--gray-10);
+  border: solid 1px var(--gray-80);
   --ui-icon-color: var(--gray-90);
   min-width: calc(100% - calc($el_gap * 2));
+  width: 100%;
   border-radius: var(--border-radius);
   overflow: hidden;
   z-index: 2;
-  background-color: var(--gray-70-opaque);
+  background-color: var(--gray-90);
 
   backdrop-filter: blur(7px);
-  border: solid 1px var(--gray-80);
+  position: relative;
+  &__close{
+    top: calc(var(--s-2) * -1);
+    right: 0;
+    position: absolute;
+    margin-bottom: var(--s-9);
+    color: var(--gray-60);
+    --ui-icon-color: var(--gray-60);
+    border-radius: var(--border-radius);
+    border: solid 1px transparent;
+    &:hover{
+      color: var(--primary);
+      --ui-icon-color: var(--primary);
+      border: solid 1px var(--primary);
+    }
+    &:focus, &:focus-within{
+      background-color: var(--primary-opaque);
 
+    }
+    // transparent, var(--gray-50), transparent,
+    // transparent, var(--primary), var(--primary),
+    // var(--primary), var(--white), transparent,
+    --ui-icon-color: var(--gray-50);
+    @extend .d-flex;
+  }
   &__lite {
     .menu__option {
-      
       background-color: var(--gray-30);
       color: var(--gray-100);
       &:hover {
@@ -32,13 +68,12 @@ $el_gap: 7px;
   }
 
   .menu__no-results {
-    height: var(--element-height);
+    height: var(--s-element);
     line-height: 1;
     display: flex;
     align-items: center;
   }
 
-  &.menu__nav-item__active,
   &.menu__nav-item {
     --ui-icon-color: var(--gray-40);
 
@@ -51,9 +86,10 @@ $el_gap: 7px;
   &.menu__flat {
     width: 100%;
     overflow: hidden;
-    color: var(--gray-50);
-
+    min-width: 200px;
+    color: var(--gray-60);
     .menu__option {
+
       &:hover {
         background-color: var(--gray-70);
       }
@@ -68,19 +104,21 @@ $el_gap: 7px;
   }
 
   .menu__option {
+    color: var(--gray-50);
+    --ui-icon-color: var(--gray-50);
     &:not(:last-child) {
       border-bottom: solid 1px var(--gray-80);
     }
 
     &:last-child {
-      border-top: solid 1px var(--gray-80);
+      border-top: solid -1px transparent;
     }
 
     z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: calc(var(--element-height) + 0px);
+    height: calc(var(--s-element) + 0px);
     --ui-icon-width: 16px;
     line-height: 1;
     cursor: pointer;
@@ -88,13 +126,15 @@ $el_gap: 7px;
     width: inherit;
 
     &:hover {
+      color: var(--gray-30);
+      --ui-icon-color: var(--gray-30);
       &:not(:last-child) {
         border-bottom: solid 1px var(--gray-60);
       }
 
-      &:last-child {
-        border-top: solid 1px var(--gray-60);
-      }
+      // &:last-child {
+        // border-top: solid 1px var(--gray-60);
+      // }/
     }
 
     &.active {

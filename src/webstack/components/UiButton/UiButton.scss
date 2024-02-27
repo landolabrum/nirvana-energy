@@ -33,7 +33,7 @@ button {
   border: none;
   height: inherit;
   line-height: inherit;
-  width: 100%;
+  width: inherit;
   overflow: inherit;
   gap: inherit;
   text-transform: inherit;
@@ -42,9 +42,13 @@ button {
   font-weight: inherit;
   font-family: inherit;
   text-align: inherit;
+  text-shadow: inherit;
+  padding-block: 0;
+  padding-inline: 0;
   cursor: inherit;
   // border-radius: inherit;
   padding: 0;
+ 
   &.flat {
     margin: 0;
   }
@@ -55,7 +59,7 @@ button {
     text-decoration: none;
   }
   &.link, &.lowercase{
-    text-transform: lowercase;
+    text-transform: none;
     width: max-content;
   }
   &.link,
@@ -69,17 +73,17 @@ button {
   }
 
   .busy-spinner {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: inherit;
-    height: inherit;
+    // position: absolute;
+    // top: 0;
+    // left: 0;
+    // width: inherit;
+    // height: inherit;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: var(--input-border-radius);
     // background-color: #00000045;
-    --ui-icon-color: var(--blue);
+    --ui-icon-color: var(--white);
   }
   &.icon, &.disabled-icon{
     padding: 0 7px;
@@ -90,12 +94,7 @@ button {
       justify-content: flex-start;
     }
   }
-  &.nav-item__active{
-    @media(max-width:1100px){
-      text-indent: 7px;
-      justify-content: flex-start;
-    }
-  }
+
   &:disabled{
     user-select: none;
     cursor:not-allowed !important;

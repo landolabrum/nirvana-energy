@@ -29,22 +29,35 @@
 .modal {
     position: fixed; // Use fixed to keep it relative to the viewport
     z-index: 1000;
+    top: 200px;
     left: 50%; // Center horizontally
     transform: translateX(-50%); // Adjust position to truly center the modal
     overflow-y: auto; // Allow scrolling for overflow content
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
-    background-color: var(--gray-90);
-    border: solid 1px var(--gray-70);
-    outline: solid 1px var(--gray-50);
+    background-color: var(--dark);
+    border: solid 1px var(--gray-80);
+    outline: solid 1px var(--gray-70-opaque);
     border-radius: var(--border-radius);
-
     @media(max-width: 900px) {
         margin: 0 auto;
-        top: 70px;
-        width: var(--padding-width);
+        top: var(--s-9);
+        width: calc(100% - calc(var(--s-9) * 2));
     }
+    &__popup {
+        top: calc(var(--s-element) + var(--s-9));
+        left: 0;
+        // bottom: calc(var(--s-element) + var(--s-9));
+        margin: auto;
+        max-height: calc(100vh - calc(var(--s-padding) + calc(var(--s-9) + 2px)));
+        right: 0;
+        width: var(--s-padding-width);
+        transform: unset;
+        @media(max-width:1100px){top: var(--s-padding);}
+    }
+
+
 
     &__dragging {
         cursor: url('/icons/fa-hand-back-fist.svg'), auto;
@@ -53,14 +66,18 @@
 
     &__fullscreen {
         top: 0;
-        height: 100%;
+        right: 0;
+        border: none;
+        border-radius: unset;
+        height: max-content;
+        width: 100%;
         padding: 0;
     }
 
     &__content {
         overflow: hidden;
-        padding: 0 var(--padding);
-        height: auto;
+        padding: var(--s-10) var(--s-padding) var(--s-padding);
+        height: 100%;
         margin: auto;
         backdrop-filter: blur(5px);
         color: var(--gray-30);
@@ -70,25 +87,34 @@
         min-height: max-content;
         transition: all 1s;
         position: relative;
-
+        @extend .d-flex;
+        flex-direction: column;
+        &__popup{
+            margin: 0;
+            @media(max-width: 1100px){
+                
+                padding: 0 var(--s-9) var(--s-element);
+            }
+        }
+        
         &:hover {
             transition: all 1s;
         }
-
+        
         &::-webkit-scrollbar-thumb {
             background-color: var(--blue);
             border-radius: 5px;
         }
-
+        
         &::-webkit-scrollbar {
             width: 10px;
             aspect-ratio: 1/1;
             background-color: #00000033;
         }
-
+        
         @media(max-width:900px) {
             justify-content: flex-start;
-            width: var(--padding-width);
+            width: var(--s-padding-width);
             min-width: unset;
         }
 
@@ -96,6 +122,7 @@
             width: 100vw;
             padding: 0;
             margin: 0;
+
             &:hover {
                 background-color: #ffffff00;
             }
@@ -104,42 +131,54 @@
     }
 
     &__header {
-        position: absolute;
-        left: 0;
         @extend .d-flex;
         justify-content: space-between;
-        padding: 0 var(--s-9);
-        width: calc(100% - calc(var(--s-9) * 2));
+            margin: auto;
+            width: var(--s-padding-width);
+            padding: 0 var(--s-padding);
 
         @media(max-width: 1100px) {
             right: 0;
         }
 
-        &:not(&__no-drag) {
-            &:hover {
-                cursor: url('/icons/fa-hand.svg'), auto;
-                background-color: var(--gray-80);
+        // &:not(&__no-drag) {
+        //     &:hover {
+        //         cursor: url('/icons/fa-hand.svg'), auto;
+        //         background-color: var(--gray-80);
 
-            }
+        //     }
 
-            :focus,
-            &:focus-within,
-            &:visited,
-            &:active {
-                cursor: url('/icons/fa-hand-back-fist.svg'), auto;
-            }
+        //     :focus,
+        //     &:focus-within,
+        //     &:visited,
+        //     &:active {
+        //         cursor: url('/icons/fa-hand-back-fist.svg'), auto;
+        //     }
+        // }
+
+        // &__dragging {
+        //     cursor: url('/icons/fa-hand-back-fist.svg'), auto;
+        // }
+
+        // &__no-drag {
+        //     cursor: default;
+        // }
+        cursor: default;
+
+        &:hover,
+        &:focus,
+        &:focus-within,
+        &:visited,
+        &:active {
+            cursor: pointer;
+            // cursor: url('/icons/fa-hand-back-fist.svg'), auto;
+            --ui-icon-color: var(--primary);
+
         }
 
-        &__dragging {
-            cursor: url('/icons/fa-hand-back-fist.svg'), auto;
-        }
-
-        &__no-drag {
-            cursor: default;
-        }
-
-        min-height: var(--element-height);
+        min-height: var(--s-element);
         --ui-icon-color: var(--gray-40);
+
         color: var(--gray-40);
 
         .modal-overlay__title {
@@ -147,18 +186,7 @@
             text-transform: capitalize;
         }
 
-        .modal-overlay__icon {
-            // @extend .d-flex;
 
-            // --ui-icon-size: var(--s-5);
-            // cursor: pointer;
-            // width: var(--element-height);
-            // height: var(--element-height);
-            // &:hover {
-            //     background-color: var(--gray-60);
-            //     --ui-icon-color: var(--primary);
-            // }
-        }
 
         &__fullscreen {
             position: absolute;
@@ -166,9 +194,9 @@
             left: 0;
             right: 0;
             z-index: 2;
-            padding-right: var(--padding);
+            padding-right: var(--s-padding);
             margin: 0;
-            min-height: var(--element-height);
+            min-height: var(--s-element);
             border-radius: unset;
             border: unset;
 
@@ -181,17 +209,28 @@
     &__body {
         word-wrap: break-word;
         overflow-y: auto;
-        margin-bottom: var(--padding);
         overflow-x: hidden;
-        padding-top: var(--element-height);
+        // width: 100%;
 
+        padding:var(--s-padding);
+        width:var(--s-padding-width);
+        overflow-x: hidden;
+        // @media(min-width: 1100px){
+        // }
         &__fullscreen {
             z-index: 1;
             margin-bottom: 0;
             padding: 0;
-            width: 100%;
         }
-
+        &__popup{
+            border-radius: var(--border-radius);
+            height:max-content;
+            width: var(--s-padding-width);
+            // width: calc(100% - calc(var(--s-padding) * 4)); 
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: var(--s-padding) var(--s-padding) var(--s-element);
+        }
         .modal-overlay__confirm {
             @extend .d-flex;
             gap: var(--s-9);
@@ -199,9 +238,13 @@
             // background-color: var(--gray-70-opaque);
             border-radius: var(--border-radius);
             overflow: hidden;
-            margin-top: var(--padding);
+            margin-top: var(--s-padding);
 
             @media(max-width: 1100px) {
+                flex-direction: column;
+            }
+
+            &-col {
                 flex-direction: column;
             }
 

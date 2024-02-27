@@ -1,76 +1,145 @@
-// Relative Path: ./VerifyPayment.tsx
 import React, { useEffect, useState } from 'react';
 import styles from './VerifyPayment.scss';
 import { getService } from '@webstack/common';
-import IMemberService from '~/src/core/services/MemberService/IMemberService';
-import ProductDescription from '~/src/pages/product/[id]';
+import ICustomerService from '~/src/core/services/CustomerService/ICustomerService';
+import IProductService from '~/src/core/services/ProductService/IProductService';
+import useCart from '~/src/modules/ecommerce/cart/hooks/useCart';
 import ContactForm from '@shared/components/ContactForm/ContactForm';
-import AccountMethods from '~/src/modules/account/views/AccountMethods/controller/AccountMethods';
+import CartList from '~/src/modules/ecommerce/cart/views/CartList/CartList';
 
-// Remember to create a sibling SCSS file with the same name as this component
 interface IVerifyPayment {
     token?: string;
 }
-const VerifyPayment: React.FC<any> = (
-    {
-        token,
-    }: IVerifyPayment) => {
+interface ICartItem {
+    
+}
+const VerifyPayment: React.FC<IVerifyPayment> = ({ token }) => {
+    const mockToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJlbWFpbCI6InBvb0BuYW5pLmNvbSIsIml0ZW1zIjpbeyJwcm9kdWN0X2lkIjoicHJvZF9QNWxJMzVyMkVXVEF4aSIsInByaWNlX2lkIjoicHJpY2VfMU9IWm1KSW9kZUtaUkxEVlVlU2xZNk03In1dfQ.Zju6uFgG1L6xI26i8CQGVub-PnCoqP2Q-93qtnD1Yvo"
     const [tokenData, setTokenData] = useState<any | undefined>();
+    const { addCartItem, getCartItems } = useCart();
+    const CustomerService = getService<ICustomerService>('ICustomerService');
+    const ProductService = getService<IProductService>('IProductService');
+    const [cart, setCart]=useState<ICartItem | undefined>();
+    const isTokenComplete = () => {
+        console.log("[ ITEM ]", {
+            tokenData
+        })
+        if (!tokenData || !tokenData.items) {
+            setTokenData({ error: "Token is invalid" });
+            return false;
+        }
 
-    const memberService = getService<IMemberService>('IMemberService');
+        // Check each item for valid price_id and product_id
+        const isValid = tokenData.items.every((item: any) =>
+            item.price_id && item.product_id &&
+            String(item.price_id).startsWith('price_') &&
+            String(item.product_id).startsWith('prod_')
+        );
+
+        if (!isValid) {
+            setTokenData({ error: "Token is invalid" });
+        }
+
+        return isValid;
+    };
+
+    const transformProductToCartItem = (product: any) => {
+        // Transform logic here
+        const transformedData = {
+            ...product,
+            price: {
+                ...product.price,
+                qty: 1
+            }
+        }
+        // console.log('[transformedData]',transformedData)
+          return transformedData; // Add other necessary properties
+    };
+
+    const getProducts = async () => {
+        try {
+            const productsResponse = await ProductService.getProducts({
+                price_ids: tokenData.items.map((i: any) => i.price_id)
+            });
+            // Loop through productsResponse and add items to cart
+            Object.values(productsResponse.data).forEach((product: any) => {
+                const cartItem = transformProductToCartItem(product);
+
+                // console.log('[cartItem ]',cartItem)
+                addCartItem(cartItem);
+            });
+        } catch (error: any) {
+            console.error('[ getProducts ( error )]', error);
+        }
+    };
+
     const decryptToken = async () => {
         if (token) {
             try {
-                const response = await memberService.decryptJWT({
+                const response = await CustomerService.decryptJWT({
                     token: token,
                     secret: 'secretKey',
                     algorithm: 'HS256'
                 });
                 if (response?.decoded) {
-                    console.log('[ JWT DECODE (SUCCESS) ]', response);
+                    console.log('[ JWT DECODE (SUCCESS) ]', response.decoded);
                     setTokenData(response.decoded);
                 }
-            } catch (error: any) { console.error('[ JWT DECODE (ERROR) ]', error); }
+            } catch (error: any) {
+                setTokenData({ error: error?.detail?.detail });
+                console.error('[ JWT DECODE (ERROR) ]', error?.detail?.detail);
+            }
         }
-    }
-    const createCustomer = (customerFields: any) => {
-        console.log('[createCustomer]', customerFields)
-    }
+    };
+
     useEffect(() => {
-        token && decryptToken();
+        console.log("[ USE EFFECT ]",tokenData, token)
+
+        if (token && tokenData === undefined) {
+            decryptToken();
+        }
     }, [token]);
-    if (!token) return <>
-        <style jsx>{styles}</style>
-        <div className='verify-payment__token-needed'>
-            No token is present, assure you clicked the right link.
-        </div>
-    </>
+
+    const currentCart = getCartItems();
+    useEffect(() => {
+        setCart(currentCart);
+        if (tokenData?.items && isTokenComplete()) {
+            getProducts();
+        }
+    }, [setTokenData]);
+
+
+
+    if (!token || tokenData?.error || !Boolean(isTokenComplete())) return (
+        <>
+            <style jsx>{styles}</style>
+            <div className='verify-payment__token-needed'>
+                <div>{String(tokenData?.error) || 'No token is present, assure you clicked the right link.'}</div>
+            </div>
+        </>
+    );
+
     return (
         <>
             <style jsx>{styles}</style>
             <div className='verify-payment'>
                 <div className='verify-payment--header'>
-                    verify payment
+
+                    {/* verify payment */}
                 </div>
                 <div className='verify-payment--content'>
-                    {/* {JSON.stringify(tokenData)}<br /> */}
-                    {Boolean(tokenData?.items) && (<>
-                        {Object.values(tokenData.items).map((product: any, key: number) => {
-                            return <span key={key}> <ProductDescription product_id={product?.product_id} price_id={product?.price_id} />
-                            </span>
-                        })}
-                        <div className='verify-payment--content__contact-form'>
-                            <ContactForm
-                                user={{
-                                    email: tokenData.email,
-                                    name: tokenData.name,
-                                    phone: tokenData.phone,
-                                }}
-                                onSubmit={createCustomer}
-                            />
-                        </div>
-                    </>
-                    )}
+                    {tokenData.items && <CartList cart={cart} />}
+                    <div className='verify-payment--content__contact-form'>
+                        <ContactForm
+                            user={{
+                                email: tokenData.email,
+                                name: tokenData.name,
+                                phone: tokenData.phone,
+                            }}
+                            onSubmit={(form) => {console.log("[ ON SUBMIT ]", form)}}
+                            submit={{text:'payment info'}}
+                        />
+                    </div>
                 </div>
             </div>
         </>

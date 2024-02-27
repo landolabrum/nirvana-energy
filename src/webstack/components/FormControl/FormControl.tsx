@@ -73,9 +73,13 @@ const FormControl: NextComponentType<NextPageContext, {}, IFormControl> = ({
       // Special handling for USABLE elements
       const hasDataElem:any = Object.values(formElement.children)
       .find((e:any) => e.getAttribute('data-element') && ['button', 'input', 'select', 'textarea'].includes(e.getAttribute('data-element')));
-      if(hasDataElem)formElement.classList.add(
-        `form-control__element--${hasDataElem.getAttribute('data-element')}${type && type=='color'?'-color':''}`
-      );
+      if(hasDataElem){
+        const dataElemStr = hasDataElem.getAttribute('data-element')
+        ref.current.classList.add(`form-control--${dataElemStr}`)
+        formElement.classList.add(
+          `form-control__element--${dataElemStr}${type && type=='color'?'-color':''}`
+        );
+    }
     }
 
     // Overlay management
@@ -110,6 +114,13 @@ const FormControl: NextComponentType<NextPageContext, {}, IFormControl> = ({
       if(type != 'color' )return'';
       return className=='form-control'?' form-control--maxY':` ${className}-input-color`;
     }
+    // const elementClassArray = ref?.current?.firstChild.classList;
+    // if(elementClassArray){
+    //   elementClassArray.forEach((cl:string) => {
+    //     console.log(cl)
+    //   });
+    // }
+    // console.log()
     if (!variant) return `${className}${createIconClass()}${createSizeClass()}${isColor()}`;
     return `${createVariantClass()}${createIconClass()}${createSizeClass()}${isColor()}`
   };
@@ -129,14 +140,14 @@ const FormControl: NextComponentType<NextPageContext, {}, IFormControl> = ({
           </div>
         )}
         <div className={propClasses('form-control__element')}>
-          {renderIcon(traits?.beforeIcon, 'before', size)}
+          {renderIcon(traits?.beforeIcon, 'before', size, variant)}
           {Children.map(children, (child: any) => cloneElement(child))}
           {traits?.badge && (
             <div className="form-control__badge">
               <div className="form-control__badge-content">{traits.badge}</div>
             </div>
           )}
-          {renderIcon(traits?.afterIcon, 'after', size)}
+          {renderIcon(traits?.afterIcon, 'after', size, variant)}
           {error && (
             <div className='form-control__invalid'>
               <UiMarkdown text={error} />
@@ -148,7 +159,7 @@ const FormControl: NextComponentType<NextPageContext, {}, IFormControl> = ({
   );
 };
 
-function renderIcon(iconProps: FormIconProps | undefined, position: string, size?: string) {
+function renderIcon(iconProps: FormIconProps | undefined, position: string, size?: string, variant?: IFormControlVariant) {
   if (!iconProps) return null;
   const icon = typeof iconProps === 'string' ? iconProps : iconProps.icon;
   const onClick = typeof iconProps === 'object' ? iconProps.onClick : undefined;
@@ -157,7 +168,7 @@ function renderIcon(iconProps: FormIconProps | undefined, position: string, size
   
   return (<>
     <style jsx>{iStyles}</style>
-    <div className={`${iCls} ${iCls}__${position} ${size ?` ${iCls}-${size}`:""}`}>
+    <div className={`${iCls} ${iCls}__${position} ${variant ?` ${iCls}-${variant}`:""} ${size ?` ${iCls}-${size}`:""}`}>
       <UiIcon
         icon={icon}
         onClick={onClick}

@@ -10,29 +10,23 @@
         transform: rotate(0deg);
         background-color: var(--gray-70);
     }
-    30%{
+
+    30% {
         transform: rotate(10deg);
         background-color: var(--error);
     }
-    70%{
+
+    70% {
         transform: rotate(-5deg);
-        background-color: var(--gary-70);
+        background-color: var(--gray-70);
     }
+
     100% {
         transform: rotate(0deg);
         background-color: var(--error);
     }
 }
 
-@keyframes glow {
-    0% {
-        box-shadow: 0 0 5px 0 rgba(255, 255, 255, 0.5);
-    }
-
-    100% {
-        box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0);
-    }
-}
 
 @keyframes glowTxt {
     0% {
@@ -51,6 +45,7 @@
 
     &:focus-within {
         color: var(--gray-40);
+
         .form-control__icon {
             --ui-icon-color: var(--gray-40);
         }
@@ -66,6 +61,7 @@
 
     &-disabled {
         filter: brightness(.7) blur(2px);
+
         &:hover {
             color: var(--gray-60);
             --ui-icon-color: var(--gray-60);
@@ -75,22 +71,20 @@
     }
 }
 
+
+
 .b-rad {
-    &:not(.form-control__element--input) {
-        outline: solid 1px unset;
-        border: solid 1px unset;
-    }
+    border-style: solid;
+    border-width: 1px;
+    border-color: transparent;
+    outline: solid 1px transparent;
     border-radius: var(--border-radius);
 }
 
-
-
-// FORM CONTROL ELEMENT
 // FORM CONTROL ELEMENT
 // FORM CONTROL ELEMENT
 
 .form-control__element {
-    padding: 0 var(--padding);
     color: var(--gray-50);
     font-size: var(--font-size);
     --ui-icon-width: var(--font-size);
@@ -101,87 +95,143 @@
     font-weight: 300;
     @extend .d-flex;
     line-height: 1;
-    height: calc(var(--element-height) - 2px);
+    height: calc(var(--s-element) - 2px);
     white-space: nowrap;
     width: auto;
+
     // SIZES
-    &-xs,&-sm,&-md,&-lg,&-xl,&-xxl{
+    &-xs,
+    &-sm,
+    &-md,
+    &-lg,
+    &-xl,
+    &-xxl {
         height: auto;
         width: max-content !important;
         line-height: 1.5;
     }
-    &-xs{font-size: var(--s-9);}
-    &-sm{font-size: var(--s-7); 
-        padding: 0 var(--s-9);
+
+    &-xs {
+        font-size: var(--s-9);
     }
-    &--input.form-control__element--sm{
-        font-size: var(--s-8);
-        height: var(--s-4);
-        padding: 0 var(--s-9);
+
+    &-sm {
+        font-size: var(--s-7);
+        padding: 0 ;
     }
-    &-md{font-size: var(--s-6);}
-    &-lg{font-size: var(--s-4);}
-    &-xl{font-size: var(--s-3);}
-    &-xxl{font-size: var(--s-2);}
+
+    &--input {
+        &-sm{
+            font-size: var(--s-8);
+            height: var(--s-4);
+            padding: 0 var(--s-9);
+        }
+    }
+
+    &-md {
+        font-size: var(--s-6);
+    }
+
+    &-lg {
+        font-size: var(--s-4);
+    }
+
+    &-xl {
+        font-size: var(--s-3);
+    }
+
+    &-xxl {
+        font-size: var(--s-2);
+    }
+
     // PSUEDO's
     // FORM CONTROL ELEMENTS - APPLY HELPERS
 
-    &:not(&--warning, &--checkbox, &--primary, &--dark, &--lite, &--flat, &--secondary, &--link, &--nav-item, &--nav-item__active, &--select, &--invalid, &--input, &--textarea, &--signature) {
+    &:not(&--warning, &--center, &--glow, &--checkbox, &--primary,&--inherit, &--dark, &--lite, &--flat, &--secondary, &--link,  &--select, &--invalid, &--input, &--textarea, &--signature) {
         @extend %element-color;
     }
 
-    &:not(&--nav-item, &--nav-item__active, &--signature, &--checkbox) {
+    &:not( &--signature, &--checkbox) {
         @extend .b-rad;
     }
 
     // HANDLE ICONS
-    &--before-icon  {
-        padding-left:  var(--element-height);
+    &:not(&--before-icon, &--after-icon){
+        padding: 0 var(--s-9);
     }
-    &--after-icon:not(&-sm)  {
-        padding-right:  var(--element-height);
+  
+    // HANDLE ICONS
+    &--before-icon {
+        &.form-control__element--link{
+            gap: var(--s-9);
+        }
     }
+
+    &--after-icon--link {
+        &.form-control__element--link{
+            gap: var(--s-9);
+        }
+    }
+    &--after-icon:not(&--flat, &--center){
+        padding-left: var(--s-9);
+    }
+    &--before-icon:not(&--flat, &--center){
+        padding-right: var(--s-9);
+    }
+ 
+
+
     // ELEMENTS
     &--button {
         color: inherit;
-        border: solid 1px transparent;
+        border-style: solid;
+        border-width: 1px;
+        border-color: unset;
         filter: brightness(.8);
-        &:hover, &:focus{
+        &:hover,
+        &:focus {
             filter: brightness(1);
         }
-        // box-shadow: var(--box-shadow);
     }
-    &--checkbox{
+    &--button.form-control__element--flat {
+        width: inherit;
+        &:first-child{
+            padding: 0;
+        }
+    }
+    &--checkbox {
         width: max-content;
-        padding:  0;
-        height: var(--element-height);
+        padding: 0;
+        height: var(--s-element);
     }
 
     &--input,
     &--textarea {
-      
-        --ui-icon-color: var(--gray-50);
-        background-color: var(--gray-70-opaque);
-        border: solid 1px var(--gray-70);
 
-        &:not(&--nav-item, &--nav-item__active, &--signature) {
+        --ui-icon-color: var(--gray-50);
+        background-color: var(--gray-60-opaque);
+        border: solid 1px var(--gray-50-opaque) !important;
+        box-shadow: inset 1px 1px 3px 2px var(--gray-80-opaque);
+
+        &:not( &--signature) {
             font-family: 'Game', sans-serif;
             font-style: italic;
         }
 
         &:focus-within {
-            &:not(&--nav-item, &--nav-item__active, &--signature) {
-                border: solid 1px var(--gray-100);
-                --ui-icon-color: var(--gray-100);
-                color: var(--gray-100);
-                background-color: var(--gray-50);
+            &:not(.form-control__element--nav-item, .form-control__element--signature) {
+                border: solid 1px var(--gray-10) !important;
+                --ui-icon-color: var(--gray-10);
+                color: var(--gray-10);
+                background-color: var(--gray-70);
             }
         }
 
-        &:not(.form-control__element--signature,.form-control__element--disabled) {
+        &:not(&--signature, &--dark, &--disabled) {
             &:hover:not(&:focus-within) {
+                // border-radius:0 0  var(--border-radius) var(--border-radius);
+
                 background-color: var(--gray-60);
-                border-color: var(--gray-60);
                 font-weight: 500;
                 color: var(--gray-100);
                 --ui-icon-color: var(--gray-100);
@@ -197,22 +247,34 @@
         height: max-content;
         max-width: inherit;
         padding-top: 4px;
-        min-height: var(--element-height);
+        min-height: var(--s-element);
     }
 
-    &-disabled, &--disabled {
+    &-disabled,
+    &--disabled {
         &:hover {
             user-select: none;
             cursor: not-allowed;
         }
     }
-    &--flat.form-control__element--after-icon{
-        padding: 0 var(--padding);
+
+    &-sm:not(&--after-icon),
+    &-sm:not(&--before-icon) {
+        padding: 0 var(--s-9)
     }
-    &--input-color{
-        padding: 0 !important;
+    &--flat{
+        &--after-icon{
+            padding: 0 var(--s-2);
+            &-sm{
+                padding: 0 var(--s-10);
+            }
+        }
+    }
+
+    &--input-color {
+        padding: 0;
         height: 100%;
-        background-color: transparent !important;
+        background-color: transparent;
     }
 
 
@@ -244,23 +306,12 @@
         }
     }
 
-    &--primary {
-        background-color: var(--gray-60);
-        color: var(--gray-40);
-        --ui-icon-color: var(--gray-40);
 
-        &:hover {
-            background-color: var(--primary);
-        }
-
-        &:focus-within {
-            background-color: var(--primary);
-            filter: brightness(.8);
-        }
-    }
-
-
-
+    @include variant('primary',
+        var(--primary-opaque), var(--gray-30), var(--primary-opaque),
+        var(--primary-opaque), var(--primary), var(--primary),
+        var(--primary), var(--white), transparent,
+    );
 
     &--secondary {
         background-color: var(--secondary-opaque);
@@ -273,7 +324,7 @@
     }
 
     @include variant('warning',
-         var(--gray-80),var(--warning), var(--warning-hover),
+        var(--gray-80), var(--warning), var(--warning-hover),
         var(--warning-hover), var(--gray-40), var(--warning-focus),
         var(--warning-focus), var(--gray-10), transparent,
     );
@@ -282,15 +333,24 @@
         inherit, var(--gray-50), transparent,
         inherit, var(--gray-30), transparent,
     );
-    &--fit-text{
+
+    &--center {
+        min-width: 150px;
+        padding: 0;
+        justify-content: space-between;
+    }
+
+    &--fit-text {
         white-space: unset;
         justify-content: flex-start;
         height: auto;
     }
+
     &--signature {
         @extend .d-flex;
         position: relative;
         overflow: visible;
+
         &:hover {
             border-color: transparent;
         }
@@ -315,34 +375,38 @@
             content: '';
             bottom: 0;
             border-top: solid 1px var(--gray-70);
-            width: calc(100% - var(--padding));
+            width: calc(100% - var(--s-padding));
         }
-            &:hover{
-                &::before {
-                    color: var(--gray-50);
-                }
-                &::after {
-                    border-top-color: var(--gray-50);
-                }
+
+        &:hover {
+            &::before {
+                color: var(--gray-50);
             }
+
+            &::after {
+                border-top-color: var(--gray-50);
+            }
+        }
+
         &:focus-within:not(&:hover) {
             &::before {
                 color: var(--gray-30);
             }
+
             &::after {
                 border-top-color: var(--gray-30);
             }
         }
     }
-    
+
     @include variant('lite',
         var(--gray-40), var(--gray-70), var(--gray-10),
         var(--gray-30), var(--gray-70), var(--secondary),
         var(--gray-40), var(--gray-50), var(--gray-50));
     @include variant('dark',
         var(--gray-100), var(--gray-50), var(--gray-80),
-        var(--dark), var(--gray-50), var(--gray-50),
-        var(--dark), var(--gray-50), var(--gray-50));
+        var(--gray-70-opaque), var(--primary), var(--primary),
+        var(--primary-opaque), var(--gray-50), var(--gray-50));
     @include variant('secondary',
         var(--secondary-opaque), var(--gray-20), var(--gray-20),
         var(--secondary-opaque), var(--gray-20), var(--gray-20),
@@ -352,43 +416,57 @@
         transparent, var(--blue-10), transparent,
         transparent, var(--blue-10), transparent);
 
+        @keyframes glow {
+            0%, 100% {
+                color: var(--gray-20); /* Adjusted for demonstration, replace with var(--gray-10-opaque) or any color */
+                --ui-icon-color: var(--gray-20); /* Adjusted for demonstration, replace with var(--gray-10-opaque) or any color */
+                background-color: var(--primary-opaque); /* Semi-transparent, adjust as needed */
+                border-color: var(--primary-opaque); /* Example hex, replace with var(--primary) or any color */
+                box-shadow: 0 0 4px 0 var(--primary); /* Soft glow, adjust color and opacity */
+            }
+        
+            50% {
+                --ui-icon-color: var(--white); /* Brighter color for the pulse peak */
+                background-color: var(--primary); /* More visible than start/end */
+                border-color: var(--primary); /* Keep consistent or adjust for effect */
+                box-shadow: 0 0 2px 3px var(--primary-lite);
+            }
+        }
+        
+         &--glow {
+            border: solid 1px;
+            overflow: visible;
+            margin: 0 5px;
+            animation: glow 3s infinite ease-in-out;
+        }
+        
+         &--glow:focus,
+         &--glow:focus-within {
+            background-color: var(--gray-80); /* Adjusted for visibility, replace with var(--gray-80) */
+        }
+        
+         &--glow:hover:not(:focus, :focus-within) {
+            animation: none;
+            background-color: var(--primary-lite); /* Slightly lighter, replace with var(--gray-70) */
+            color: var(--gray-10); /* Example hex, represents a lighter primary color, replace with var(--primary-lite) */
+            box-shadow: 0 0 8px 2px var(--primary); /* Soft glow, adjust as needed */
+        }
+
     &--link {
-        width: 100%;
+        padding: 0;
+        width: max-content;
+        gap: var(--s-10);
         &:hover {
             animation: glowTxt 1s infinite;
         }
     }
-    &--bump{
+    &--bump {
         animation: bump .3s;
     }
-    &--pill{
+
+    &--pill {
         border: solid 1px var(--gray-70);
         width: max-content;
-    }
-    &--nav-item {
-        padding-right: var(--element-height);
-        --ui-icon-color: var(--gray-50);
-        &:hover {
-            border-bottom: solid 1px var(--blue);
-        }
-        @media(max-width: 1100px){
-            padding-right: 0;
-            // padding-left: var(--s-1);
-            margin: 0 auto;
-            border-bottom: unset;
-            &:hover {
-                color: var(--primary);
-                --ui-icon-color: var(--primary);
-                border-bottom: unset;
-            }
-        }
-        
-    }
-
-    &--nav-item__active {
-        --ui-icon-color: var(--gray-50);
-        background-color: transparent;
-        border-bottom: solid 1px var(--secondary) !important;
     }
 
     // FORM CONTROL ELEMENTS - INVALID DEFINITIONS
@@ -397,12 +475,13 @@
         color: var(--invalid-border) !important;
         --ui-icon-color: var(--invalid-border) !important;
 
-        &:not(.form-control__element--signature) {
+        &:not(&--signature) {
             border: solid 1px var(--invalid-border) !important;
         }
 
-        &.form-control__element--signature {
+        &--signature {
             border: solid 1px transparent !important;
+
             .form-control__invalid {
                 color: var(--error) !important;
             }
@@ -422,28 +501,32 @@
         }
     }
 
-    &--select.form-control__element--flat{
-        background-color: var(--gray-70-opaque);
-        color: var(--gray-70-opaque);
-        --ui-icon-color: var(--gray-70-opaque);
-        border: solid 1px transparent;
-        &:hover, &:focus-within{
-            background-color: var(--gray-70);
-            color: var(--gray-30);
-            --ui-icon-color: var(--gray-70);
-            border: solid 1px var(--gray-90);
+    &--select {
+        &--flat{
+            background-color: var(--gray-70-opaque);
+            color: var(--gray-70-opaque);
+            --ui-icon-color: var(--gray-70-opaque);
+            border: solid 1px transparent;
+            
+            &:hover,
+            &:focus-within {
+                background-color: var(--gray-70);
+                color: var(--gray-30);
+                --ui-icon-color: var(--gray-70);
+                border: solid 1px var(--gray-90);
+            }
         }
     }
 
     // FORM CONTROL ELEMENTS - ELEM TYPES
-    &--select:not(&--nav-item, &--nav-item__active, &--flat) {
-       
-        color: var(--gray-80);
-        &:not(.form-control__element--lite){
+    &--select:not( &--flat) {
+        color: var(--gray-90);
+    }
+    &--select:not( &--flat, &--lite) {
             color: var(--gray-60);
             --ui-icon-color: var(--gray-60);
-            background-color: var(--gray-80);
-        }
+            background-color: var(--gray-90);
+
 
         &:hover {
             color: var(--gray-40);
