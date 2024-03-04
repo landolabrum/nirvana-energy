@@ -4,8 +4,8 @@ const prodEnvironment: IEnvironment = {
   useMockApi: false,
   isProduction: true,
   site:{
-    // url: 'https://deepturn.com'
-    url: 'https://nirvanaenergy.net'
+    url: 'https://deepturn.com'
+    // url: 'https://nirvanaenergy.net'
 
   },
   merchant:{
