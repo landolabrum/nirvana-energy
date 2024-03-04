@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import styles from "./TJSCube.scss";
 import { createRoot } from 'react-dom/client';
 import { Canvas, useFrame, useThree, extend, PointLightProps } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -195,12 +196,12 @@ const TJSCubeContent = (props: ICube) => {
       // Add the new group to the scene
       scene.add(group);
     }
-    let max = Math.max(size?.x || 0,size?.y || 0,size?.z || 0) * (1+Math.PI * 0.1);
     if (size) {
       setCameraPos([
         size.x * .5,
         0,
-        max
+        // MAX
+        Math.max(size?.x || 0,size?.y || 0,size?.z || 0) * (1+Math.PI * 0.1)
         // (size.x + size.y ) + (size.z ? size.z : 0) / 23
       ]);
     }
@@ -272,4 +273,4 @@ const TJSCubeContent = (props: ICube) => {
   );
 };
 
-export const TJSCube = (props: ICube) => <Canvas ><TJSCubeContent {...props} /></Canvas>;
+export const TJSCube = (props: ICube) => <><style jsx>{styles}</style><div className='tjscube'><Canvas ><TJSCubeContent {...props} /></Canvas></div></>;

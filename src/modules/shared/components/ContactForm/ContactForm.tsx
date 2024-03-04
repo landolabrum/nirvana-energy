@@ -48,6 +48,7 @@ const ContactForm: React.FC<IContactFormProps> = ({ onSubmit, user, submit, }) =
       if(field.name === name)field.value = value;
       return field;
     })
+    console.log('[fieldsRef ]',fieldsRef)
     setFields(fieldsRef); // Update the state with the modified fields
     handleDisabled(fieldsRef); // Update the disabled state based on the new fields
   };

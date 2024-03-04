@@ -35,7 +35,7 @@ const Deepturn: React.FC = () => {
               size={{ x: 120, y: 120, z: 0 }}
               metalness={5}
               animate={{ rotate: { y: -1, x:0.5, speed: .05 } }}
-              color="#e0e0e0"
+              color="#dd4400"
             />
           </div>
 

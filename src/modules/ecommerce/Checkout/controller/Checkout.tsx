@@ -1,83 +1,94 @@
-// Relative Path: ./Checkout.tsx
 import React, { useEffect, useState } from 'react';
 import styles from './Checkout.scss';
 import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
-import CheckoutButton from '../views/CheckoutButton/CheckoutButton';
 import useCart from '../../cart/hooks/useCart';
 import { useUser } from '~/src/core/authentication/hooks/useUser';
 
-import UiLoader from '@webstack/components/UiLoader/view/UiLoader';
 import SignUp from '~/src/modules/authentication/views/SignUp/SignUp';
-import { useRouter } from 'next/router';
-import UserMethods from '~/src/modules/user/views/UserMethods/controller/UserMethods';
-import UserCreateMethod from '~/src/modules/user/views/UserMethods/views/UserCreateMethod/controller/UserCreateMethod';
-import { getService } from '@webstack/common';
-import ICustomerService from '~/src/core/services/CustomerService/ICustomerService';
-// Remember to create a sibling SCSS file with the same name as this component
-interface ICheckout {
-    cart: any;
-    label?: string;
-    isModal?: boolean;
-}
-const Checkout: React.FC<ICheckout> = () => {
-    const router = useRouter();
-    const user = useUser();
-    const [view, setView] = useState<any>('sign-up');
-    const [cart, setCart] = useState<any>();
-    const [billing_details, set_billing_details] = useState<any>();
-    const { getCartItems, } = useCart();
-   const customerService = getService<ICustomerService>("ICustomerService");
-    const handleSignUp = (res: any) => {
-        console.log('[ CHECKOUT (HANDLE SIGNUP)[ 1 ] ]',res);
-        if(res.id){
-            customerService.updateCurrentUser(res);
-            set_billing_details(res);
-        }
-        else{
-            console.log('[ CHECKOUT (HANDLE SIGNUP)[ERROR] ]',res);
-        }
-    }
-    const handleSuccess = (res: any) => {
-        console.log('[ CHECKOUT (HANDLE SUCCESS) ]',res);
-    }
-    const qry = router?.query || {setup_intent: undefined};
-    useEffect(() => {
-        if(!cart)setCart(getCartItems());
-        if (user && !billing_details)setView('user-methods');
-        if(!user && billing_details && !qry?.setup_intent)setView('card-details');
-    }, [billing_details,  user]); 
+import { useProspect } from '~/src/core/authentication/hooks/useProspect';
+import SignIn from '~/src/modules/authentication/views/SignIn/controller/SignIn';
+import { IView } from '@webstack/layouts/UiViewLayout/UiViewLayout';
+import UserContext from '~/src/models/UserContext';
+import Collect from '../views/Collect/controller/Collect';
+import UiLoader from '@webstack/components/UiLoader/view/UiLoader';
+import CartList from '../../cart/views/CartList/CartList';
 
-    return <>
+
+const Checkout = ():React.JSX.Element => {
+    const user = useUser();
+    const [view, setView] = useState<any>();
+    const [cart, setCart] = useState<any>();
+    const [selectedUser, setUser] = useState<UserContext | {email:string} | undefined>();
+    const { getCartItems, } = useCart();
+    const prospect = useProspect();
+    const handleSignUp = (res: any) => {
+        if (res.id) {
+            setView('card-details');
+        }
+        else if(res?.status === 'existing' && res?.email){
+            setUser({email:res.email});
+            setView('existing');
+        }
+        else {
+            console.log('[ CHECKOUT (HANDLE SIGNUP)[ERROR] ]', res);
+        }
+    }
+
+    const views: IView = {
+        'sign-up': (
+            <SignUp
+                title="Contact info"
+                hasPassword={false}
+                btnText='continue'
+                onSuccess={handleSignUp}
+            />),
+        'existing': (
+            <SignIn onSuccess={console.log} title={`Account for ${selectedUser?.email}, exists. please sign in.`} email={selectedUser?.email} />
+        ),
+        'collect': (
+            <Collect
+                user={selectedUser}
+                cart_items={cart}
+            />
+        )
+    }
+    const handleUser = () => {
+        if(selectedUser)return;
+        // console.log('[ USER ]', {user, prospect})
+        if (user || prospect) {
+            setView('collect');
+            setUser(user || prospect);
+        }else {
+            setView('sign-up');
+        }
+    }
+    const handleCart = () =>{
+        if(cart)return;
+        setCart(getCartItems());
+    }
+    useEffect(() => {
+        handleUser();
+        handleCart();
+    }, [handleUser, user]);
+
+    if (view) return <>{view}
         <style jsx>{styles}</style>
         <div className='checkout' id="main-checkout">
+ 
+
             <div className='checkout__title'>
-                Secure Checkout <UiIcon icon="fa-lock" /> {view}
-            </div>
-            <div className='checkout__button'>
-                {user?.methods?.length && cart && <CheckoutButton cart={cart} collect />}
+                Secure Checkout <UiIcon icon="fa-lock" />
             </div>
             <div className='checkout__button'>
                 Step {view === 'sign-up'?'1':'2'} of 2
             </div>
+            <CartList adjustable={false} variant='mini'/>
             <div className='checkout__body'>
-                {view === 'sign-up' && <SignUp hasPassword={false} btnText='continue' onSuccess={handleSignUp}/>}
-                {view === 'user-methods' && <UserMethods selected='pm_1OoGorIodeKZRLDVPuXlifqP' onSelect={console.log}  {...user}/>}
-                {view == 'card-details' ?  (
-                    <UserCreateMethod
-                        user={billing_details}
-                        onSuccess={handleSuccess}
-                     />
-                ) || <UiLoader />:''}
-          
-                {/* secret: {JSON.stringify(clientSecret)} <br/>
-                 <br/> */}
-            </div> 
+                {views[view]}
+            </div>
         </div>
-    </>; 
-
+    </>;
+    return (<UiLoader />)
 };
 
 export default Checkout;
-
-
-// http://localhost:3000/checkout?setup_intent=seti_1Onu6KIodeKZRLDVzd8NYO6z&setup_intent_client_secret=seti_1Onu6KIodeKZRLDVzd8NYO6z_secret_PdARUacGWwRvCG3ogBUyk4y7Qm9dobR&redirect_status=succeeded

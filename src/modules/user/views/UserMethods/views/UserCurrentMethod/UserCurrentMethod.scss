@@ -1,3 +1,4 @@
+
 $pad: 18px;
 $delW: 50px;
 $min: calc(100% - calc(calc($pad * 5) + $delW));
@@ -51,17 +52,12 @@ $borderColor: var(--gray-40);
         width: $max;
     }
 }
-
 .d-flex{
  display: flex;
  justify-content: center;
  align-items: center;
 }
-
-
-.current-method--container {
-    width: 100%;
-    .current-method {
+.current-method {
     cursor: pointer;
     background-color: var(--primary-opaque);
     color: var(--gray-90);
@@ -74,13 +70,13 @@ $borderColor: var(--gray-40);
     border-radius: var(--border-radius);
     border: solid 1px var(--gray-60);
     overflow: hidden;
-    &__select{
-        
-    }
     &__content {
+        &.selected{
+            background-color: var(--primary);
+        }
+        background-color: var(--gray-90);
         --ui-icon-color: var(--gray-40);
         color: var(--gray-40);
-        background-color: var(--gray-90);
         border-right: solid 5px var(--gray-50);
         height: var(--s-element);
         border-radius: var(--border-radius) 0 0 var(--border-radius);
@@ -212,17 +208,5 @@ $borderColor: var(--gray-40);
                 background-color: var(--red);
             }
         }
-    }
-}
-}
-.current-method__response{
-    @extend .d-flex;
-    justify-content: flex-start;
-    padding: 0 10px;
-    height: var(--s-element);
-    color: var(--primary);
-    background-color: var(--gray-60);
-    &.current-method__response-error{
-        color: var(--orange);
     }
 }

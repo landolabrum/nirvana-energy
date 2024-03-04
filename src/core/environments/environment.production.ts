@@ -15,7 +15,9 @@ const prodEnvironment: IEnvironment = {
     name:"nirvana-energy"
   },
   legacyJwtCookie: {
-    name: "auth-token",
+    authToken: "auth-token",
+    prospectToken: "prospect-token",
+    transactionToken: "transaction-token",
   },
   serviceEndpoints: {
     membership: `${serverUrl}`,
@@ -32,4 +34,4 @@ const prodEnvironment: IEnvironment = {
   },
 };
 
-export default prodEnvironment; 
+export default prodEnvironment;

@@ -1,7 +1,6 @@
 $gap: 10px;
 $pad: 10px;
 
-$space: 14px;
 
 .d-flex {
     display: flex;
@@ -11,133 +10,26 @@ $space: 14px;
 
 .cart-list {
     @extend .d-flex;
-    margin-top: $pad;
-    width: calc(100%);
-
-    .cart-list__item {
-        border-radius: 7px;
-        background-color: var(--gray-90);
-        padding: $space;
-        &-image{
-            @extend .d-flex;
-            --ui-icon-width: var(--s-3);
-            --ui-icon-color:var(--gray-40);
-            --ui-icon-height:100%;
-        }
-        &:not(:last-child) {
-            margin-bottom: calc($space * .75);
-        }
-        &:hover{
-            background-color: var(--gray-80-opaque);
-
-        }
-        width: calc(100% - calc($space * 2));
+    width: 100%;
+    margin-top: var(--s-padding);
+    @media(max-width: 900px){
+        width: var(--s-padding-width);
+    }
+    &--mini{
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    &__header{
+        text-transform: capitalize;
+    }
+  
+    &__brand-icon{
+        width: 90px;
+        height: 90px;
         @extend .d-flex;
-        justify-content: flex-start;
-
-        @media(max-width: 900px) {
-            &:first-child{
-                margin-top: var(--s-element);
-            }
-        }
-        
-        .cart-list__item-content {
-            @media(max-width: 900px) {
-                flex-direction: column;
-            }
-            @extend .d-flex;
-            gap: var(--s-9);
-            height: 100%;
-            margin: auto;
-            justify-content: flex-start;
-            width: calc(100% - 2px);
-
-            &.cart-list__item-content-mini {
-                justify-content: space-between;
-
-                .cart-list__item-name,
-                .cart-list__item-description {
-                    height: auto;
-                    @media(max-width:900px) {
-                        display: none;
-                    }
-                }
-
-                .cart-list__item-body {
-                    display: none;
-                }
-
-                .cart-list__item-image {
-                    &::before {
-                        line-height: 1.5;
-                        content: attr(data-name);
-                        @extend .d-flex;
-                        justify-content: flex-start;
-                        align-items: flex-start;
-                        font-size: var(--s-3);
-                    }
-                }
-            }
-            .cart-list__item-body {
-                @extend .d-flex;
-                flex-direction: column;
-                height: 100%;
-                color: var(--gray-40);
-                margin-right: auto;
-                align-items: flex-start;
-                justify-content: flex-start;
-                gap: var(--s-9);
-                @media(max-width: 900px) {
-                    flex-direction: row;
-                    align-items: center;
-                    width: 100%;
-                    justify-content: space-between;
-                }
-                .cart-list__item-name {
-                    font-size: var(--s-1);
-                    color:var(--gray-30);
-                    text-transform: capitalize;
-                    @media(max-width: 900px) {
-                        font-size: var(--s-3);
-                    }
-                }
-                // .cart-list__item-description {}
-                .cart-list__item-amount {
-                    color:var(--gray-50);
-                    font-size:  var(--s-5);
-       
-                }
-                
-            }
-            .cart-list__item-image{
-                overflow: hidden;
-                @extend .d-flex;
-                width: 100px;
-                height: 100px;
-                position: relative;
-                @media(max-width: 900px) {
-                    // min-height: 250px;
-                    width: 100%;
-                    display: flex;
-                    order: 2;
-                }
-            }
-
-            .cart-list__item-action {
-                @extend .d-flex;
-                align-items: flex-end;
-                height: 100%;
-                @media(max-width: 900px) {
-                    order: 3;
-                }
-                @media(max-width: 900px) {
-                    width: 100%;
-                    justify-content: flex-end;
-                }
-            }
-        }
-
-
+        --ui-icon-height: 75px;
+        --ui-icon-width: 75px;
     }
 }
 

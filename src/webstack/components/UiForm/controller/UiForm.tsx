@@ -9,7 +9,7 @@ import ToggleSwitch from '../../UiToggle/UiToggle';
 import UiCheckBox from '../../UiCheckbox/UiCheckBox';
 import FormControl from '../../FormControl/FormControl';
 import AddFieldForm from '../views/AddFieldForm/AddFieldForm';
-import AdaptGrid from '@webstack/components/AdaptGrid/AdaptGrid';
+import AutocompleteAddressInput from '@webstack/components/UiInput/views/AddressInput';
 
 const UiForm = ({
     variant,
@@ -20,8 +20,7 @@ const UiForm = ({
     onChange, loading,
     disabled,
     onAddField,
-    readOnly,
-}: IForm) => {
+}: IForm):React.JSX.Element => {
     const textTypes = ['', undefined, 'text', 'password', 'email', 'number', 'tel', null, false, 'expiry', 'textarea'];
     const boolTypes = ['checkbox'];
     const [complete, setComplete] = useState<boolean>(false);
@@ -104,7 +103,7 @@ const UiForm = ({
         <div className={`form${variant && ` form--${variant}` || ''}`}>
             {fieldsCanPopulate &&
                 fields.map((field, index) => field.name && field?.readonly && (
-                    <div key={index} className='form-field__readonly'>
+                    <div key={index} className='form-field__readonly' style={field?.width ? { width: `calc(${field.width} - 8px)` } : {}}>
                         <div className='form-field__readonly--label'>{field?.label}</div>
                         <div className='form-field__readonly--value'>{`${field?.value}`}</div>
                     </div>
@@ -117,7 +116,18 @@ const UiForm = ({
                     style={typeof field?.width == 'string' ?
                         { width: `calc(${field.width} - 6px)` } : {}}
                 >
-                    {textTypes.includes(field?.type) && field.name && <>
+                    {field.name === 'address' && (
+                        <AutocompleteAddressInput
+                            variant={
+                                Boolean(field?.error) ? 'invalid' : variant || field?.variant
+                            }
+                            label='address'
+                            address={field.value}
+                            error={field?.error}
+                            setAddress={e => handleInputChange(e, field.constraints)}
+                        />
+                    )}
+                    {textTypes.includes(field?.type) && field.name && field.name !== 'address' && <>
                         <UiInput
                             label={field.label}
                             variant={

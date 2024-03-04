@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import SignIn from "../views/SignIn/SignIn";
+import SignInView from "../views/SignIn/views/SignInView/SignInView";
 import styles from "./Authentication.scss";
 import { UiIcon } from "@webstack/components/UiIcon/UiIcon";
 import SignUp from "../views/SignUp/SignUp";
@@ -35,11 +35,17 @@ const Authentication: React.FC<any> = (props: any) => {
       case "customer-created":
         setView("sign-in")
         break;
+      case "existing":
+        setView("sign-in")
+        break;
       default:
         setView("sign-up")
     }
   }
-
+  const handleSignup = (response:any)=>{
+    setView('sign-in');
+    setNewCustomerEmail(response.email)
+  }
 
   const [notification, setNotification] = useNotification();
   useEffect(() => {
@@ -60,7 +66,7 @@ const Authentication: React.FC<any> = (props: any) => {
     }
 
     if (newCustomerEmail != undefined) setView("sign-in");
-  }, [])
+  }, [handleSignup])
 
   return (
     <>
@@ -81,8 +87,8 @@ const Authentication: React.FC<any> = (props: any) => {
           An email has been sent to
           <Link onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)} style={hover?{color:'var(--primary'}:undefined} href={`mailto://${view}`}>{' '+view+', '}</Link> click the link in the email to continue.
         </div>}
-        {view == 'sign-in' && <SignIn email={newCustomerEmail} />}
-        {view == 'sign-up' && <SignUp setView={setView} />}
+        {view == 'sign-in' && <SignInView email={newCustomerEmail} />}
+        {view == 'sign-up' && <SignUp onSuccess={handleSignup} />}
         {/* {view == 'verify' && router.query.token && <VerifyEmail token={router.query.token} onSuccess={setNewCustomerEmail} />} */}
         <div className="authentication__view-action">
           <div className="authentication__view-label">

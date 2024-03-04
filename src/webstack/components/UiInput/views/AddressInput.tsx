@@ -4,16 +4,18 @@ import styles from '../UiInput.scss';
 import aStyles from './AddressInput.scss';
 import { Loader } from '@googlemaps/js-api-loader';
 import FormControl, { ITraits } from '@webstack/components/FormControl/FormControl';
+import { IFormControlVariant } from '@webstack/components/AdapTable/models/IVariant';
 
 interface IAddressInput {
   address?: any;
   setAddress: (e: any) => void;
   traits?: ITraits,
+  variant?: IFormControlVariant,
   inputClasses?: string,
   label?: string;
   error?: string | null;
 }
-const AutocompleteAddressInput = ({ address, setAddress, traits, inputClasses, label, error }: IAddressInput) => {
+const AutocompleteAddressInput = ({ address, setAddress, variant, traits, inputClasses, label, error }: IAddressInput) => {
   const GOOGLE_API_KEY = process.env.NEXT_PUBLIC_GAPI_KEY?.trim() || "";
   // console.log("[ PROPS ]", props)
   const initAutocomplete = async () => {
@@ -33,7 +35,7 @@ const AutocompleteAddressInput = ({ address, setAddress, traits, inputClasses, l
           // acc[type] = component.long_name || component.short_name;
           return acc;
         }, {});
-        console.log('[ ADDRESS ]',place)
+        // console.log('[ ADDRESS ]',place)
 
         const formattedAddress = {
           line1: `${addressComponents.street_number || ''} ${addressComponents.route || ''}`,
