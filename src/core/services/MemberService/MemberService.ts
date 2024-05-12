@@ -4,15 +4,17 @@ import { EventEmitter } from "@webstack/helpers/EventEmitter";
 import environment from "~/src/environment";
 import CustomToken from "~/src/models/CustomToken";
 import MemberToken from "~/src/models/MemberToken";
-import UserContext, { ProspectContext } from "~/src/models/UserContext";
+import UserContext, { GuestContext } from "~/src/models/UserContext";
 import ApiService, { ApiError } from "../ApiService";
-import IMemberService, { IDecryptJWT, IEncryptJWT, IEncryptMetadataJWT, ISessionData, SetupIntentSecretRequest } from "./IMemberService";
+import IMemberService, { IDecryptJWT, IEncryptJWT, IEncryptMetadataJWT, IResetPassword, ISessionData, OResetPassword } from "./IMemberService";
 import { IPaymentMethod } from "~/src/modules/user/model/IMethod";
 import { encryptString } from "@webstack/helpers/Encryption";
 import errorResponse from "../../errors/errorResponse";
+import { ICustomer } from "~/src/models/CustomerContext";
 const MEMBER_TOKEN_NAME = environment.legacyJwtCookie.authToken;
 const TRANSACTION_TOKEN_NAME = environment.legacyJwtCookie.transactionToken;
-const PROSPECT_TOKEN_NAME = environment.legacyJwtCookie.prospectToken;
+const GUEST_TOKEN_NAME = environment.legacyJwtCookie.guestToken;
+const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION?.trim();
 
 const TIMEOUT = 5000;
 function timeoutPromise<T>(promise: Promise<T>, ms: number): Promise<T> {
@@ -44,13 +46,38 @@ export default class MemberService
     super(environment.serviceEndpoints.membership);
   }
   private _userContext: UserContext | undefined;
-  private _prospectContext: UserContext | undefined;
-  private _prospectToken: string | undefined;
+  private _guestContext: UserContext | undefined;
+  private _guestToken: string | undefined;
   private _userToken: string | undefined;
   private _timeout: number | undefined;
   public userChanged = new EventEmitter<UserContext | undefined>();
-  public prospectChanged = new EventEmitter<ProspectContext | undefined>();
+  public guestChanged = new EventEmitter<GuestContext | undefined>();
 
+  public async signIn(cust: any): Promise<any> {
+    if (!cust.email) {
+      throw new ApiError("Email is required", 400, "MS.SI.01");
+    }
+    if (!cust.metadata.user.password) {
+      throw new ApiError("Password is required", 400, "MS.SI.02");
+    }
+
+    // Encrypt the login data
+    const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION?.trim();
+
+    const encryptedLoginData = encryptString(JSON.stringify(cust), ENCRYPTION_KEY);
+    const memberJwt:any = await timeoutPromise(
+      await this.post<{}, any>(
+        "usage/auth/login",
+        { data: encryptedLoginData },
+      ),
+      TIMEOUT // 5 seconds timeout
+    );
+    if(memberJwt){
+      this.saveMemberToken(memberJwt);
+      this.saveLegacyAuthCookie(memberJwt);
+      return this._getCurrentUser(true)!;
+    }
+  };
   public async verifyEmail(token: string): Promise<any> {
     if (!token) {
       throw new ApiError("No Token Provided", 400, "MS.SI.02");
@@ -91,6 +118,43 @@ export default class MemberService
     }
   }
 
+  public async verifyPassword(token: string): Promise<any> {
+    if (!token) {
+      throw new ApiError("No Token Provided", 400, "MS.SI.02");
+    }
+
+    try {
+      const verifiedMemberResp = await timeoutPromise(
+        this.get<any>(`/usage/auth/verify-password?token=${token}`),
+        TIMEOUT // 5 seconds timeout
+      );
+
+      // Check if the response is an ApiError
+      if (verifiedMemberResp instanceof ApiError) {
+        throw verifiedMemberResp;
+      }
+
+      const customer_token = verifiedMemberResp?.customer_token;
+      if (customer_token) {
+        this.saveMemberToken(customer_token);
+        this.saveLegacyAuthCookie(customer_token);
+        this._getCurrentUser(true)!;
+      }
+
+      // If everything is successful, return the response
+      return verifiedMemberResp;
+    } catch (error) {
+      // Handle the error here
+      if (error instanceof ApiError) {
+        return errorResponse(error);
+      } else {
+        // Handle other types of errors as needed
+        console.error("An unexpected error occurred:", error);
+        const responseError = new ApiError("Internal Server Error", 500, "MS.SI.01", "an Unknown Error Occured");
+        return errorResponse(responseError);
+      }
+    }
+  }
 
   public async toggleCustomerDefaultMethod(paymentMethodId: string): Promise<any> {
     let customerId = this._getCurrentUser(false)?.id;
@@ -115,27 +179,36 @@ export default class MemberService
     }
   }
 
-  public async createSetupIntent(customer: SetupIntentSecretRequest, method?: IPaymentMethod): Promise<any> {
-    const memberMethod = async () => {
-      try {
-        const response: any = await this.post<any, {}>(
-          `api/setup-intent/create`,
-          customer
-        );
-        return response;
-      } catch (e: any) {
-        return e;
-      }
+  public async createSetupIntent(customer_id: string, method?: IPaymentMethod): Promise<any> {
+    if (customer_id) {
+
+      const res = await this.get<any>(
+        `api/setup-intent/create?customer_id=${customer_id}`
+      )
+      return res
+    } else {
+      throw new ApiError("No ID Provided", 400, "MS.SI.02");
     }
-    if (customer && !method) {
-      return await memberMethod();
-    }
-    else if (!customer && method) {
-      throw new ApiError("UNHANDLED (!user && method)", 400, "MS.SI.02");
-    }
-    if (!method) {
-      throw new ApiError("NO MEMBER DATA PROVIDED", 400, "MS.SI.02");
-    }
+    // const memberMethod = async () => {
+    //   try {
+    //     const response: any = await this.post<any, {}>(
+    //       `api/setup-intent/create`,
+    //       {customer_id}
+    //     );
+    //     return response;
+    //   } catch (e: any) {
+    //     return e;
+    //   }
+    // }
+    // if (customer_id && !method) {
+    //   return await memberMethod();
+    // }
+    // else if (!customer_id && method) {
+    //   throw new ApiError("UNHANDLED (!customer_id)", 400, "MS.SI.02");
+    // }
+    // if (!method) {
+    //   throw new ApiError("NO MEMBER DATA PROVIDED", 400, "MS.SI.02");
+    // }
   }
   public async getSetupIntent(client_secret: string) {
     if (client_secret) {
@@ -233,45 +306,25 @@ public async processTransaction(sessionData: ISessionData) {
   }
 
   public async signUp(
-    {
-      name,
-      email,
-      password,
-      user_agent,
-      origin,
-      metadata
-    }: any
+    props: any
   ): Promise<UserContext> {
-    if (!email) {
+    if (!props.email) {
       throw new ApiError("Email is required", 400, "MS.SI.01");
     }
-
+    const encryptedSignUp = encryptString(JSON.stringify(props), ENCRYPTION_KEY);
+    // console.log("[ SIGN UP ]", props)
     const res = await this.post<{}, any>(
       "usage/auth/sign-up",
-      {
-        name: name,
-        email: email,
-        password: password,
-        origin: origin,
-        user_agent: user_agent,
-        ...metadata
-      },
+      {data: encryptedSignUp},
     );
-    // PROSPECT
-    if (res?.status === "prospect") {
-      const prospectJwt = await res.data;
-      this.saveProspectToken(prospectJwt);
-      this.saveLegacyProspectCookie(prospectJwt);
-
-      return this._getCurrentProspect(true)!;
+    // GUEST TEMP SIGN IN
+    console.log("[ RES ]", res)
+    if (res?.status === "guest") {
+      const guestJwt = await res.data;
+      this.saveguestToken(guestJwt);
+      this.saveLegacyguestCookie(guestJwt);
     }
-    // EXISTING
-    // if (res?.status === "existing") {
-    //   const memberJwt = await res.data;
-    //   this.saveMemberToken(memberJwt);
-    //   this.saveLegacyAuthCookie(memberJwt);
-    //   return this._getCurrentUser(true)!;
-    // }
+    // console.log("[ SIGN UP RES ]", res)
     return res;
   }
   public async getMethods(customerId?: string): Promise<any> {
@@ -301,16 +354,25 @@ public async processTransaction(sessionData: ISessionData) {
 
   };
 
-  public async updateCustomerProfile(id: string, memberData: any): Promise<any> {
-    if (id && memberData) {
+  public async modifyCustomer(customer:ICustomer): Promise<any> {
+    console.log('[ MEMBERSERVICE modifyCustomer(customer) ]',customer)
+    if (customer) {
+      const encryptedSignUp = encryptString(JSON.stringify(customer), ENCRYPTION_KEY);
+
+      
+      // console.log('[ MODUFY ]', res)
+      //   const res = await this.put<any, any>(
+      //     `api/customer/`,
+      //     memberData
+      //   );
       try {
-        const res = await this.put<any, any>(
-          `api/customer/?id=${id}`,
-          memberData
+        const res = await this.put<{}, any>(
+          `api/customer/`,
+          {data: encryptedSignUp},
         );
         let memberJwt: any = null;
-        if (res) memberJwt = res;
-        // res && console.log('[ RES ]', res)
+        if (res && res?.data) memberJwt = res?.data;
+        res && console.log('[ Sigin  RES ]', res)
         this.saveMemberToken(memberJwt);
         this.saveLegacyAuthCookie(memberJwt);
         return this._getCurrentUser(true)!;
@@ -319,11 +381,9 @@ public async processTransaction(sessionData: ISessionData) {
         // Handle error accordingly
       }
     }
-    if (!id) {
-      throw new ApiError("NO ID PROVIDED", 400, "MS.SI.02");
-    }
-    if (!memberData) {
-      throw new ApiError("NO MEMBER DATA PROVIDED", 400, "MS.SI.02");
+
+    if (!customer) {
+      throw new ApiError("NO customer PROVIDED", 400, "MS.SI.02");
     }
   };
 
@@ -371,8 +431,8 @@ public async processTransaction(sessionData: ISessionData) {
       }
     }
   }
-  private saveLegacyProspectCookie(customJwt: string) {
-    if (environment.legacyJwtCookie?.prospectToken) {
+  private saveLegacyguestCookie(customJwt: string) {
+    if (environment.legacyJwtCookie?.guestToken) {
       const jwtCookie = environment.legacyJwtCookie;
       const a = customJwt.split(".");
       if (a.length === 3) {
@@ -384,36 +444,34 @@ public async processTransaction(sessionData: ISessionData) {
         const props: { [key: string]: string } = {};
         props.path = "/";
         props["max-age"] = diff.toString();
-        props['is_prospect']='true';
+        props['is_guest']='true';
         if (jwtCookie.domain) props.domain = jwtCookie.domain;
-        CookieHelper.setCookie(jwtCookie.prospectToken, customJwt, props);
+        CookieHelper.setCookie(jwtCookie.guestToken, customJwt, props);
       }
     }
   }
 
-  public async signIn({ email, password, code, user_agent }: any): Promise<UserContext> {
+  public async resetPassword({ email, user_agent }: IResetPassword): Promise<OResetPassword> {
+    const merchant = environment.merchant;
     if (!email) {
       throw new ApiError("Email is required", 400, "MS.SI.01");
     }
-    if (!password) {
-      throw new ApiError("Password is required", 400, "MS.SI.02");
+    if (!user_agent) {
+      throw new ApiError("UA is required", 400, "MS.SI.01");
     }
 
     // Encrypt the login data
-    const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION?.trim();
 
-    const encryptedLoginData = encryptString(JSON.stringify({ email, password, code, user_agent }), ENCRYPTION_KEY);
+    const encryptedResetPasswordData = encryptString(JSON.stringify({ email, user_agent }), ENCRYPTION_KEY);
 
     const res = await this.post<{}, any>(
-      "usage/auth/sign-in",
-      { data: encryptedLoginData },
+      "usage/auth/reset-password",
+      { data: encryptedResetPasswordData },
     );
-    const memberJwt = await res;
-    this.deleteProspectToken();
-    this.saveMemberToken(memberJwt);
-    this.saveLegacyAuthCookie(memberJwt);
-    return this._getCurrentUser(true)!;
-  }
+    const status = await res;
+
+    return status;
+  };
 
   private updateUserContext(
     context: UserContext | undefined,
@@ -427,28 +485,28 @@ public async processTransaction(sessionData: ISessionData) {
     }
     this._userContext = context;
     this._userToken = token;
-    this._prospectToken = undefined;
+    this._guestToken = undefined;
     this.userChanged.emit(context);
   }
-  private updateProspectContext(
-    context: ProspectContext | undefined,
+  private updateguestContext(
+    context: GuestContext | undefined,
     token: string | undefined
   ) {
-    if (context == null && this._prospectContext == null) {
+    if (context == null && this._guestContext == null) {
       return;
     }
-    if (context === this._prospectContext) {
+    if (context === this._guestContext) {
       return;
     }
-    this._prospectContext = context;
+    this._guestContext = context;
     // HERE
     console.log('[ tokl ]', token)
-    this._prospectToken = token;
-    this.prospectChanged.emit(context);
+    this._guestToken = token;
+    this.guestChanged.emit(context);
   }
 
-  getCurrentProspect(): ProspectContext | undefined {
-    return this._getCurrentProspect(false);
+  getCurrentGuest(): GuestContext | undefined {
+    return this._getCurrentGuest(false);
   }
   getCurrentUser(): UserContext | undefined {
     return this._getCurrentUser(false);
@@ -465,8 +523,8 @@ public async processTransaction(sessionData: ISessionData) {
     }
     const memberToken = this.parseToken(memberJwtString);
     const user = memberToken?.user;
-    let prospectJwtString = this.getProspectTokenFromStorage();
-    if(prospectJwtString)this.signOutProspect();
+    let guestJwtString = this.getguestTokenFromStorage();
+    if(guestJwtString)this.signOutguest();
     if (memberJwtString) {
       this.updateUserContext(undefined, undefined);
     }
@@ -495,65 +553,61 @@ public async processTransaction(sessionData: ISessionData) {
 
     return this._userContext;
   }
-  private _getCurrentProspect(forceUpdate: boolean): ProspectContext | undefined {
-    if (!forceUpdate && this._prospectContext != null) {
-      return this._prospectContext;
+  private _getCurrentGuest(forceUpdate: boolean): GuestContext | undefined {
+    if (!forceUpdate && this._guestContext != null) {
+      return this._guestContext;
     }
-    let prospectJwtString = this.getProspectTokenFromStorage();
+    let guestJwtString = this.getguestTokenFromStorage();
 
-    if (!prospectJwtString) {
-      this.updateProspectContext(undefined, undefined);
+    if (!guestJwtString) {
+      this.updateguestContext(undefined, undefined);
       return;
     }
-    const prospectToken = this.parseToken(prospectJwtString);
+    const guestToken = this.parseToken(guestJwtString);
     // console.log('[ MEMBER TOKEN ]', memberToken)
-    const prospect = prospectToken?.user;
+    const guest = guestToken?.user;
 
-    if (prospect == null) {
-      this.updateProspectContext(undefined, undefined);
+    if (guest == null) {
+      this.updateguestContext(undefined, undefined);
       return;
     }
-    this.updateProspectContext({ ...prospect }, prospectJwtString);
+    this.updateguestContext({ ...guest }, guestJwtString);
 
     if (this._timeout != null) {
       clearTimeout(this._timeout);
     }
 
-    if (prospectToken?.exp) {
+    if (guestToken?.exp) {
       const now = new Date().getTime();
-      const expires = parseInt(prospectToken.exp as any) * 1000;
+      const expires = parseInt(guestToken.exp as any) * 1000;
       const diff = expires - now;
       if (diff > 0) {
         alert(1)
         this._timeout = setTimeout(() => {
-          this._getCurrentProspect(true);
+          this._getCurrentGuest(true);
         }, diff + 1000) as any;
       }
       alert(2)
     }
 
-    return this._prospectContext;
+    return this._guestContext;
   }
 
   private saveTransactionToken(tranactionToken: string) {
-    if (this.isBrowser) {
-      localStorage?.setItem(TRANSACTION_TOKEN_NAME, tranactionToken);
-    }
+    if (!this.isBrowser)return;
+    localStorage?.setItem(TRANSACTION_TOKEN_NAME, tranactionToken);
   }
   private saveMemberToken(memberJwt: string) {
-    if (this.isBrowser) {
-      localStorage?.setItem(MEMBER_TOKEN_NAME, memberJwt);
-    }
+    if (!this.isBrowser)return;
+    const existingguestToken = this.getguestTokenFromStorage();
+    if (existingguestToken)this.deleteguestToken();
+    localStorage?.setItem(MEMBER_TOKEN_NAME, memberJwt);
   }
-  private saveProspectToken(prospectJwt: string) {
-    if (this.isBrowser) {
-      // Check if a member token exists and delete it before saving the prospect token
-      const existingMemberToken = localStorage?.getItem(MEMBER_TOKEN_NAME);
-      if (existingMemberToken) {
-        this.deleteMemberToken(); // Ensure member token is deleted if it exists
-      }
-      localStorage?.setItem(PROSPECT_TOKEN_NAME, prospectJwt);
-    }
+  private saveguestToken(guestJwt: string) {
+    if (!this.isBrowser)return;
+    const existingMemberToken = this.getMemberTokenFromStorage();
+    if (existingMemberToken)this.deleteMemberToken();
+    localStorage?.setItem(GUEST_TOKEN_NAME, guestJwt);
   }
   private get isBrowser(): boolean {
     return typeof window === "object";
@@ -565,11 +619,11 @@ public async processTransaction(sessionData: ISessionData) {
     this.deleteLegacyCookie();
     return "Success";
   }
-  async signOutProspect(): Promise<string> {
-    if (!this.getCurrentProspectToken) return "No User";
-    this.updateProspectContext(undefined, undefined);
-    this.deleteProspectToken();
-    this.deleteLegacyProspectCookie();
+  async signOutguest(): Promise<string> {
+    if (!this.getCurrentGuestToken) return "No User";
+    this.updateguestContext(undefined, undefined);
+    this.deleteguestToken();
+    this.deleteLegacyguestCookie();
     return "Success";
   }
   private deleteLegacyCookie() {
@@ -580,12 +634,12 @@ public async processTransaction(sessionData: ISessionData) {
     CookieHelper.deleteCookie(jwtCookie.authToken)
     // CookieHelper.setCookie(jwtCookie.authToken, "poo", props);
   }
-  private deleteLegacyProspectCookie() {
+  private deleteLegacyguestCookie() {
     const props: { [key: string]: string } = {};
     const jwtCookie = environment.legacyJwtCookie;
     props.path = "/";
     if (jwtCookie.domain) props.domain = jwtCookie.domain;
-    CookieHelper.setCookie(jwtCookie.prospectToken, "", props);
+    CookieHelper.setCookie(jwtCookie.guestToken, "", props);
   }
   private parseToken(jwt: string): MemberToken | null {
     const segments = jwt.split('.');
@@ -623,9 +677,9 @@ public async processTransaction(sessionData: ISessionData) {
   //   return null;
   // }
 
-  private deleteProspectToken() {
+  private deleteguestToken() {
     if (this.isBrowser) {
-      localStorage?.removeItem(PROSPECT_TOKEN_NAME);
+      localStorage?.removeItem(GUEST_TOKEN_NAME);
     }
   }
   private deleteMemberToken() {
@@ -633,17 +687,17 @@ public async processTransaction(sessionData: ISessionData) {
       localStorage?.removeItem(MEMBER_TOKEN_NAME);
     }
   }
-  private getProspectTokenFromStorage(): string | null {
+  private getguestTokenFromStorage(): string | null {
     if (!this.isBrowser) {
       return null;
     }
-    const jwt = localStorage?.getItem(PROSPECT_TOKEN_NAME);
+    const jwt = localStorage?.getItem(GUEST_TOKEN_NAME);
     if (jwt == null) {
       return null;
     }
     const token = this.parseToken(jwt);
     if (token == null) {
-      this.deleteProspectToken();
+      this.deleteguestToken();
       return null;
     }
     return jwt;
@@ -669,8 +723,8 @@ public async processTransaction(sessionData: ISessionData) {
   getCurrentUserToken(): string | undefined {
     return this._userToken;
   }
-  getCurrentProspectToken(): string | undefined {
-    return this._prospectToken;
+  getCurrentGuestToken(): string | undefined {
+    return this._guestToken;
   }
   protected appendHeaders(headers: { [key: string]: string }) {
     super.appendHeaders(headers);

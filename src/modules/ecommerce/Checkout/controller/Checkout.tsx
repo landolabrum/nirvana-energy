@@ -5,13 +5,15 @@ import useCart from '../../cart/hooks/useCart';
 import { useUser } from '~/src/core/authentication/hooks/useUser';
 
 import SignUp from '~/src/modules/authentication/views/SignUp/SignUp';
-import { useProspect } from '~/src/core/authentication/hooks/useProspect';
-import SignIn from '~/src/modules/authentication/views/SignIn/controller/SignIn';
-import { IView } from '@webstack/layouts/UiViewLayout/UiViewLayout';
+import { useGuest } from '~/src/core/authentication/hooks/useGuest';
+
+import Login from '~/src/modules/authentication/views/Login/controller/Login';
 import UserContext from '~/src/models/UserContext';
 import Collect from '../views/Collect/controller/Collect';
 import UiLoader from '@webstack/components/UiLoader/view/UiLoader';
 import CartList from '../../cart/views/CartList/CartList';
+import { useNotification } from '@webstack/components/Notification/Notification';
+import { IView } from '@webstack/layouts/UiViewLayout/controller/UiViewLayout';
 
 
 const Checkout = ():React.JSX.Element => {
@@ -20,10 +22,15 @@ const Checkout = ():React.JSX.Element => {
     const [cart, setCart] = useState<any>();
     const [selectedUser, setUser] = useState<UserContext | {email:string} | undefined>();
     const { getCartItems, } = useCart();
-    const prospect = useProspect();
+    const guest = useGuest();
+    console.log('[ GUEsT ] ', guest)
     const handleSignUp = (res: any) => {
-        if (res.id) {
-            setView('card-details');
+        const selectedUser = res?.id && res || guest;
+        console.log('[handleSignUp ]',res)
+        if (['guest','created'].includes(res?.status)) {
+            handleUser()
+            setView('collect');
+            handleNotifictaion(res);
         }
         else if(res?.status === 'existing' && res?.email){
             setUser({email:res.email});
@@ -33,7 +40,17 @@ const Checkout = ():React.JSX.Element => {
             console.log('[ CHECKOUT (HANDLE SIGNUP)[ERROR] ]', res);
         }
     }
-
+    const [notification, setNotification]=useNotification();
+    type InotificationContext = {data: string, email: string, status: "existing" | "created" | "success"}
+    const handleNotifictaion = (notificationContext: InotificationContext) =>{
+        console.log('[ handleNotification ]',notificationContext)
+      const status = notificationContext.status;
+        setNotification({
+          active: true,
+          // persistence: 3000,
+          list:[{name:`email ${status}, sign in to continue`}]});
+      console.log('[ NOTIFICIATION ]', {notification, notificationContent: notificationContext})
+    }
     const views: IView = {
         'sign-up': (
             <SignUp
@@ -43,7 +60,7 @@ const Checkout = ():React.JSX.Element => {
                 onSuccess={handleSignUp}
             />),
         'existing': (
-            <SignIn onSuccess={console.log} title={`Account for ${selectedUser?.email}, exists. please sign in.`} email={selectedUser?.email} />
+            <Login onSuccess={handleSignUp} title={`Account for ${selectedUser?.email}, exists. please sign in.`} email={selectedUser?.email} />
         ),
         'collect': (
             <Collect
@@ -54,10 +71,10 @@ const Checkout = ():React.JSX.Element => {
     }
     const handleUser = () => {
         if(selectedUser)return;
-        // console.log('[ USER ]', {user, prospect})
-        if (user || prospect) {
+        console.log('[ USER ]', {user, prospect: guest})
+        if (user || guest) {
             setView('collect');
-            setUser(user || prospect);
+            setUser(user || guest);
         }else {
             setView('sign-up');
         }
@@ -69,13 +86,12 @@ const Checkout = ():React.JSX.Element => {
     useEffect(() => {
         handleUser();
         handleCart();
-    }, [handleUser, user]);
+    }, [handleUser, handleCart]);
 
-    if (view) return <>{view}
+    if (view) return <>
         <style jsx>{styles}</style>
+        {/* user: {JSON.stringify(prospect)} */}
         <div className='checkout' id="main-checkout">
- 
-
             <div className='checkout__title'>
                 Secure Checkout <UiIcon icon="fa-lock" />
             </div>

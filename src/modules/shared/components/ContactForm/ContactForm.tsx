@@ -15,21 +15,22 @@ interface IContactFormProps {
   onSubmit: (contactData: any) => void;
   user?: any;
   payment?: any
+  title?: string | React.ReactElement | boolean;
 }
 
-const ContactForm: React.FC<IContactFormProps> = ({ onSubmit, user, submit, }) => {
+const ContactForm: React.FC<IContactFormProps> = ({ onSubmit, user, submit, title='contact'}) => {
   const initialContactFields = [
-    { name: 'firstName', label: 'First Name', type: 'text', placeholder: 'First Name', required: true, 
-    // value:mockDateTime(true)
+    { name: 'firstName', label: 'First Name', width: "50%", type: 'text', placeholder: 'First Name', required: true, 
+    value:"Test"
   },
-    { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Last Name', required: true
-    // , value:mockDateTime()
+    { name: 'lastName', label: 'Last Name', width: "50%",  type: 'text', placeholder: 'Last Name', required: true
+    , value:`${mockDateTime()} ${mockDateTime(true)}`
   },
     { name: 'email', label: 'Email', type: 'email', placeholder: 'your@email.com', required: true
-    // , value:'larzrandana@gmail.com'
+    , value:'larzrandana@gmail.com'
   },
     { name: 'phone', label: 'Phone', type: 'tel', placeholder: '1 (555) 555-5555', required: true, 
-    // value:'4344343433'
+    value:'4344343433'
   },
     { name: 'address', label: 'Address', type: 'text', placeholder: 'Your Address', required: true },
   ];
@@ -38,7 +39,6 @@ const ContactForm: React.FC<IContactFormProps> = ({ onSubmit, user, submit, }) =
   const [fields, setFields] = useState<IFormField[]>(initialContactFields);
   const [initialFields, setInitialFields]=useState<IFormField[] | undefined>();
   const [disabled, setDisabled] = useState<boolean>(true);
-  const [selectedUser, setUser]=useState<UserContext | undefined>()
   // const selectedUser:  = user || loggedInUser;
 
 
@@ -48,7 +48,6 @@ const ContactForm: React.FC<IContactFormProps> = ({ onSubmit, user, submit, }) =
       if(field.name === name)field.value = value;
       return field;
     })
-    console.log('[fieldsRef ]',fieldsRef)
     setFields(fieldsRef); // Update the state with the modified fields
     handleDisabled(fieldsRef); // Update the disabled state based on the new fields
   };
@@ -65,7 +64,8 @@ const ContactForm: React.FC<IContactFormProps> = ({ onSubmit, user, submit, }) =
         acc[fieldName] = field.value;
       }
       return acc;
-    }, {});
+    }, {}); 
+
     formData.name = `${formData.firstName} ${formData.lastName}`; // Combining firstName and lastName
     delete formData.firstName; // Remove firstName
     delete formData.lastName; // Remove lastName
@@ -74,9 +74,8 @@ const ContactForm: React.FC<IContactFormProps> = ({ onSubmit, user, submit, }) =
 
 
   const handleDisabled = async (updatedFields: IFormField[]) => {
-    // console.log('[ updateFields ]',updatedFields)
     if (!Array.isArray(updatedFields)) {
-      console.error('updatedFields is not an array', updatedFields);
+      // console.error('updatedFields is not an array', updatedFields);
       return; // Exit the function or handle this case as appropriate
     }
     const isComplete = updatedFields.map((field: IFormField) => {
@@ -93,7 +92,7 @@ const ContactForm: React.FC<IContactFormProps> = ({ onSubmit, user, submit, }) =
 
 const handleUser = async () => {
   // Check if a user has been selected and update fields accordingly
-  const userToUse = selectedUser || user || loggedInUser;
+  const userToUse = user || loggedInUser;
   if (userToUse) {
     const updatedFields = fields.map((field) => {
       switch (field.name) {
@@ -112,23 +111,26 @@ const handleUser = async () => {
       }
     });
 
-    setFields(updatedFields);
+    if(!fields) setFields(updatedFields);
     if (!initialFields) setInitialFields(updatedFields);
   }
 };
   const init = async () => {
-    handleUser().then((updatedFields: any) => handleDisabled(updatedFields))
+    handleUser().then(
+      (updatedFields: any) => handleDisabled(updatedFields)
+    ) 
   }
   useEffect(() => {
     init()
-  }, []);
+  }, [init, handleUser]);
 
 
   return (
     <>
       <style jsx>{styles}</style>
       <div className='contact-form'>
-        <div className='contact-form__title'>Contact</div>
+        {/* {JSON.stringify(fields)} */}
+        {title && <div className='contact-form__title'>{title}</div>}
         <UiForm
           fields={fields}
           disabled={disabled}

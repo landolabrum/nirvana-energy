@@ -1,0 +1,27 @@
+.d-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.instagram {
+    @extend .d-flex;
+    flex-direction: column;
+
+    width: var(--s-padding-width);
+    padding: var(--s-padding);
+    &-header {
+        @extend .d-flex;
+        justify-content: flex-start;
+        width: var(--s-padding-width);
+        padding: var(--s-padding);
+        &--title {
+            font-size: var(--s-element);
+        }
+    }
+    &-body{
+        @extend .d-flex;
+        flex-wrap: wrap;
+       
+    }
+}

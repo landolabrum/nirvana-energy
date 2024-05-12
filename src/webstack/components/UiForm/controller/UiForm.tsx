@@ -17,6 +17,7 @@ const UiForm = ({
     onSubmit,
     onError: onLocalErrors,
     title, submitText,
+    submitIcon,
     onChange, loading,
     disabled,
     onAddField,
@@ -105,7 +106,15 @@ const UiForm = ({
                 fields.map((field, index) => field.name && field?.readonly && (
                     <div key={index} className='form-field__readonly' style={field?.width ? { width: `calc(${field.width} - 8px)` } : {}}>
                         <div className='form-field__readonly--label'>{field?.label}</div>
-                        <div className='form-field__readonly--value'>{`${field?.value}`}</div>
+                        <div className='form-field__readonly--value'>{
+                            typeof field.value !== 'object' && `${field?.value}` || 
+                            field.value && <div className='object-list'>{Object.entries(field.value).map(([chK,chV]:any)=>{
+                                return <span className='object-item' key={chK}>
+                                    <span className='object-item--key'>{chK}:</span>
+                                    <span className='object-item--value'>{JSON.stringify(chV).replaceAll('"','')}</span>
+                                </span>
+                            })}</div>
+                        }</div>
                     </div>
                 ))}
 
@@ -129,6 +138,7 @@ const UiForm = ({
                     )}
                     {textTypes.includes(field?.type) && field.name && field.name !== 'address' && <>
                         <UiInput
+                            autoComplete={field.autoComplete}
                             label={field.label}
                             variant={
                                 Boolean(field?.error) ? 'invalid' : variant || field?.variant
@@ -187,7 +197,7 @@ const UiForm = ({
 
             {onAddField && <AddFieldForm onAddField={onAddField} />}
             <div className={`form__submit ${variant && ` form__submit--${variant}` || ''}`}>
-                <UiButton onClick={handleSubmit} disabled={disabled || !complete} variant={!disabled && complete && 'glow'} type='submit' busy={loading == true} >
+                <UiButton onClick={handleSubmit} traits={{afterIcon:submitIcon}} disabled={disabled || !complete} variant={!disabled && complete && 'glow'} type='submit' busy={loading == true} >
                     {submitText ? submitText : 'Submit'}
                 </UiButton>
             </div>

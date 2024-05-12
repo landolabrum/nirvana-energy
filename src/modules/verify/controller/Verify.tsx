@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import styles from './Verify.scss';
 import { useRouter } from 'next/router';
 import VerifyEmail from '../views/VerifyEmail/VerifyEmail';
-import SignInView from '../../authentication/views/SignIn/views/SignInView/SignInView';
+import LoginView from '../../authentication/views/Login/views/LoginView/LoginView';
 import VerifyAccount from '../views/VerifyAccount/VerifyAccount';
 import VerifyPayment from '../views/VerifyPayment/VerifyPayment';
+import VerifyPassword from '../views/VerifyPassword/VerifyPassword';
+import VerifyShare from '../views/VerifyShare/VerifyShare';
 
 
 const DefaultVerifyView = () => {
@@ -26,10 +28,12 @@ const Verify = () => {
   const [token, setToken] = useState<string | undefined>();
 
   const views: any = {
-    'sign-in': <SignInView email={newCustomerEmail} />,
+    'sign-in': <LoginView email={newCustomerEmail} />,
     email: <VerifyEmail token={token} onSuccess={(v: string) => setNewCustomerEmail(v)} />,
+    password: <VerifyPassword token={token} onSuccess={(v: string) => setNewCustomerEmail(v)} />,
     account: <VerifyAccount />,
-    payment: <VerifyPayment token={token} />
+    payment: <VerifyPayment token={token} />,
+    share: <VerifyShare />,
   };
 
   useEffect(() => {

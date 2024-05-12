@@ -11,18 +11,14 @@
 export interface IEnvironment {
   useMockApi: any;
   isProduction: boolean;
-  site:{
-    url: string;
-  },
   merchant:{
-    logo?: string;
+    url: string;
     name?: string;
     mid?: string;
-    // <COUNTRY><MERCHANT NAME>
   },
   legacyJwtCookie: {
     authToken: string;
-    prospectToken: string;
+    guestToken: string;
     transactionToken: string;
     domain?: string;
   };

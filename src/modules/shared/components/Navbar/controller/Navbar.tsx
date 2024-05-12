@@ -13,12 +13,11 @@ import environment from "~/src/environment";
 import useNavMobile from "../hooks/useNavBreak"; // Ensure this path is correct
 import useScroll from "@webstack/hooks/useScroll";
 import keyStringConverter from "@webstack/helpers/keyStringConverter";
-import { Router } from "next/router";
 
 
 
 const Navbar = () => {
-  const [user, current, setRoute] = useRoute();
+  const { selectedUser, pathname, explicitRouter} = useRoute();
   const routes = useClearanceRoutes();
   const [scroll, _] = useScroll();
   const { openModal, closeModal, isModalOpen } = useModal();
@@ -32,14 +31,14 @@ const Navbar = () => {
   const handleMobileClick = (selectedRoute: IRoute) => {
     closeModal();
     if (selectedRoute.href && !selectedRoute.items) {
-      setRoute(selectedRoute); // Assuming setRoute expects an IRoute
+      explicitRouter(selectedRoute); // Assuming setRoute expects an IRoute
     } else if (selectedRoute.modal) {
       openModal(modals[selectedRoute.modal]);
     } else if (selectedRoute.items) {
       openModal(<MobileNav routes={selectedRoute.items} handleClick={handleMobileClick} onBack={handleBackButtonClick} />);
     }
   };
-
+const isMerchant = (route:IRoute) => route.label === keyStringConverter(String(environment.merchant.name));
   // Function to go back to the original routes in mobile view
   const handleBackButtonClick = () => {
     setCurrentRoutes(routes);
@@ -52,11 +51,11 @@ const Navbar = () => {
 
   // Handle click events for routes and modals
   const handleSelect = (route: IRoute | string) => {
-    let _route: IRoute = typeof route === 'string' ? { href: route } : route;
+    const _route: IRoute = typeof route === 'string' ? { href: route } : route;
 
     if (_route?.href) {
-      setRoute(_route);
-      setToggled(_route.label || null); // Set the route as toggled when selected
+      explicitRouter(_route);
+      setToggled(_route.label || null);
     } else if (_route?.modal && !isModalOpen) {
       openModal(modals[_route.modal]);
     }
@@ -66,7 +65,8 @@ const Navbar = () => {
   const handleTrigger = () => {
     if (currentRoutes !== undefined) openModal({
       title:<>
-        <h1 onClick={()=>{
+        <h1
+          onClick={()=>{
           handleMobileClick({href:'/'})
           }}><UiIcon icon={`${environment.merchant.name}-logo`}/>{environment.merchant.name && keyStringConverter(environment.merchant.name)}</h1>
         </>,
@@ -77,12 +77,11 @@ const Navbar = () => {
 
   // Compute user display name
   const displayName = useMemo(() => {
-    return user?.name ? `${user.name.split(" ")[0]} ${user.name.split(" ")[1][0]}.` : "";
-  }, [user]);
+    return selectedUser?.name ? `${selectedUser.name.split(" ")[0]} ${selectedUser.name.split(" ")[1][0]}.` : "";
+  }, [selectedUser]);
 
   const cartTotal = useCartTotal();
-  const cartRoute = routes && routes.find((r: any) => r.href === '/cart');
-  // Mobile navigation component
+
   const modals: any = {
     login: <Authentication />,
   };
@@ -103,9 +102,11 @@ const Navbar = () => {
   return (
     <>
       <style jsx>{styles}</style>
-      <nav id="nav-bar" className={`navbar__container ${isMobile ? 'navbar__container--hide' : ''}`} >
+      <nav id="nav-bar" 
+      // style={{display: 'none'}} 
+      className={`navbar__container ${isMobile ? 'navbar__container--hide' : ''}`} >
         <div className='navbar' ref={navRef}>
-          <div className={`navbar__trigger${scroll > 90 ? ' navbar__trigger--opaque' : ''}`}>
+          <div className={`navbar__trigger${scroll > 90 ? ' navbar__trigger--o' : ''}`}>
             <UiIcon
               icon={isModalOpen ? 'fa-xmark' : 'fa-bars'}
               onClick={handleTrigger}
@@ -117,7 +118,8 @@ const Navbar = () => {
                 key={key}
                 className={
                   `nav__nav-item nav__nav-item--${
-                    route.label ? (route.label !== keyStringConverter(String(environment.merchant.name)) ? route.label.toLowerCase() : 'brand') : (
+                    route.label ? (
+                      isMerchant(route) ? 'brand': route.label.toLowerCase()) : (
                       String(route.href).split('/')[1]
                     )
                   }${
@@ -128,7 +130,14 @@ const Navbar = () => {
               >
               {route.href !== '/cart' ? !route?.items ? (
                 <UiButton
-                  traits={route?.icon ? { afterIcon: { icon: route.icon }, } : undefined}
+                  traits={route?.icon ? (
+                    // PUTS ICON BEFORE TEXT ON BRAND
+                    isMerchant(route)?{ 
+                      beforeIcon: { icon: route.icon }
+                     }:{ 
+                      afterIcon: { icon: route.icon }
+                     }
+                  ) : undefined}
                   variant='flat'
                   onClick={() => handleSelect(route)}
                   >

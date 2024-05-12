@@ -45,7 +45,7 @@ const UserCurrentMethod: React.FC<IUserCurrentMethod> = (
         const label = runDelete.message ? runDelete.message : `*${runDelete.message}`
         setNotification({
             active: true,
-            persistance: 3000,
+            persistence: 3000,
             list: [
                 { label: 'payment method' },
                 { label: label }
@@ -75,7 +75,7 @@ const UserCurrentMethod: React.FC<IUserCurrentMethod> = (
     useEffect(() => {
         console.log('[ methodsClass ]', methodsClass)
     }, [method, methodsClass]);
-    if (typeof methodsClass === 'object') return (
+    if (typeof methodsClass === 'object' && method?.card) return (
         <>
             <style jsx>{styles}</style>
             <div className={`current-method`}>

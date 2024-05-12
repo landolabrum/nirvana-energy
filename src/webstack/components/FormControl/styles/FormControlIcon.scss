@@ -10,10 +10,10 @@
   margin: 4px 3px;
   height: calc(var(--s-element) - var(--s-10));
   aspect-ratio: unset;
-  background-color: var(--dark-opaque);
+  background-color: var(--dark-o);
 
   &:hover {
-    background-color: var(--primary-opaque);
+    background-color: var(--primary-o);
   }
 }
 
@@ -46,10 +46,8 @@
 
   &-sm {
     position: relative;
-    // width: var(--s-9);
-    width: var(--s-6);
-    --ui-icon-width: var(--s-6);
-    --ui-icon-height: var(--s-6);
+    --ui-icon-height: var(--s-7);
+    --ui-icon-width: 100%;
    }
 
   // &__before {

@@ -18,6 +18,7 @@ export type IFormField = {
     width?: string;
     value?: string | boolean | UserAddress | number;
     label?: string;
+    autoComplete?: 'on' | 'off';
     min?: number;
     max?: number;
     placeholder?: string;
@@ -42,6 +43,7 @@ export interface IForm {
     variant?: IFormControlVariant;
     disabled?: boolean;
     loading?: OForm;
+    submitIcon?: string;
     fields?: IFormField[];
     title?: string | React.ReactElement;
     submitText?: string | React.ReactElement;

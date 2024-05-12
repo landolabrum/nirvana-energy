@@ -6,14 +6,19 @@ import { IEnvironment } from "./core/environments/environment.interface";
 let environment: IEnvironment = devEnvironment;
 
 // const DEV_URL: string = "https://tiktok.soy"
-const DEV_URL: string = "localhost:3000"
+const DEV_URL: string = ":3000"
+// const DEV_URL: string = ":3000"
 
-export const isEnvironmentProduction = () => {
-    if(typeof window == "object") return window.location.host?.toLowerCase() !== DEV_URL;
+const isDevelope = () => {
+    if(typeof window == "object"){
+        const isDev = window.location.href?.toLowerCase().includes(DEV_URL);;
+        // console.error("[ usDiv ]", isDev)
+        return isDev;
+    }
     return false;
 };
 
-environment = isEnvironmentProduction()? prodEnvironment: devEnvironment;
+environment = isDevelope()?  devEnvironment: prodEnvironment;
 // console.log('[ environment ]', environment)
 // if (typeof window == "object") {
 //   switch (window.location.host?.toLowerCase()) {

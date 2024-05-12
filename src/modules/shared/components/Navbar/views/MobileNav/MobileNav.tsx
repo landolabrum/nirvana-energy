@@ -15,7 +15,9 @@ const MobileNav: React.FC<IMobileNav> = ({ routes, handleClick, onBack, }):React
     return (
         <>
             <style jsx>{styles}</style>
-            <div className='navbar__mobile'>
+            <div 
+            //   style={{display: 'none'}} 
+            className='navbar__mobile'>
                 {onBack && <div className='navbar__mobile--actions'>
                     <div>
                         <UiButton
@@ -27,34 +29,18 @@ const MobileNav: React.FC<IMobileNav> = ({ routes, handleClick, onBack, }):React
                 <div className='navbar__mobile--content'>
                     {routes && routes.reverse().map((route: IRoute, key: number) => 
                        {
-                        if(route?.hide)return<></>;
-                        // if(route?.href == '/')return <div 
-                        //     key={key}
-                        //     className='navbar__mobile--content__brand'
-                        //     onClick={() => handleClick(route)}
-                        // >
-                        //     <div>
-                        //         <UiIcon icon={route?.icon} width={100} height={100}/> 
-                        //     </div>
-                        //     <div>
-                        //         {route.label}
-                        //     </div>
-                        // </div>;
-                        return (
-                            <div 
-                                key={key} 
-                                className='navbar__mobile--content__nav-item' 
-                                onClick={() => handleClick(route)}
-                            >
-                                <div>
+                           if(route?.hide)return<></>;
+                           return (
+                               <span key={key}>
                                 <UiButton
+                                    onClick={() => handleClick(route)}
                                     traits={{beforeIcon:route?.icon}}
-                                    variant='inherit'
-                                >
+                                    // variant='inherit'
+                                    >
+
                                     {route.label}{route?.href =='/cart' ?'cart':''}
                                 </UiButton>
-                            </div>
-                            </div>
+                            </span>
                         )}
                     )}
                 </div>

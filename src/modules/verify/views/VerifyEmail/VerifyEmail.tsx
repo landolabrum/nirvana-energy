@@ -7,9 +7,10 @@ import UiLoader from '@webstack/components/UiLoader/view/UiLoader';
 import keyStringConverter from '@webstack/helpers/keyStringConverter';
 import UiForm from '@webstack/components/UiForm/controller/UiForm';
 import { IFormField } from '@webstack/components/UiForm/models/IFormModel';
-import SignIn from '~/src/modules/authentication/views/SignIn/controller/SignIn';
+import Login from '~/src/modules/authentication/views/Login/controller/Login';
 import UiButton from '@webstack/components/UiButton/UiButton';
 import { useModal } from '@webstack/components/modal/contexts/modalContext';
+import { Router, useRouter } from 'next/router';
 
 // Remember to create a sibling SCSS file with the same name as this component
 interface IVerifyEmail {
@@ -26,17 +27,22 @@ interface IVerifyEmailState {
     customer?: any;
 }
 const VerifyEmail: React.FC<any> = ({ token, onSuccess }: IVerifyEmail) => {
+
     const [state, setState] = useState<IVerifyEmailState>({ status: 'verifying_email' });
     const MemberService = getService<IMemberService>("IMemberService");
     const {openModal}=useModal();
-
+    const router = useRouter();
     const handleVerify = async () => {
         if (!token) {
             setState({ status: 'no_token_present' });
             return;
         }
-        const verifiedResponse = await MemberService.verifyEmail(String(token));
-        if (verifiedResponse) setState(verifiedResponse);
+        try{
+            const verifiedResponse = await MemberService.verifyEmail(String(token));
+            if (verifiedResponse) setState(verifiedResponse);
+        }catch(e:any){
+            console.error('[ HANDLE VERIFY ]', e)
+        }
     }
 
     const loadingText = (): string => {
@@ -77,19 +83,19 @@ const VerifyEmail: React.FC<any> = ({ token, onSuccess }: IVerifyEmail) => {
     const onSubmit = async () => {
         const newPassword = state?.fields?.find((f: IFormField) => f.name == 'password')?.value;
         let customer = state.customer;
-        customer.metadata.password = newPassword;
-        const updateMember = await MemberService.updateCustomerProfile(customer.id, customer);
+        customer.metadata.user.password = newPassword;
+        const updateMember = await MemberService.modifyCustomer(customer);
         if (updateMember){
-            handleSignInModal();
+            handleLoginModal();
             onSuccess(updateMember.email);
         }
     }
-    const handleSignInModal = () =>{
-       openModal(<SignIn email={state.customer.email} />)
+    const handleLoginModal = () =>{
+       openModal(<Login email={state.customer.email} onSuccess={(e)=>JSON.stringify(e)}/>)
     }
     useEffect(() => {
-        handleVerify()
-    }, [token]);
+        handleVerify();
+    }, [token,onSuccess]);
 
     return (
         <>
@@ -97,9 +103,13 @@ const VerifyEmail: React.FC<any> = ({ token, onSuccess }: IVerifyEmail) => {
             <div className='verify-email'>
                 <div className={`verify-email__content${state.status === 'verification_success'?' verify-email__content--success':'' }`}>
                     <div className='verify-email__content--loader'>
-                        <UiLoader position='relative' text={loadingText()} dots={state?.status != undefined && ['verifying_email'].includes(state?.status)} />
+                        <UiLoader 
+                            position='relative'
+                            text={loadingText()}
+                            dots={state?.status != undefined && ['verifying_email'].includes(state?.status)}
+                        />
                     </div>
-                    {state.status == 'incomplete' && state?.fields &&
+                    {state.status && ["418",'incomplete'].includes(state.status) && state?.fields &&
                         <UiForm
                             title={String(state?.detail) || undefined}
                             onChange={onChange}
@@ -109,7 +119,8 @@ const VerifyEmail: React.FC<any> = ({ token, onSuccess }: IVerifyEmail) => {
                     }
 
                     {state.status === 'verification_success' && state.customer.email && <div className='verify-email__content__sign-in'>
-                        <UiButton href='/profile'>Go to Account</UiButton>
+                    <UiButton onClick={handleLoginModal}>Login</UiButton>
+
                     </div>}
                 </div>
             </div>

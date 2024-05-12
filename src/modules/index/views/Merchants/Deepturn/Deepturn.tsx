@@ -1,45 +1,68 @@
 // Relative Path: ./MbOne.tsx
 import React, { useEffect, useState } from 'react';
 import styles from './Deepturn.scss';
-import { TJSCube } from '@webstack/components/threeJs/TJSCube/controller/TJSCube';
-import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
+// import { TJSCube } from '@webstack/components/threeJs/TJSCube/controller/TJSCube';
+// import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
+import UiMap from '../../../../../webstack/components/Graphs/UiMap/controller/UiMap';
+import useLocation from '@webstack/hooks/user/useLocation';
+import { useLoader } from '@webstack/components/Loader/Loader';
 
 // Remember to create a sibling SCSS file with the same name as this component
 
 const Deepturn: React.FC = () => {
-    const svgOptions = {
-        bevelEnabled: true,
-        bevelThickness: 3, // Set the bevel thickness to 10px
-        bevelSegments: 20, // Adjust the number of bevel segments as needed
-        bevelSize: 1, // Adjust the bevel size as needed
-      };
-    const [isClient, setIsClient] = useState(false);
-    useEffect(() => {
-      setIsClient(true);
-    }, []);
+  const [loader,setLoader]=useLoader();
+  const showLoader:boolean = loader?.active;
+  const loc = useLocation();
+  
+
+  useEffect(() => {
+    // if(!loc && !showLoader){
+    //   setLoader({active:true,
+    //     body:"loading map"
+    //     // children: <h1>Hello World!</h1>
+    //   });
+    // }else if(showLoader)setLoader({active:false});
+  }, [showLoader, setLoader, loc]);
+
+  // if (!loc) return <></>;
   return (
-      <>
+    <>
       <style jsx>{styles}</style>
       <div className='mbone'>
-          {isClient && (
-            <div className="background-video" data-img="/assets/backgrounds/lava1.jpeg"/>
-            // <video loop muted className="background-video" autoPlay>
-            // <source src="/assets/backgrounds/contour_bg.webm" type="video/webm" />
-            // Your browser does not support the video tag.
-            // </video>
-          )}
-            <TJSCube
-              svgOptions={svgOptions}
-            //   svg={<UiIcon icon={`fmc-logo`} />}
-              svg={<UiIcon icon={`deepturn-logo`} />}
-              size={{ x: 120, y: 120, z: 0 }}
-              metalness={5}
-              animate={{ rotate: { y: -1, x:0.5, speed: .05 } }}
-              color="#dd4400"
-            />
-          </div>
-
-        </>
+        <div className="background-video">
+          {/* <img src="/assets/backgrounds/lava1.jpeg" /> */}
+          <UiMap
+            vessels={[
+              // {  name: "Vessel 1", location: [loc?.lng, loc?.lat], path: [] },
+              {  name: "Vessel 1", location:loc },
+              {  name: "Vessel 2", location:{lat:32, lng: 20.8} },
+            ]}
+          />
+          {/* <TJSCube
+            icon={{
+              bevel: {
+                bevelEnabled: true,
+                bevelThickness: 5,
+                bevelSegments: 15,
+                bevelSize: 2
+              },
+              // color:"#e0e0e0"/,
+              // backgroundColor:"#e0e0e0",
+              // metalness: 10,
+              // roughness: .51,
+              // opacity: opacity !== 0 && opacity * .1 || .1,
+              // opacity: .7,
+              icon: "deepturn-logo",
+              texture: "/assets/backgrounds/lava1.jpeg",
+              // bumpMap:"/assets/textures/texture-leaves.jpeg",
+              size: { x: 120, y: 120, z: 9 },
+              animate: { rotate: { y: -2, x: 1, speed: .001 } }
+            }}
+          // metalness={5}
+          /> */}
+        </div>
+      </div>
+    </>
   );
 };
 

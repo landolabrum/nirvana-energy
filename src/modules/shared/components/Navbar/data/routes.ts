@@ -53,15 +53,15 @@ export const routes: IRoute[] = [
   // { label: "dashboard", href: "/dashboard", icon: "fal-guage", active: true, clearance: 1 },
   // { label: "configure", href: "/configure", icon: "fa-gear", active: true },
   { label: "products", href: "/product", icon: "fa-tags", active: true },
-  // {
-  //   label: "Social",
-  //   icon: "fa-biohazard",
-  //   href: '/social',
-  //   clearance: 10,
-  //   items: [
-  //     { label: "instagram", href: "/social?platform=instagram", icon: "fa-instagram", active: true },
-  //   ],
-  // },
+  {
+    label: "Social",
+    icon: "fa-biohazard",
+    href: '/social',
+    clearance: 10,
+    items: [
+      { label: "instagram", href: "/social?platform=instagram", icon: "fa-instagram", active: true },
+    ],
+  },
   {
     label: "Home",
     icon: "fa-home",
@@ -69,7 +69,7 @@ export const routes: IRoute[] = [
     clearance: 6,
     items: [
       { label: "surveillance",  href: "home?vid=surveillance", icon: "fa-camera-security", active: true },
-      { label: "lights", href: "home?vid=lights", icon: "fa-lightbulb-on", active: true},
+      { label: "lights", href: "home?vid=light", icon: "fa-lightbulb-on", active: true},
     ],
   },
   {
@@ -96,18 +96,19 @@ export const routes: IRoute[] = [
     icon: 'fa-circle-user',
     clearance: 0,
   },
+  // { label: "about", href: "/about", icon: "fal-circle-info" , active: true },
   { label: "", href: "/cart", icon: "fal-bag-shopping" },
   { label: "", href: "/checkout", hide: true},
 ];
 export const useClearanceRoutes = () => {
-  const user = useUser();
-  const level = user?.metadata.clearance || 0;
+  const authedUser = useUser();
+  const level = authedUser?.metadata?.user?.clearance || 0;
 
   const access = useMemo(() => {
     const filterRoutes = (routeItems: IRoute[]) => {
       return routeItems.filter((route) => {
         // Hide 'login' route if user exists
-        if (route.label === 'login' && route.clearance === 0 && user) {
+        if (route.label === 'login' && route.clearance === 0 && authedUser) {
           return false;
         }
         const accessible = route.clearance === undefined || (route.clearance <= level);
@@ -132,7 +133,7 @@ export const useClearanceRoutes = () => {
     });
 
     return sortedAndFilteredRoutes.reverse();
-  }, [user, level]); // Update dependency array to include 'user'
+  }, [authedUser, level]); // Update dependency array to include 'user'
 
   return access;
 };

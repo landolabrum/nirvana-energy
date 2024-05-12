@@ -9,6 +9,7 @@ import keyStringConverter from "@webstack/helpers/keyStringConverter";
 import useReferrer from "@webstack/hooks/useReferrer";
 import { findField } from "@webstack/components/UiForm/functions/formFieldFunctions";
 import { useNotification } from "@webstack/components/Notification/Notification";
+import environment from "~/src/environment";
 
 
 export interface ISignUp {
@@ -89,58 +90,56 @@ const SignUp = ({ hasPassword = true, btnText, onSuccess, title }: ISignUp): Rea
   }
 
 
-  const URL = useReferrer();
+  // const URL = useReferrer();
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     changeField(name, 'value', value);
   };
-  type InotificationContext = {data: string, email: string, status: "existing"}
-const handleNotifictaion = (notificationContext: InotificationContext) =>{
-  if(notificationContext.status === 'existing'){
-    setNotification({
-      active: true,
-      persistance: 3000,
-      list:[{name:"email exists, sign in to continue"}]});
-  }
-  // const active = notification?.active;
-  console.log('[ NOTIFICIATION ]', {notification, notificationContent: notificationContext})
-}
+
   const handleSubmit = async () => {
     setLoading(true);
     const errors = handleErrors();
     if (!errors) {
-      let request = fields.reduce((acc: any, obj: any) => {
-        acc[obj.name] = obj.value;
-        return acc;
-      }, {});
-      request.name = `${request.first_name} ${request.last_name}`;
-      request.user_agent = user_agent;
-      request.origin = URL;
-
+      const request = {
+        name: `${findField(fields, 'first_name')?.value} ${findField(fields, 'first_name')?.value}`,
+        email: findField(fields, 'email')?.value,
+        phone: findField(fields, 'phone')?.value,
+        address: findField(fields, 'address')?.value,
+        metadata: {
+            user:{
+              user_agent:user_agent,
+              password: findField(fields, "password")?.value
+            },
+            merchant:environment.merchant
+        }
+      }
+      let context;
       try {
         const response = await MemberService.signUp(request);
-        
         if (response?.email !== undefined ) {
+          context = response;
           onSuccess && onSuccess(response);
         }
         else if (response?.status === 'existing' && onSuccess) {
-          const existingContext = {...response, email: findField(fields,'email')?.value};
-          onSuccess(existingContext);
-          handleNotifictaion(existingContext);
+          context = {...response, email: findField(fields,'email')?.value};
+          onSuccess(context);
         }else {
           console.error('[ SIGN UP RESPONSE UNHANDLED ]', response);
           // Display a general user-friendly error message
         }
       } catch (e: any) {
         if (e?.detail?.fields) {
+          console.log("[ e.detail.fields ]",e.detail.fields)
           e.detail.fields.forEach((field: any) => {
             changeField(field.name, 'error', field.message);
           });
         } else {
           console.error('[ SIGN UP RESPONSE ERRORS ]', e);
-          // Display a general user-friendly error message
         }
       }
+      // finally{
+        // console.log('[ handleSubmit (signUp) ]',context)
+      // }
     } else {
       console.error('[ SIGN UP ERRORS LOCAL ]', errors);
     }
