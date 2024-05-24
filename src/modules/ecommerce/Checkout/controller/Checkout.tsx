@@ -19,11 +19,10 @@ import { IView } from '@webstack/layouts/UiViewLayout/controller/UiViewLayout';
 const Checkout = ():React.JSX.Element => {
     const user = useUser();
     const [view, setView] = useState<any>();
-    const [cart, setCart] = useState<any>();
+    const [_cart, setCart] = useState<any>();
     const [selectedUser, setUser] = useState<UserContext | {email:string} | undefined>();
-    const { getCartItems, } = useCart();
+    const {cart } = useCart();
     const guest = useGuest();
-    console.log('[ GUEsT ] ', guest)
     const handleSignUp = (res: any) => {
         const selectedUser = res?.id && res || guest;
         console.log('[handleSignUp ]',res)
@@ -65,7 +64,7 @@ const Checkout = ():React.JSX.Element => {
         'collect': (
             <Collect
                 user={selectedUser}
-                cart_items={cart}
+                cart_items={_cart}
             />
         )
     }
@@ -80,8 +79,8 @@ const Checkout = ():React.JSX.Element => {
         }
     }
     const handleCart = () =>{
-        if(cart)return;
-        setCart(getCartItems());
+        if(_cart)return;
+        setCart(cart);
     }
     useEffect(() => {
         handleUser();

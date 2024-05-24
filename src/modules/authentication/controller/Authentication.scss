@@ -21,7 +21,7 @@ a {
 
   &--success {
     @extend .d-flex-col;
-    gap: var(--s-padding);
+    gap: var(--s-4);
     width: inherit;
     text-align: center;
     color: var(--dark);
@@ -33,22 +33,23 @@ a {
 }
 
 .authentication {
-  min-width: 350px;
+
+  min-height: 350px;
   z-index: 1;
-  height: max-content;
-  overflow: hidden;
   @extend .d-flex-col;
-  gap: var(--s-padding);
+  gap: var(--s-4);
   @media(max-width: 900px) {
     min-width: unset;
+    padding: var(--s-4) 0 0;
   }
-  // &:not(.authentication__sign-in) {
-  //   @media(max-width: 1100px) {
-  //   }
-  // }
   &__welcome-modal{
     width: 100%;
     @extend .d-flex-col;
+    align-items: flex-start;
+    h1{
+      line-height: 1;
+      margin-bottom: var(--s-1);
+    }
     gap:var(--s-9);
   }
   &__email-verify {
@@ -62,18 +63,24 @@ a {
     text-transform: capitalize;
     @extend .d-flex;
     justify-content: flex-start;
-    gap: var(--s-7);
-    font-size: var(--s-1);
+    gap: var(--s-10);
+    font-weight: 100;
+    font-family: Game;
+    text-transform: uppercase;
+    line-height: var(--s-1);
+    font-size: var(--s-3);
     --ui-icon-size: var(--s-1);
-
+    
     @media(max-width: 1100px) {
       width: 100%;
       justify-content: center;
     }
-
     
-    --ui-icon-color: var(--primary-lite);
-    color: var(--primary-lite);
+    
+    --ui-icon-color: var(--gray-70);
+    color:var(--gray-70);
+    
+
     // .authentication__view-name {
     // }
 
@@ -84,7 +91,7 @@ a {
     @extend .d-flex-col;
     white-space: nowrap;
     text-align: center;
-    gap: var(--s-padding);
+    gap: var(--s-4);
     color: var(--gray-60);
     position: relative;
     z-index: 1;
@@ -102,7 +109,7 @@ a {
     .authentication__view-label {
       padding: 0 var(--s-8);
       z-index: 2;
-      margin: var(--s-padding) 0 0;
+      margin: var(--s-4) 0 0;
       background-color: inherit;
       width: 100%;
 

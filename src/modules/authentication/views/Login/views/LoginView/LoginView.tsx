@@ -10,7 +10,7 @@ import styles from "./LoginView.scss";
 import { useNotification } from "@webstack/components/Notification/Notification";
 import { useModal } from "@webstack/components/modal/contexts/modalContext";
 import { ILogin } from "../../controller/Login";
-import environment from "~/src/environment";
+import environment from "~/src/core/environment";
 import { IFormField } from "@webstack/components/UiForm/models/IFormModel";
 
 const DEFAULT_RESPONSE = { response: "", message: "" };
@@ -32,7 +32,6 @@ const LoginView: React.FC<ILogin> = ({ email, onSuccess }: ILogin) => {
     code: defaultCodeValue,
   }
   const [notification, setNotification] = useNotification();
-  const { closeModal, isModalOpen } = useModal();
 
   const [signInResponse, setSignInResponse] = useState<any>(DEFAULT_RESPONSE);
   const userResponse = useUser();
@@ -63,9 +62,11 @@ const LoginView: React.FC<ILogin> = ({ email, onSuccess }: ILogin) => {
             }
           }
         });
-        if (onSuccess) onSuccess(resp);
-        if (resp?.email && isModalOpen) {
-          closeModal();
+         const  closeMod = async () =>{
+          return;
+        }
+        if (onSuccess) {
+          closeMod().then(()=>onSuccess(resp))
         }
         else setSignInResponse('error');
       } catch (e: any) {
@@ -87,7 +88,7 @@ const LoginView: React.FC<ILogin> = ({ email, onSuccess }: ILogin) => {
   }
   const tryError: any = (field: IFormField) => {
     const context = Array(signInResponse?.fields)?.length && Array(signInResponse?.fields).find((f: any) => Boolean(f?.name) && f.name == field);
-console.log('[ CONTEX ]', context)
+// console.log('[ CONTEX ]', context)
     return context;
   }
 

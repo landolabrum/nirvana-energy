@@ -1,89 +1,95 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useModal } from '@webstack/components/modal/contexts/modalContext';
+import { useCallback, useState, useRef, useEffect } from "react";
+import { useModal } from "@webstack/components/modal/contexts/modalContext";
 
-export interface ICoordinates {
-    lat: number;
-    lng: number;
-}
+const useLocation = () => {
+  const { openModal, closeModal, isModalOpen } = useModal();
+  const [lngLat, setLocation] = useState<[number, number] | undefined>();
+  const [permissionDenied, setPermissionDenied] = useState<boolean>(false);
+  const permissionStatusRef = useRef<PermissionStatus | null>(null);
 
-const useLocation = (): ICoordinates | undefined => {
-    const { openModal, closeModal } = useModal();
-    const [location, setLocation] = useState<ICoordinates | undefined>();
-    const [permissionDenied, setPermissionDenied] = useState<boolean>(false);
-    const permissionStatusRef = useRef<PermissionStatus | null>(null);
+  const success = useCallback((position: GeolocationPosition) => {
+    setLocation([
+      Number(position.coords.longitude.toFixed(2)),
+      Number(position.coords.latitude.toFixed(2)),
+    ]);
+  }, []);
 
-    const success = (position: GeolocationPosition) => {
-        setLocation({
-            lat: Number(position.coords.latitude.toFixed(2)),
-            lng: Number(position.coords.longitude.toFixed(2)),
-        });
-    };
+  const error = useCallback(() => {
+    console.error("Unable to retrieve your location");
+    setPermissionDenied(true);
+  }, []);
 
-    const error = () => {
-        console.error("Unable to retrieve your location");
-        setPermissionDenied(true);
-    };
+  const handlePermissionChange = useCallback(() => {
+    const permissionStatus = permissionStatusRef.current;
+    if (permissionStatus && permissionStatus.state === 'granted') {
+      closeModal();
+      navigator.geolocation.getCurrentPosition(success, error);
+    } else {
+      setPermissionDenied(true);
+    }
+  }, [closeModal, error, success]);
 
-    const handlePermissionChange = () => {
-        const permissionStatus = permissionStatusRef.current;
-        if (permissionStatus && permissionStatus.state === 'granted') {
-            closeModal();
-            navigator.geolocation.getCurrentPosition(success, error); // Retrieve location after permission is granted
-        } else {
-            setPermissionDenied(true);
-        }
-    };
+  const requestLocation = useCallback(() => {
+    if (navigator.permissions) {
+      navigator.permissions.query({ name: 'geolocation' }).then((permissionStatus: PermissionStatus) => {
+        permissionStatusRef.current = permissionStatus;
+        permissionStatus.addEventListener('change', handlePermissionChange);
 
-    const initializeLocation = () => {
-        if (navigator.permissions) {
-            navigator.permissions.query({ name: 'geolocation' }).then((permissionStatus: PermissionStatus) => {
-                permissionStatusRef.current = permissionStatus;
-
-                permissionStatus.addEventListener('change', handlePermissionChange);
-
-                if (permissionStatus.state === 'granted') {
+        if (permissionStatus.state === 'granted') {
+          navigator.geolocation.getCurrentPosition(success, error);
+        } else if (permissionStatus.state === 'prompt' && !isModalOpen) {
+          !isModalOpen && openModal({
+            // dismissable: false,
+            title: "Know Your Location",
+            confirm: {
+              title: "Enable Location",
+              body: "To use this feature, please enable location access.",
+              statements: [
+                {
+                  label: 'Allow',
+                  onClick: () => {
+                    permissionStatusRef.current?.addEventListener('change', handlePermissionChange);
                     navigator.geolocation.getCurrentPosition(success, error);
-                } else if (permissionStatus.state === 'prompt') {
-                    openModal({
-                        title: "Know Your Location",
-                        children: "To use this feature, please enable location access.",
-                        confirm: {
-                            title: "Enable Location",
-                            statements: [
-                                {
-                                    label: 'Allow',
-                                    onClick: () => {
-                                        permissionStatusRef.current?.addEventListener('change', handlePermissionChange);
-                                        // Now try to retrieve location again
-                                        navigator.geolocation.getCurrentPosition(success, error);
-                                    }
-                                },
-                                {
-                                    label: "Deny",
-                                    onClick: () => {
-                                        closeModal();
-                                        setPermissionDenied(true);
-                                    }
-                                }
-                            ]
-                        }
-                    });
-                } else {
+                  }
+                },
+                {
+                  label: "Deny",
+                  onClick: () => {
+                    closeModal();
                     setPermissionDenied(true);
+                  }
                 }
-            });
+              ]
+            }
+          });
         } else {
-            console.error("Permission API not supported");
-            setPermissionDenied(true);
+          setPermissionDenied(true);
         }
+      }).catch(error => {
+        console.error("Error querying permissions", error);
+        setPermissionDenied(true);
+      });
+    } else {
+      console.error("Permission API not supported");
+      setPermissionDenied(true);
+    }
+    // openModal, closeModal, success, error, handlePermissionChange, isModalOpen
+  }, [handlePermissionChange, error, success, isModalOpen]);
+
+  useEffect(() => {
+    return () => {
+      const permissionStatus = permissionStatusRef.current;
+      if (permissionStatus) {
+        permissionStatus.removeEventListener('change', handlePermissionChange);
+      }
     };
+  }, [handlePermissionChange]);
 
-    useEffect(() => {
-        // if(location) alert(JSON.stringify(location))
-        initializeLocation();
-    }, []);
-
-    return location;
+  return {
+    lngLat,
+    requestLocation, // This function can be triggered by a user action
+    permissionDenied,
+  };
 };
 
 export default useLocation;

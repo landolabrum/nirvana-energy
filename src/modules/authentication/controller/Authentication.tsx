@@ -7,9 +7,10 @@ import keyStringConverter from "@webstack/helpers/keyStringConverter";
 import { useRouter } from "next/router";
 import UiButton from "@webstack/components/UiButton/UiButton";
 import Link from "next/link";
-import environment from "~/src/environment";
+import environment from "~/src/core/environment";
 import { useModal } from "@webstack/components/modal/contexts/modalContext";
 import { useNotification } from "@webstack/components/Notification/Notification";
+import { useClearance } from "~/src/core/authentication/hooks/useUser";
 
 
 
@@ -20,6 +21,7 @@ const Authentication: React.FC<any> = (props: any) => {
   const router = useRouter();
   const query = router.query;
   const { openModal, closeModal } = useModal();
+  const [notif, setNotification] = useNotification();
 
   const handleView = () => {
     switch (view) {
@@ -42,7 +44,7 @@ const Authentication: React.FC<any> = (props: any) => {
   const handleSignup = (response: any) => {
     const status = response?.status;
     if (!status) {
-      alert("lando, handle this! 212");
+      alert("dev, handle this! 212");
       return;
     }
 
@@ -54,46 +56,51 @@ const Authentication: React.FC<any> = (props: any) => {
       case 'existing':
         label = `email: ${response?.email}, exists.`
         break;
-
-      default:
-        break;
+      default: break;
     }
-    setNotification({ active: true, list: [{ 'label': label, message:"Sign in to continue." }] });
-
+    setNotification({ active: true, list: [{ 'label': label, message: "Sign in to continue." }] });
     setView('sign-in');
     setNewCustomerEmail(response.email)
   }
   const handleSignIn = (user: any) => {
     if (user?.id) {
-      const WelcomeModalContent = ({ user, onProfileClick, onClose }: any) => (
-        <>      <style jsx>{styles}</style>
-          <div className='authentication__welcome-modal'>
-            <h1>Welcome, {user.name}</h1>
-            <UiButton onClick={onProfileClick}>Go to account</UiButton>
-            <UiButton onClick={onClose}>Close</UiButton>
-          </div>
-        </>
-      );
+      const WelcomeModalContent = ({ user, onClose }: any) => {
+        const adminClearance = useClearance() > 9;
+        const onProfileClick = (isAdmin: boolean) => {
+          if (isAdmin && adminClearance) router.push('/admin');
+          else router.push('/profile');
+          closeModal();
+        }
+        return (
+
+          <>
+            <style jsx>{styles}</style>
+            <div className='authentication__welcome-modal'>
+              <h3>Welcome, {user.name}</h3>
+              {adminClearance && <UiButton onClick={onProfileClick}>admin</UiButton>}
+              <UiButton onClick={onProfileClick}>account</UiButton>
+              <UiButton onClick={onClose}>Close</UiButton>
+            </div>
+          </>
+        )
+      };
 
       // Usage within a component
       openModal({
         title: 'User Details',
-        children: <WelcomeModalContent user={user} onProfileClick={() => router.push('/profile')} onClose={closeModal} />
+        children: <WelcomeModalContent user={user} onClose={closeModal} />
       });
     }
-    console.log('[handleSignIn]:', user);
   };
 
-  const [notif, setNotification] = useNotification();
   useEffect(() => {
 
-    if (query && query.verify) {
+    if (query && query.verify && view !== 'verify') {
       setView('verify');
-      console.log('[router]', router)
     }
 
     if (newCustomerEmail != undefined) setView("sign-in");
-  }, [handleSignup, handleSignIn, setView])
+  }, [handleSignup, handleSignIn,])
 
   return (
     <>
