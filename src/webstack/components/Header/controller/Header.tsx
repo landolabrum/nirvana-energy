@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useContext, createContext, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 import Navbar from "@shared/components/Navbar/controller/Navbar";
-import BreadCrumbs, { BreadCrumbLinkProps } from "../components/BreadCrumbs/BreadCrumbs";
 import styles from "./Header.scss";
 import useWindow from "@webstack/hooks/useWindow";
 import environment from "~/src/core/environment";
 import { UiIcon } from "@webstack/components/UiIcon/UiIcon";
-import { debounce } from "lodash";
+import { debounce, head } from "lodash";
 import keyStringConverter from "@webstack/helpers/keyStringConverter";
 import useRoute from "~/src/core/authentication/hooks/useRoute";
+import UiHeader from "../views/UiHeader/UiHeader";
 
 
 export type HeaderProps = {
-  breadcrumbs?: BreadCrumbLinkProps[];
   title?: string;
   right?: React.ReactElement | React.ReactFragment | string;
   subheader?: React.ReactElement | React.ReactFragment | string;
@@ -26,10 +25,10 @@ const HeaderContext = createContext<[HeaderProps | null, (header: HeaderProps) =
 export const useHeader = () => useContext(HeaderContext);
 const merchantName = environment.merchant.name;
 export const HeaderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { pathname:pathname}=useRouter();
+  const { pathname: pathname } = useRouter();
   const [headerState, setHeaderState] = useState<HeaderProps | null>(null);
-  const pathBase= pathname.replaceAll("/",'');
-  const pathClass = pathBase?.length && pathBase.replaceAll("/",'')|| 'index';
+  const pathBase = pathname.replaceAll("/", '');
+  const pathClass = pathBase?.length && pathBase.replaceAll("/", '') || 'index';
   return (
     <>
       <style jsx>{styles}</style>
@@ -60,67 +59,41 @@ const Header: React.FC = () => {
     [setShow]
   );
 
-  const handleTitleClick = () => {
-    // console.log("[ handleTitleClick ]",{ selectedUser, pathname, explicitRouter, routeTitle});
-
-    // Extract the first part of the pathname
-    // const newTitle = router.pathname.split('/')[1].split('?')[0];
-
-    // console.log('[ handleTitleClick ]', { firstWord: newTitle });
-
-    // if (newTitle === 'products' || newTitle === 'account' || newTitle === 'cart') {
-    //   console.log('First word in path:', newTitle);
-    // } else {
-    //   console.log('First word does not match predefined routes');
-    // }
-
-    // const isBrandIndex = headerState?.title === environment?.merchant?.name;
-
-    // const isCurrent = 
-    // (router?.pathname === headerState?.title ) || (headerState?.title && newTitle === headerState?.title.toLowerCase());
-
-
-    // // CONDITIONS
-    // if(isCurrent || isBrandIndex && router.pathname === '/')alert();
-    // else if(headerState?.title)(router?.push(`/${headerState.title}`))
-    // console.log(
-    //   { newTitle, isBrandIndex, isCurrent }
-    // );
-
-    // if (isBrandIndex || isCurrent) console.log('dont allow');
-  };
   const titleRef = useRef<any>();
 
   const handleHeaderState = () => {
-    const currentRoute = context !== null ? context : { title: keyStringConverter(`${merchantName}`, false) }
+    const currentRoute = context !== null ? context : { title: keyStringConverter(`${merchantName}`, { dashed: false }) }
 
     setHeaderState(routeTitle && { title: routeTitle } || currentRoute);
     setRoute(router.asPath);
   }
   const handleTitleSize = () => {
     if (!titleRef?.current || !merchantName || width > 1100) return;
-  
+
     const headerTitleWidth = titleRef.current.offsetWidth;
     const titleLength = headerState?.title && headerState?.title.length + 2 || false;
-    if(!titleLength)return;
-    
-    
+    if (!titleLength) return;
+
+
     const nfz = headerTitleWidth / titleLength;
-    const ratio = 1/5;
-    const fontNum = Number((nfz * Number(1 - ratio)).toFixed(2));
+    const ratio = 1 / 5;
+    let fontNum = Number((nfz * Number(1 - ratio)).toFixed(2));
+    if (fontNum > 50) fontNum = 50;
     const fontSize = `${fontNum}px`;
-    const gap = `${(nfz * ratio).toFixed(2)}px`;
+    const spacingDim = Number((nfz * ratio).toFixed(2))
+    const spacing = `${spacingDim}px`;
     const headTitleEl = titleRef?.current;
     headTitleEl.style.fontSize = fontSize;
-    headTitleEl.style.letterSpacing = gap;
-    const brandLogo:HTMLElement = headTitleEl.children[0];
-    if(brandLogo)brandLogo.style.minWidth = fontSize;
+    headTitleEl.style.letterSpacing = spacing;
+    headTitleEl.style.gap = `${spacingDim * .88}px`;
+    const brandLogo: HTMLElement = headTitleEl.children[0];
+    if (brandLogo) brandLogo.style.minWidth = fontSize;
   };
-  
+
   useEffect(() => {
     handleTitleSize();
   }, [width]);
-  
+
   useEffect(() => {
     handleHeaderState();
     if (router.asPath !== route) {
@@ -138,18 +111,11 @@ const Header: React.FC = () => {
           className={`header ${merchantName}`}
         >
           <div className={`header-content ${show ? ' header-content__show' : ""}`}>
-            <div  className="header-left">
-              {/* <BreadCrumbs links={headerState?.breadcrumbs} /> */}
-              <div
-                ref={titleRef}
-                className="header-title"
-                onClick={handleTitleClick}
-              >
-                {width < 1100  && <div className="brand-logo">
-                  <UiIcon icon={`${merchantName}-logo`} />
-                </div>}
-              <div>  {headerState?.title}</div>
-              </div>
+            <div className="header-left">
+              <UiHeader 
+                title={headerState?.title}
+                subTitle={headerState?.title}
+              />
             </div>
             {headerState?.right && (
               <div className="header-right">{headerState?.right}</div>

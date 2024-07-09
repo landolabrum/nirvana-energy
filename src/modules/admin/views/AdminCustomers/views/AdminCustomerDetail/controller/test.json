@@ -1,336 +1,197 @@
-{
-    "customer": [
-        {
-            "name": "address",
-            "label": "address",
-            "value": null,
-            "type": "address"
+{"response1":{
+    "id": "cus_QQBCYTKRUrkqDq",
+    "object": "customer",
+    "address": {
+        "city": "Salt Lake City",
+        "country": "US",
+        "line1": "4324 Commercial Way",
+        "line2": "",
+        "postal_code": "84104",
+        "state": "UT"
+    },
+    "balance": 0,
+    "created": 1720219378,
+    "currency": null,
+    "default_source": null,
+    "delinquent": false,
+    "description": null,
+    "discount": null,
+    "email": "larzrandana@gmail.com",
+    "invoice_prefix": "146B5370",
+    "invoice_settings": {
+        "custom_fields": null,
+        "default_payment_method": null,
+        "footer": null,
+        "rendering_options": null
+    },
+    "livemode": true,
+    "metadata": {
+        "merchant": {
+            "url": "http://localhost:3000",
+            "name": "nirvana-energy",
+            "mid": "nirv1",
+            "stripeId": "acct_1OWy0fE8XAGZDdpK"
         },
-        {
-            "name": "description",
-            "label": "description",
-            "value": null,
-            "type": "text"
-        },
-        {
-            "name": "discount",
-            "label": "discount",
-            "value": null,
-            "type": "text"
-        },
-        {
-            "name": "email",
-            "label": "email",
-            "value": "test@deepturn.com",
-            "type": "email"
-        },
-        {
-            "name": "invoice_settings",
-            "label": "invoice settings",
-            "value": {
-                "custom_fields": null,
-                "default_payment_method": null,
-                "footer": null,
-                "rendering_options": null
-            },
-            "type": "text"
-        },
-        {
-            "name": "invoice_settings.rendering_options",
-            "label": "invoice settings rendering options",
-            "value": null,
-            "type": "text"
-        },
-        {
-            "name": "livemode",
-            "label": "livemode",
-            "value": true,
-            "type": "checkbox"
-        },
-        {
-            "name": "metadata",
-            "label": "metadata",
-            "value": {
-                "merchant": {
-                    "url": "http://localhost:3000",
-                    "name": "nirvana-energy",
-                    "mid": "nirv1"
-                },
-                "user": {
-                    "clearance": 1,
-                    "password_token": null,
-                    "email_verified": false,
-                    "password": "burrito",
-                    "type": "customer",
-                    "user_agent": {
-                        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-                        "userAgentData": {
-                            "brands": [
-                                {
-                                    "brand": "Not A(Brand",
-                                    "version": "99"
-                                },
-                                {
-                                    "brand": "Google Chrome",
-                                    "version": "121"
-                                },
-                                {
-                                    "brand": "Chromium",
-                                    "version": "121"
-                                }
-                            ],
-                            "mobile": false,
-                            "platform": "macOS"
-                        }
-                    },
-                    "merchant": {
-                        "url": "http://localhost:3000",
-                        "name": "nirvana-energy",
-                        "mid": "nirv1"
-                    },
-                    "server_url": "localhost:8000"
-                }
-            },
-            "type": "text"
-        },
-        {
-            "name": "metadata.merchant",
-            "label": "metadata merchant",
-            "value": {
-                "url": "http://localhost:3000",
-                "name": "nirvana-energy",
-                "mid": "nirv1"
-            },
-            "type": "text"
-        },
-        {
-            "name": "metadata.user",
-            "label": "metadata user",
-            "value": {
-                "clearance": 1,
-                "password_token": null,
-                "email_verified": false,
-                "password": "burrito",
-                "type": "customer",
-                "user_agent": {
-                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-                    "userAgentData": {
+        "user": {
+            "address": null,
+            "clearance": 1,
+            "password_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxhcnpyYW5kYW5hQGdtYWlsLmNvbSJ9.uYzikd0dcDH2456yBfB_K5T-1bE97ABnnz1dSr_Vlbg",
+            "password": null,
+            "email": "larzrandana@gmail.com",
+            "email_verified": false,
+            "type": "customer",
+            "devices": [
+                {
+                    "wan": "104.28.192.150",
+                    "lan": "b1976c03-2bef-4699-96e1-b848dd6f79b2.local",
+                    "navigator": {
+                        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+                        "platform": "MacIntel",
+                        "language": "en-US",
+                        "languages": [
+                            "en-US"
+                        ],
+                        "cookieEnabled": true,
                         "brands": [
                             {
-                                "brand": "Not A(Brand",
-                                "version": "99"
-                            },
-                            {
-                                "brand": "Google Chrome",
-                                "version": "121"
+                                "brand": "Not/A)Brand",
+                                "version": "8"
                             },
                             {
                                 "brand": "Chromium",
-                                "version": "121"
+                                "version": "126"
+                            },
+                            {
+                                "brand": "Google Chrome",
+                                "version": "126"
                             }
                         ],
-                        "mobile": false,
-                        "platform": "macOS"
-                    }
-                },
-                "merchant": {
-                    "url": "http://localhost:3000",
-                    "name": "nirvana-energy",
-                    "mid": "nirv1"
-                },
-                "server_url": "localhost:8000"
-            },
-            "type": "text"
-        },
-        {
-            "name": "metadata.user.clearance",
-            "label": "metadata user clearance",
-            "value": 1,
-            "type": "number"
-        },
-        {
-            "name": "metadata.user.password_token",
-            "label": "metadata user password token",
-            "value": null,
-            "type": "text"
-        },
-        {
-            "name": "metadata.user.email_verified",
-            "label": "metadata user email verified",
-            "value": false,
-            "type": "checkbox"
-        },
-        {
-            "name": "metadata.user.password",
-            "label": "metadata user password",
-            "value": "burrito",
-            "type": "password"
-        },
-        {
-            "name": "metadata.user.type",
-            "label": "metadata user type",
-            "value": "customer",
-            "type": "text"
-        },
-        {
-            "name": "metadata.user.user_agent",
-            "label": "metadata user user agent",
-            "value": {
-                "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-                "userAgentData": {
-                    "brands": [
-                        {
-                            "brand": "Not A(Brand",
-                            "version": "99"
+                        "mobile": false
+                    },
+                    "connection": {
+                        "effectiveType": "4g",
+                        "downlink": 7.3,
+                        "rtt": 50,
+                        "saveData": false,
+                        "type": "4g"
+                    },
+                    "device": {
+                        "memory": 8,
+                        "hardwareConcurrency": 10,
+                        "screen": {
+                            "width": 3360,
+                            "height": 1890,
+                            "colorDepth": 30
                         },
-                        {
-                            "brand": "Google Chrome",
-                            "version": "121"
-                        },
-                        {
-                            "brand": "Chromium",
-                            "version": "121"
+                        "window": {
+                            "innerWidth": 1678,
+                            "innerHeight": 1744
                         }
-                    ],
-                    "mobile": false,
-                    "platform": "macOS"
+                    },
+                    "permissions": {
+                        "geolocation": "prompt",
+                        "notifications": "prompt",
+                        "camera": "prompt",
+                        "microphone": "prompt",
+                        "persistent_storage": null
+                    },
+                    "device_settings": null,
+                    "authorization_data": null,
+                    "cookies": null,
+                    "created": 1720219378460
+                },
+                {
+                    "wan": "10.2.0.1",
+                    "lan": null,
+                    "navigator": {
+                        "userAgent": null,
+                        "platform": "unknown",
+                        "language": null,
+                        "languages": null,
+                        "cookieEnabled": null,
+                        "brands": [
+                            {
+                                "brand": "unknown",
+                                "version": "unknown"
+                            }
+                        ],
+                        "mobile": false
+                    },
+                    "connection": null,
+                    "device": null,
+                    "permissions": null,
+                    "device_settings": null,
+                    "authorization_data": null,
+                    "cookies": null,
+                    "created": 1720219379043
                 }
-            },
-            "type": "text"
-        },
-        {
-            "name": "metadata.user.user_agent.user_agent_data",
-            "label": "metadata user user agent user agent data",
-            "value": {
-                "brands": [
-                    {
-                        "brand": "Not A(Brand",
-                        "version": "99"
-                    },
-                    {
-                        "brand": "Google Chrome",
-                        "version": "121"
-                    },
-                    {
-                        "brand": "Chromium",
-                        "version": "121"
-                    }
-                ],
-                "mobile": false,
-                "platform": "macOS"
-            },
-            "type": "text"
-        },
-        {
-            "name": "metadata.user.merchant",
-            "label": "metadata user merchant",
-            "value": {
-                "url": "http://localhost:3000",
-                "name": "nirvana-energy",
-                "mid": "nirv1"
-            },
-            "type": "text"
-        },
-        {
-            "name": "metadata.user.merchant.url",
-            "label": "metadata user merchant url",
-            "value": "http://localhost:3000",
-            "type": "text"
-        },
-        {
-            "name": "metadata.user.merchant.name",
-            "label": "metadata user merchant name",
-            "value": "nirvana-energy",
-            "type": "text"
-        },
-        {
-            "name": "metadata.user.merchant.mid",
-            "label": "metadata user merchant mid",
-            "value": "nirv1",
-            "type": "text"
-        },
-        {
-            "name": "metadata.user.server_url",
-            "label": "metadata user server url",
-            "value": "localhost:8000",
-            "type": "text"
-        },
-        {
-            "name": "name",
-            "label": "name",
-            "value": "test user",
-            "type": "text"
-        },
-        {
-            "name": "next_invoice_sequence",
-            "label": "next invoice sequence",
-            "value": 1,
-            "type": "number"
-        },
-        {
-            "name": "phone",
-            "label": "phone",
-            "value": null,
-            "type": "text"
-        },
-        {
-            "name": "preferred_locales",
-            "label": "preferred locales",
-            "value": [],
-            "type": "text"
-        },
-        {
-            "name": "shipping",
-            "label": "shipping",
-            "value": null,
-            "type": "text"
-        },
-        {
-            "name": "tax_exempt",
-            "label": "tax exempt",
-            "value": "none",
-            "type": "text"
-        },
-        {
-            "name": "test_clock",
-            "label": "test clock",
-            "value": null,
-            "type": "text"
-        },
-        {
-            "name": "methods",
-            "label": "methods",
-            "value": {
-                "object": "list",
-                "data": [],
-                "has_more": false,
-                "url": "/v1/payment_methods"
-            },
-            "type": "text"
-        },
-        {
-            "name": "methods.object",
-            "label": "methods object",
-            "value": "list",
-            "type": "text"
-        },
-        {
-            "name": "methods.data",
-            "label": "methods data",
-            "value": [],
-            "type": "text"
-        },
-        {
-            "name": "methods.has_more",
-            "label": "methods has more",
-            "value": false,
-            "type": "checkbox"
-        },
-        {
-            "name": "methods.url",
-            "label": "methods url",
-            "value": "/v1/payment_methods",
-            "type": "text"
+            ],
+            "social": [],
+            "server_url": "tiktok.soy"
         }
-    ]
+    },
+    "name": "larz survey",
+    "next_invoice_sequence": 1,
+    "phone": null,
+    "preferred_locales": [],
+    "shipping": null,
+    "tax_exempt": "none",
+    "test_clock": null,
+    "methods": {
+        "object": "list",
+        "data": [],
+        "has_more": false,
+        "url": "/v1/payment_methods"
+    }
+},
+"response2":{
+    "id": "cus_QQBCYTKRUrkqDq",
+    "object": "customer",
+    "address": {
+        "city": "Salt Lake City",
+        "country": "US",
+        "line1": "4324 Commercial Way",
+        "line2": "",
+        "postal_code": "84104",
+        "state": "UT"
+    },
+    "balance": 0,
+    "created": 1720219378,
+    "currency": null,
+    "default_source": null,
+    "delinquent": false,
+    "description": null,
+    "discount": null,
+    "email": "larzrandana@gmail.com",
+    "invoice_prefix": "146B5370",
+    "invoice_settings": {
+        "custom_fields": null,
+        "default_payment_method": null,
+        "footer": null,
+        "rendering_options": null
+    },
+    "livemode": true,
+    "metadata": {
+        "merchant": {
+            "url": "http://localhost:3000",
+            "name": "nirvana-energy",
+            "mid": "nirv1",
+            "stripeId": "acct_1OWy0fE8XAGZDdpK"
+        },
+        "user": "Decryption failed"
+    },
+    "name": "larz survey",
+    "next_invoice_sequence": 1,
+    "phone": null,
+    "preferred_locales": [],
+    "shipping": null,
+    "tax_exempt": "none",
+    "test_clock": null,
+    "methods": {
+        "object": "list",
+        "data": [],
+        "has_more": false,
+        "url": "/v1/payment_methods"
+    }
+}
 }

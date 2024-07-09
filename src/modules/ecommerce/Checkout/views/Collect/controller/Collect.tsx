@@ -1,11 +1,11 @@
 import styles from "./Collect.scss";
 import { useState } from "react";
-import UserContext from "~/src/models/UserContext";
 import CheckoutButton from "../../CheckoutButton/CheckoutButton";
 import { ISessionCartItem } from "~/src/core/services/MemberService/IMemberService";
-import UserMethods from "~/src/modules/user/views/UserMethods/controller/UserMethods";
-import { IMethod } from "~/src/modules/user/model/IMethod";
+import UserMethods from "~/src/modules/profile/views/UserMethods/controller/UserMethods";
+import { IMethod } from "~/src/modules/profile/model/IMethod";
 import UiLoader from "@webstack/components/UiLoader/view/UiLoader";
+import { useModal } from "@webstack/components/modal/contexts/modalContext";
 interface ICollect {
   user?: any;
   cart_items: ISessionCartItem[];
@@ -15,8 +15,8 @@ interface ICollect {
 
 const Collect = ({ user, cart_items }: ICollect) => {
   const [method, setMethod] = useState<IMethod | undefined>()
-
-  const onCreateProspectMethodSuccess = (e?: any) => {
+// const {openModal, isModalOpen,closeModal}=useModal();
+  const onCreateGuestMethodSuccess = (e?: any) => {
     console.log("[ FINALLY ]", e)
   };
   if(user && user.id)return (<>
@@ -36,7 +36,7 @@ const Collect = ({ user, cart_items }: ICollect) => {
         open={false}
         user={user}
         selected={method}
-        onSuccess={onCreateProspectMethodSuccess}
+        onSuccess={onCreateGuestMethodSuccess}
         onSelect={setMethod}
       />
       }

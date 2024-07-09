@@ -8,22 +8,21 @@ import AdminListDocuments from '../views/AdminDocuments/controller/AdminListDocu
 import AdminSystem from '../views/AdminSystem/AdminSystem';
 import AdminAccounts from '../views/AdminAccounts/controller/AdminAccounts';
 import { useClearance } from '~/src/core/authentication/hooks/useUser';
-import AdminInvoices from '../views/AdminInvoices/controller/AdminInvoices';
-import AdminMesenger from '../views/AdminMesenger/AdminMesenger';
 import AdminMarketing from '../views/AdminMarketing/AdminMarketing';
 import { useRouter } from 'next/router';
 import AdminDashboard from '../views/AdminDashboard/controller/AdminDashboard';
 import AdminMgmt from '../views/AdminMgmt/controller/AdminMgmt';
+import AdminSales from '../views/AdminSales/controller/AdminSales';
 
 
 
 const Admin = () => {
   const initialViews = {
     management: <AdminMgmt/>,
+    sales: <AdminSales/>,
     operations: <h1>Operations</h1>,
     finance: <h1>Finance and Accounting</h1>,
     marketing: <h1>Marketing</h1>,
-    sales: <h1>Sales</h1>,
     humanResources: <h1>Human Resources</h1>,
     customerService: <h1>Customer Service</h1>,
     infoTechnology: <h1>Information Technology</h1>,
@@ -31,7 +30,8 @@ const Admin = () => {
     legal: <h1>Legal</h1>,
     procurement: <h1>Procurement</h1>,
     strategicPlanning: <h1>Strategic Planning</h1>,
-  };
+  }
+  const [views, setViews]=useState<any>();
   
   // const initialViews = {
   //   dashboard: <AdminDashboard />,
@@ -44,29 +44,22 @@ const Admin = () => {
   //   messenger: <AdminMesenger />,
   //   marketing: <AdminMarketing />,
   // }
-  const router = useRouter();
   const level = useClearance();
-  const [views, setViews] = useState<any | undefined>();
-  const [current, setCurrentView] = useState<string | undefined>('management');
   useEffect(() => {
-    if(views === undefined)setViews(initialViews);
-    if (level >= 10 && views !== undefined) {
-      views.accounts = <AdminAccounts />;
-      setViews(views)
-    }
-    if(router.query?.vid && Object.keys(initialViews).includes(String(router.query?.vid)))setCurrentView(String(router.query?.vid));
-  }, [ level ]);
-  if(level < 10 || views === undefined)return <></>;
+    if(level < 10 && views )return;
+    if (level &&  level >= 10 )setViews({...initialViews, ['accounts']:<AdminAccounts />});
+    else setViews(initialViews);
+  }, []);
+  if( views === undefined)return <>not authorized</>;
   return (
     <>
       <style jsx>{styles}</style>
       <UiSettingsLayout
-        title={current}
-        setViewCallback={setCurrentView}
+        title="admin"
+        // subTitle={}
         views={views}
       />
     </>
   );
 };
-
 export default Admin;      

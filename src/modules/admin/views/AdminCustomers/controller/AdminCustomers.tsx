@@ -4,48 +4,42 @@ import AdminCustomerAdd from '~/src/modules/admin/views/AdminCustomers/views/Adm
 import AdminCustomerList from '~/src/modules/admin/views/AdminCustomers/views/AdminCustomerList/AdminCustomerList';
 import AdminCustomerDetails from '~/src/modules/admin/views/AdminCustomers/views/AdminCustomerDetail/controller/AdminCustomerDetail';
 import UiButton from '@webstack/components/UiButton/UiButton';
-import UserContext from '~/src/models/UserContext';
+import IAuthenticatedUser from "~/src/models/ICustomer";
 import { useRouter } from 'next/router';
+import UiHeader from '@webstack/components/Header/views/UiHeader/UiHeader';
+import UiViewLayout from '@webstack/layouts/UiViewLayout/controller/UiViewLayout';
 
 
 const AdminCustomers: React.FC = () => {
   const router = useRouter();
-  const [view, setView] = useState<string>();
-  const cid = router?.query?.cid;
-  const vid = router?.query?.vid;
-  
-  const updateViewUrl = (newView?: string, customer?: UserContext) => {
-    if (!newView && !view) {
-      setView(cid ? 'modify' : 'list');
-    } else if (newView) {
-      setView(newView);
-      const query = { ...router.query };
-      if (newView === 'modify' && customer) {
-        query.cid = customer.id;
-        query.vid = vid; // Keep existing vid if present
-      } else {
-        delete query.cid;
-        delete query.vid;
-      }
-      router.push({ query });
-    }
+  const query = router?.query;
+  const updateViewUrl = (newView?: string, customer?: IAuthenticatedUser) => {
+    router.push({ 
+      query: { ...query, cid: customer?.id || newView}},
+      undefined,
+      { shallow: true }
+    );
   };
-  
-  useEffect(() => {
-    updateViewUrl();
-  }, [cid, vid]); // Update on cid or vid change
-  
+  const views = {
+    modify: <AdminCustomerDetails
+      id={query.cid}
+      setView={(e: any) => {
+        updateViewUrl(e);
+      }}
+    />,
+    list: <AdminCustomerList onSelect={(customer: IAuthenticatedUser) => updateViewUrl('modify', customer)} />,
+    add: <AdminCustomerAdd />,
+  };
+
+
   return (
     <>
       <style jsx>{styles}</style>
       <div className='admin-customer'>
         <div className='admin-customer__header-container'>
-          <div className='header'>
-            <div className='header--title'>Customer</div>
-            <div className='header--subtitle'>{view}</div>
-          </div>
+          {/* <UiHeader title='Customer' subTitle={query.cid && String(query.cid)} /> */}
           <div className='actions'>
-            {view !== 'add' && (
+            {query.cid !== 'add' && (
               <UiButton
                 traits={{ afterIcon: 'fa-user-plus' }}
                 onClick={() => updateViewUrl('add')}
@@ -53,7 +47,7 @@ const AdminCustomers: React.FC = () => {
                 Add
               </UiButton>
             )}
-            {view !== 'list' && (
+            {query.cid !== 'list' && (
               <UiButton
                 traits={{ afterIcon: 'fa-user-group' }}
                 onClick={() => updateViewUrl('list')}
@@ -63,18 +57,11 @@ const AdminCustomers: React.FC = () => {
             )}
           </div>
         </div>
-        {view === 'list' && (
-          <AdminCustomerList onSelect={(customer: UserContext) => updateViewUrl('modify', customer)} />
-        )}
-        {view === 'modify' && (
-          <AdminCustomerDetails
-            id={cid}
-            setView={(e: any) => {
-              updateViewUrl(e);
-            }}
-          />
-        )}
-        {view === 'add' && <AdminCustomerAdd />}
+        <UiViewLayout currentView={
+          Boolean(query.cid && query.cid?.includes("cus_")) ?
+            'modify' : query?.cid ? String(query.cid) : 'list'
+        } views={views} />
+
       </div>
     </>
   );

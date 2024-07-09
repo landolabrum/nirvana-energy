@@ -20,8 +20,13 @@
   justify-content: space-between;
   background-color: var(--primary-o);
   top: 0;
-  &.aire-hotel--index, &.deepturn--index{
-    display: none;
+  &.aire-hotel--index{display: none;}
+  &.deepturn--index{
+    opacity: 0;
+    transition: all .2s;
+    &:hover{
+      opacity: 1;
+    }
   }
   @media(max-width: 1099px) {
     flex-direction: row-reverse;
@@ -124,8 +129,8 @@
           min-height: max-content;
           text-transform: uppercase;
           &:hover{
-            color: var(--primary);
-            --ui-icon-color: var(--primary);
+            color: var(--primary-50);
+            --ui-icon-color: var(--primary-50);
           }
         }
         .brand-logo{

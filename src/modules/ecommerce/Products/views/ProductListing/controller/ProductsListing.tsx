@@ -8,7 +8,7 @@ import IProductService from "~/src/core/services/ProductService/IProductService"
 import { useLoader } from "@webstack/components/Loader/Loader";
 import environment from "~/src/core/environment";
 import ProductList from "../views/ProductList/ProductList";
-import UiSelect from "@webstack/components/UiSelect/UiSelect";
+import UiSelect from "@webstack/components/UiForm/components/UiSelect/UiSelect";
 
 interface Filter {
   [key: string]: {
@@ -41,7 +41,11 @@ const ProductsListing: NextPage = () => {
   };
 
   const fetchProducts = async () => {
-    !loader.active && setLoader({ active: true, body: 'loading products', animation: true });
+    !loader.active && setLoader({ 
+      active: true,
+      body: 'loading products',
+      // animation: true
+     });
     try {
       const memberResponse = await ProductService.getProducts();
       const fetchedProducts: any = memberResponse?.data;

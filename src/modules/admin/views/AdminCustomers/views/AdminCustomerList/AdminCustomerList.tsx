@@ -7,8 +7,11 @@ import IAdminService from '~/src/core/services/AdminService/IAdminService';
 import AdaptTableCell from '@webstack/components/AdapTable/components/AdaptTableContent/components/AdaptTableCell/AdaptTableCell';
 import environment from '~/src/core/environment';
 import { ICustomer } from '~/src/models/CustomerContext';
-import { useClearance } from '~/src/core/authentication/hooks/useUser';
+import { getUserClearance, useClearance, useUser } from '~/src/core/authentication/hooks/useUser';
 import canViewCustomer from '../../functions/canViewCustomer';
+import keyStringConverter from '@webstack/helpers/keyStringConverter';
+import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
+import UiButton from '@webstack/components/UiButton/UiButton';
 
 
 const AdminCustomerList: React.FC<any> = ({ onSelect }: { onSelect: (props: string) => void }) => {
@@ -18,8 +21,7 @@ const AdminCustomerList: React.FC<any> = ({ onSelect }: { onSelect: (props: stri
   const adminService = getService<IAdminService>('IAdminService');
 
   const hideColumns = ['extras', 'id'];
-  const level = useClearance();
-
+  const user = useUser();  
   const getCustomerList = async () => {
     let customerList = await adminService.listCustomers();
     if (customerList?.object === 'list') {
@@ -28,10 +30,8 @@ const AdminCustomerList: React.FC<any> = ({ onSelect }: { onSelect: (props: stri
 
       // Use a for loop or reduce function to transform the customer data
       const transformedCustomerList = customerList.map((customer: ICustomer) => {
-        // if(level >= 10 )
-
-          
-          const canViwCustomer = canViewCustomer(customer, level);
+        const viewableCustomer = canViewCustomer(customer, user);
+        const notUser = customer.email != user?.email;
         // Create a new dictionary for each customer
         const extras = {
           ...customer.metadata,
@@ -43,7 +43,7 @@ const AdminCustomerList: React.FC<any> = ({ onSelect }: { onSelect: (props: stri
           invoice_prefix: customer.invoice_prefix,
           next_invoice_sequence: customer.next_invoice_sequence,
         }
-        if(canViwCustomer)return {
+        if (viewableCustomer) return {
           customer: <AdaptTableCell cell='member' data={{
             id: customer.id,
             name: customer.name,
@@ -54,11 +54,16 @@ const AdminCustomerList: React.FC<any> = ({ onSelect }: { onSelect: (props: stri
           balance: customer.balance,
           created: <AdaptTableCell cell='date' data={customer.created} />,
           default_source: <AdaptTableCell cell='check' data={Boolean(customer.default_source)} />,
+          merchant: <>
+          <style jsx>{styles}</style>
+          <div className={`d-flex ${notUser?'':"user"}`}><UiIcon
+          icon={notUser?`${customer?.metadata?.merchant?.name}-logo`:'fa-star'} /></div>
+          </>,
           // delinquent: customer.delinquent,
           tax_exempt: <AdaptTableCell cell='check' data={Boolean(customer.tax_exempt == 'exempt')} />,
-          clearance: <AdaptTableCell cell='id' data={customer?.user?.clearance} />,
+          clearance: <AdaptTableCell cell='id' data={keyStringConverter(getUserClearance(customer?.metadata?.user?.clearance)?.user.type,{textTransform:"capitalize"})} />,
           extras: extras,
-          request: customer.metadata && <AdaptTableCell cell='check' data={Boolean(Object.entries(customer.metadata).find((f: any) => String(f).includes(String(environment.merchant.mid))))} />,
+          quote: customer.metadata && <AdaptTableCell cell='check' data={Boolean(Object.entries(customer.metadata).find((f: any) => String(f).includes(String(environment.merchant.mid))))} />,
         };
       });
 
@@ -66,9 +71,65 @@ const AdminCustomerList: React.FC<any> = ({ onSelect }: { onSelect: (props: stri
       setCustomers(transformedCustomerList);
     }
   };
-
-
-
+  // const getLocalIPs = (callback) => {
+  //   const ipDuplicates = {};
+  
+  //   // Compatibility for different browsers
+  //   const RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+  //   if (!RTCPeerConnection) {
+  //     const iframe = document.createElement('iframe');
+  //     iframe.style.display = 'none';
+  //     document.body.appendChild(iframe);
+  //     const win = iframe.contentWindow;
+  //     window.RTCPeerConnection = win.RTCPeerConnection || win.mozRTCPeerConnection || win.webkitRTCPeerConnection;
+  //   }
+  
+  //   const pc = new RTCPeerConnection({
+  //     iceServers: []
+  //   });
+  
+  //   const handleCandidate = (candidate) => {
+  //     console.log('ICE Candidate:', candidate); // Log the entire candidate for debugging
+  //     // Match IP address
+  //     const ipRegex = /([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})/; // Updated regex to be simpler and more specific
+  //     const candi = ipRegex.exec(candidate);
+  //     console.log({ candi });
+  //     if (candi) {
+  //       const ipAddress = candi[1];
+  
+  //       // Remove duplicates
+  //       if (!ipDuplicates[ipAddress]) {
+  //         callback(ipAddress);
+  //       }
+  //       ipDuplicates[ipAddress] = true;
+  //     }
+  //   };
+  
+    // Create a bogus data channel
+  //   pc.createDataChannel('');
+  
+  //   // Create an offer
+  //   pc.createOffer()
+  //     .then((offer) => pc.setLocalDescription(offer))
+  //     .catch((error) => console.error('Error creating offer:', error));
+  
+  //   // Listen for candidate events
+  //   pc.onicecandidate = (event) => {
+  //     if (event.candidate) {
+  //       console.log({ e: event.candidate });
+  //       handleCandidate(event.candidate.candidate);
+  //     }
+  //   };
+  // };
+  
+  // // Usage:
+  // useEffect(() => {
+  //   getLocalIPs((ip) => {
+  //     console.log('Local IP address:', ip);
+  //   });
+  //   if (!customers) getCustomerList();
+  // }, [setCustomers]);
+  
   useEffect(() => {
     if (!customers) getCustomerList();
   }, [setCustomers]);
@@ -76,6 +137,11 @@ const AdminCustomerList: React.FC<any> = ({ onSelect }: { onSelect: (props: stri
     <>
       <style jsx>{styles}</style>
       <div className='admin-customer-list'>
+      <div className='d-flex s-w-9 justify-end s-4-bottom'>
+        <div>
+        <UiButton onClick={()=>getCustomerList()}>refresh</UiButton>
+      </div>
+        </div>
         <div className='admin-customer-list__table'>
           <AdapTable
             // page={1}
@@ -85,12 +151,14 @@ const AdminCustomerList: React.FC<any> = ({ onSelect }: { onSelect: (props: stri
             // setLimit={console.log}
             options={{
               hideColumns: hideColumns,
-              tableTitle: 'customer list'
+              // hide:['header']
             }}
+
             loading={!Object(customers)?.length}
             data={customers}
             onRowClick={onSelect}
           />
+          {hasMore && "next"}
         </div>
       </div>
     </>
