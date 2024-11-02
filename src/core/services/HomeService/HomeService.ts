@@ -42,11 +42,23 @@ export default class HomeService extends ApiService implements IHomeService {
         "/api/home/hue/all-off",
       );
     }
-    public async stream(
+    public async wbInfo(
       cameraId: string
     ): Promise<string> {
       return this.get<string>(
-        `/cam-${cameraId}`,
+        `/api/stream/cam?id=${cameraId}`,
+      );
+    }
+    public async wbSnapshot(
+      cameraId: string
+    ): Promise<string> {
+      return this.get<string>(
+        `/api/stream/img?id=${cameraId}`,
+      );
+    }
+    public async wbListCameras(): Promise<string> {
+      return await this.get<string>(
+        `/api/stream/cams`,
       );
     }
     public async hue_brightness(

@@ -1,30 +1,22 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import containerStyles from './UiSettingsLayout.scss';
 import UiLoader from '@webstack/components/UiLoader/view/UiLoader';
 import { useRouter } from 'next/router';
 import useClass from '@webstack/hooks/useClass';
 import keyStringConverter from '@webstack/helpers/keyStringConverter';
-import { IConfirm, useModal } from '@webstack/components/modal/contexts/modalContext';
-import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
-import environment from '~/src/core/environment';
+import UiHeader from '@webstack/components/Header/views/UiHeader/UiHeader';
 import UiButton from '@webstack/components/UiButton/UiButton';
-import UiSettingsLayoutNav from '../views/UiSettingsLayoutNav/UiSettingsLayoutNav';
-
-interface ISettingsClasses {
-  container: string;
-  content: string;
-  view: string;
-}
-
-const MODAL_ID = 'settings-views';
 
 interface ISettingsLayout {
   views: any;
   setViewCallback?: (e: any) => void;
   variant?: 'full-width' | 'full';
-  title?: string;
-  defaultView?: string;
-  showMenu?: boolean;
+  theme?: 'light';
+  title?: any;
+  subTitle?: string;
+  viewName?: string;
+  customMenu?: any;
+  footer?: any;
 }
 
 const UiSettingsLayout: React.FC<ISettingsLayout> = ({
@@ -32,110 +24,79 @@ const UiSettingsLayout: React.FC<ISettingsLayout> = ({
   setViewCallback,
   variant,
   title,
-  defaultView,
-  showMenu = false,
+  subTitle,
+  viewName,
+  theme,
+  customMenu,
+  footer,
 }: ISettingsLayout) => {
   const router = useRouter();
-  const { openModal, closeModal, isModalOpen } = useModal();
-
   const [view, setView] = useState<string | undefined>();
-  const [hide, setHide] = useState('start');
-  const isFullVariant = variant === 'full-width' || variant === 'full';
-  // Directly apply useClass hook here as useMemo is not required for useClass
-  // if useClass is purely functional without side effects
+  const classMaker = (className: string) => {
+    let primaryClass = className ? `settings__${className}` : 'settings';
+    return `${primaryClass}${variant ? ` ${primaryClass}--${variant}` : ''}${theme?` ${primaryClass}_${theme}` : '' }`;
+  }
   const classes = {
-    container: useClass({ cls: 'settings', variant: variant }),
-    content: useClass({ cls: 'settings__content', variant: variant }),
-    header: useClass({ cls: 'settings__view--header', variant: variant }),
-    view: useClass({ cls: 'settings__view', variant: variant }),
-    icon: useClass({ cls: "settings__trigger", variant: variant, standalones: ['card'] })
+    primary: classMaker(''),
+    content: classMaker('content'),
+    header: classMaker('header'),
+    view: classMaker('view'),
+    nav: classMaker('nav'),
+    navContent: classMaker('nav--content'),
+    footer: classMaker('footer'),
   };
 
   const handleView = useCallback((view: string) => {
     router.push({
       pathname: router.pathname,
-      query: { vid: keyStringConverter(view, false) },
+      query: { vid: view?.includes("-") && keyStringConverter(view) || view },
     }, undefined, { shallow: false });
     setViewCallback?.(view);
   }, [router, setViewCallback]);
 
+  const titleContent = typeof title == 'string' && keyStringConverter(title) || title;
 
+  const firstView = router.query.vid || viewName || Object.keys(views)[0];
+  const isView = view && Object.keys(views).includes(view);
 
-  useEffect(() => {
-    const adjustMainElementStyles = () => {
-      const main = document.querySelector('main');
-      if (!main) return;
+  useEffect(() => setView(firstView?.toString()), [firstView, isView]);
 
-      // Check if the settings layout should apply full viewport width styles
-      const isFullWidth = variant === 'full-width' || variant === 'full';
-      if (isFullWidth) {
-        main.style.margin = '0px';
-        main.style.width = '100%';
-      } else {
-        // Reset styles if not full-width or full variant
-        main.style.margin = '';
-        main.style.width = '';
-      }
-    };
-
-    adjustMainElementStyles();
-
-    return () => {
-      const main = document.querySelector('main');
-      if (main) {
-        main.style.margin = '';
-        main.style.width = '';
-      }
-    };
-  }, [variant, isFullVariant]);
-
-
-
-  useEffect(() => {
-    if (!view && defaultView) {
-      setView(defaultView);
-    }
-  }, [defaultView, view]);
-
-  useEffect(() => {
-    const firstView = router.query.vid || defaultView || Object.keys(views)[0];
-    if (firstView) {
-      setView(firstView.toString());
-    }
-  }, [router.query.vid, defaultView, views]);
-
-  // useEffect(() => {
-  //   if (showMenu) setHide('show');
-  //   if (showMenu === false) setHide('hide');
-  // }, [showMenu]);
-
-
-
-  if (view === undefined) return <UiLoader />;
+  if (!isView) return (
+    <>
+      <style jsx>{containerStyles}</style>
+      <div className={`${classes.primary}`}>
+        <div className='settings__loader'><UiLoader /></div>
+      </div>
+    </>
+  );
 
   return (
     <>
       <style jsx>{containerStyles}</style>
-      <div
-        id="settings-container"
-        className={classes.container}>
+      <div id="settings" className={`${classes.primary}`}>
+        <div className={`${classes.header}`}>
+          {!title && isView && <UiHeader title={titleContent} subTitle={subTitle} /> || title}
+        </div>
         <div className={classes.content}>
-          {title && (
-            <div className={classes.header}>
-              <div className="settings__view--header--title">
-                {title}
-              </div>
+          <div className={classes.nav}>
+            <div className={classes.navContent}>
+              {!customMenu && Object.keys(views)?.map((vue) => (
+                <span key={vue} className='s-w-100'>
+                  <UiButton
+                    traits={view === vue ? { afterIcon: 'fa-check' } : {}}
+                    variant={view == vue && "primary"}
+                    onClick={() => handleView(vue)}
+                  >{keyStringConverter(vue)}</UiButton>
+                </span>
+              ))}
+              {customMenu}
             </div>
-          )}
-         {Array(views)?.length  && <UiSettingsLayoutNav view={view} views={views} handleView={handleView} />}
-
-          <div id="settings-view" className={classes.view}>
-            <div className="settings__view__content">
-              <div className="settings__view__content-background">
-                <UiIcon icon={`${environment.merchant.name}-logo`} />
-              </div>
+          </div>
+          <div className={classes.view}>
+            <div className={classes.content}>
               {views[view]}
             </div>
+            {footer && <div className={classes.footer}>{footer}</div>}
           </div>
         </div>
       </div>

@@ -17,6 +17,7 @@ interface IProductDescription {
   price_id?: string
 }
 const ProductDescription = ({ product_id, price_id }: IProductDescription) => {
+  const {mid}=environment.merchant;
   const router = useRouter();
   const productNonExist = 'product does not exist';
   const product_query_id: string | undefined = router?.query?.id != undefined ? router?.query?.id.toString() : undefined
@@ -90,10 +91,16 @@ const ProductDescription = ({ product_id, price_id }: IProductDescription) => {
       <style jsx>{styles}</style>
       <div className="product-description">
         <div className="product-description__header">
-          <div>
-            <UiButton traits={{ beforeIcon: "fa-chevron-left" }} variant='link' href='/product'>back to shop</UiButton>
-          </div>
+          <div className='product-description__header-left'>
+            {/* <UiButton traits={{ beforeIcon: "fa-chevron-left" }} variant='link' href='/product'>back to shop</UiButton> */}
+            <div className="product-description__header--title">buy {product.name}</div>
+            </div>
+          <div className='product-description__header-right'>
+            {product?.offers}
         </div>
+
+        </div>
+        <div className="product-description__body">
         <AdaptGrid
           sm={1}
           md={2}
@@ -101,13 +108,12 @@ const ProductDescription = ({ product_id, price_id }: IProductDescription) => {
         // variant='card'
         >
           <div className="product-description__img-default" >
-
             {product.images[0] ? (
               <Image
                 src={product.images[0]}
                 alt={product.name}
                 fill // Use fill to make the image fill the container
-                style={{ objectFit: 'cover' }} // Adjust object-fit as needed
+                // style={{ objectFit: 'cover' }} // Adjust object-fit as needed
                 unoptimized={true}
               />
             ) : (<div className='img-placeholder'>
@@ -124,7 +130,11 @@ const ProductDescription = ({ product_id, price_id }: IProductDescription) => {
             <div className="product-description__info-panel_body">
               {product.description}
             </div>
-            <div className='product-description__footer'>
+ 
+          </div>
+        </AdaptGrid>
+        </div>
+        <div className='product-description__footer'>
               {cart && cart?.length >= 1 && (
                 <div className='product-description__go-to-cart'>
                   <UiButton traits={{ afterIcon: 'fal-bag-shopping' }} variant='link' href='/cart'>go to cart</UiButton>
@@ -137,16 +147,7 @@ const ProductDescription = ({ product_id, price_id }: IProductDescription) => {
                 />
               </div>
             </div>
-          </div>
-        </AdaptGrid>
-
-        {/* {product?.metadata?.type == 'generator' &&
-          <div className='product-description__table'>
-            <h4>Scalable</h4>
-            <AdapTable variant='mini' data={applianceArray} />
-          </div>} */}
       </div>
-
     </>
   );
 };

@@ -37,7 +37,7 @@
     display: flex;
     overflow-x:hidden;
     flex-direction: column;
-    background-color: var(--gray-100);
+    background: linear-gradient(var(--gray-90),var(--gray-100));
     border: solid 1px var(--gray-80-o);
     outline: solid 1px var(--gray-70-o);
     box-shadow: 2px 4px 15px 5px var(--dark);
@@ -46,8 +46,9 @@
     min-width: 450px;
     max-width: var(--s-6-width);
     @media(max-height: 900px) {
-        top:var(--s-9);
-        bottom:var(--s-9);
+        top: unset;
+        // top:var(--s-1);
+        // bottom:var(--s-9);
     }
     @media(max-width: 900px) {
         min-width: unset;
@@ -106,7 +107,7 @@
         }
         
         &::-webkit-scrollbar-thumb {
-            background-color: var(--blue);
+            background-color: var(--blue-60);
             border-radius: 5px;
         }
         
@@ -149,7 +150,7 @@
         &:visited,
         &:active {
             cursor: pointer;
-            --ui-icon-color: var(--primary);
+            --ui-icon-color: var(--primary-50);
         }
    
         .modal-overlay__title {
@@ -157,7 +158,7 @@
             text-transform: capitalize;
             font-family: Play;
             letter-spacing: var(--s-12);
-            color: var(--primary);
+            color: var(--primary-50);
             @media(max-width: 900px) {
                 font-size: var(--s-4);
             }
@@ -190,6 +191,7 @@
         font-family: FreightSans;
         font-weight: 500;
         height: auto;
+        background: linear-gradient(var(--gray-90), var(--gray-100));
         color: var(--gray-50);
         padding: var(--s-4);
         overflow-y: auto; 

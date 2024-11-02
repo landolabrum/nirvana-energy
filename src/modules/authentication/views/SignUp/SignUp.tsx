@@ -6,10 +6,10 @@ import IMemberService from "~/src/core/services/MemberService/IMemberService";
 import useUserAgent from "~/src/core/authentication/hooks/useUserAgent";
 import UiForm from "@webstack/components/UiForm/controller/UiForm";
 import keyStringConverter from "@webstack/helpers/keyStringConverter";
-import useReferrer from "@webstack/hooks/useReferrer";
 import { findField } from "@webstack/components/UiForm/functions/formFieldFunctions";
 import { useNotification } from "@webstack/components/Notification/Notification";
 import environment from "~/src/core/environment";
+import useDevice from "~/src/core/authentication/hooks/useDevice";
 
 
 export interface ISignUp {
@@ -34,7 +34,8 @@ const SignUp = ({ hasPassword = true, btnText, onSuccess, title }: ISignUp): Rea
   const [loading, setLoading] = useState<any>(false);
   const user = useUser();
   const MemberService = getService<IMemberService>("IMemberService");
-  const user_agent = useUserAgent();
+  // const user_agent = useUserAgent();
+  const device = useDevice()
   const [fields, setFields] = useState<any>(form);
 
   const changeField = (fieldName: string, key: string, value: string) => {
@@ -101,13 +102,14 @@ const SignUp = ({ hasPassword = true, btnText, onSuccess, title }: ISignUp): Rea
     const errors = handleErrors();
     if (!errors) {
       const request = {
-        name: `${findField(fields, 'first_name')?.value} ${findField(fields, 'first_name')?.value}`,
+        name: `${findField(fields, 'first_name')?.value} ${findField(fields, 'last_name')?.value}`,
         email: findField(fields, 'email')?.value,
         phone: findField(fields, 'phone')?.value,
         address: findField(fields, 'address')?.value,
         metadata: {
-            user:{
-              user_agent:user_agent,
+          user:{
+              email: findField(fields, 'email')?.value,
+              devices: [{...device, created:`${Date.now()}`}],
               password: findField(fields, "password")?.value
             },
             merchant:environment.merchant
@@ -155,7 +157,6 @@ const SignUp = ({ hasPassword = true, btnText, onSuccess, title }: ISignUp): Rea
   return (
     <>
       <style jsx>{styles}</style>
-
       {!user && <UiForm title={title} fields={fields} onSubmit={handleSubmit} loading={loading} onChange={handleChange} submitText={btnText || 'sign up'} />}
       <div className="authentication__authentication-status">
         {loading?.message}

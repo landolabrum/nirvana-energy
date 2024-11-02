@@ -16,10 +16,11 @@ interface IImageControl {
   refreshInterval?: number; // Interval in milliseconds to refresh the image
   error?: string | React.ReactElement;
   fixedLoad?: boolean;
-  loadingText?: string
+  loadingText?: string;
+  onComplete?:(e:any)=>void;
 }
 
-const ImageControl: React.FC<IImageControl> = ({ children, variant, mediaType = 'image', refreshInterval = 1000, error, loadingText, fixedLoad=false }) => {
+const ImageControl: React.FC<IImageControl> = ({ children, variant, mediaType = 'image', refreshInterval = 1000, error, loadingText, fixedLoad=false, onComplete }) => {
   const childRef = useRef<HTMLDivElement | null>(null); // Change to HTMLDivElement
   const [loading, setLoading] = useState<boolean>(true);
   // const clzz: string = useClass('image-control__element', mediaType, variant);
@@ -44,20 +45,29 @@ const ImageControl: React.FC<IImageControl> = ({ children, variant, mediaType = 
     ): closeModal();
   };
 
+
+
+  useEffect(() => {
+    const mediaHeight = childRef?.current?.offsetHeight;
+    if(childRef.current && !loading){
+      console.log('[ onComplete ]', {src: Boolean(mediaHeight && mediaHeight > 30), loading})
+      onComplete?.({src: Boolean(mediaHeight && mediaHeight > 30), loading})
+    }
+  },[childRef.current]);
   useEffect(() => {
     // if (!loading || error) return;
+    const mediaHeight = childRef?.current?.offsetHeight;
+    const imageSrc = Boolean(mediaHeight && mediaHeight > 30);
     const interval = setInterval(() => {
-      const mediaHeight = childRef?.current?.offsetHeight;
-      const hasSrc = Boolean(mediaHeight && mediaHeight > 30);
-      if (childRef.current && hasSrc) {
+      if (childRef.current && imageSrc && loading == true) {
         setLoading(false);
       } else {
         if (error && !loading) setLoading(true);
       }
     }, refreshInterval);
-
+  
     return () => clearInterval(interval);
-  }, [refreshInterval, loading, childRef.current]); // Include 'loaded' and 'mediaHeight' in dependencies
+  }, [refreshInterval, childRef.current]); // Include 'loaded' and 'mediaHeight' in dependencies
 
   return (
     <>

@@ -14,21 +14,32 @@ const MainLayout = (props: IProps) => {
   const styleMerchant = () => {
     if (!mid || !mainRef?.current) return;
     
-    // Set margin-top based on header height
-    const mainRefStyle = mainRef.current.style;
-    const headerHeight = document.getElementById('header-container')?.offsetHeight;
-    if (headerHeight) {
-      mainRefStyle.marginTop = `${headerHeight}px`;
-    }
+    // // Set margin-top based on header height
+    // const mainRefStyle = mainRef.current.style;
+    // const headerHeight = document.getElementById('header-container')?.offsetHeight;
+    // if (headerHeight) {
+    //   mainRefStyle.marginTop = `${headerHeight}px`;
+    // }
 
     // Dynamically load the merchant-specific stylesheet
+    const existingTheme = document.querySelector(`link[href*="theme.css"]`);
     const existingLink = document.querySelector(`link[href*="${mid}.css"]`);
-    if (!existingLink) {
+    if (!existingTheme) {
+      // <link rel="stylesheet" href="./styles/theme.css" />
+      const theme = document.createElement('link');
+      theme.rel = 'stylesheet';
+      theme.href = `/styles/theme.css`;
+      document.head.appendChild(theme);
+      
+    }
+    if(!existingLink){
       const link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = `/styles/merchants/${mid}.css`;
       document.head.appendChild(link);
     }
+    
+
   };
 
   useEffect(() => {

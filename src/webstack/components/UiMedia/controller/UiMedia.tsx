@@ -7,12 +7,13 @@ export interface IMedia {
   src: string;
   alt?: string;
   variant?: IImageVariant;
+  onLoad?: (e:any)=>void;
   type?: IImageMediaType;
   loadingText?: string;
   rotate?: number; // Added rotate prop for rotation degree
 }
 
-const UiMedia: React.FC<IMedia> = ({ src, variant, type, alt, loadingText, rotate }: IMedia) => {
+const UiMedia: React.FC<IMedia> = ({ src, variant, type, alt, loadingText, rotate, onLoad }: IMedia) => {
   const [imageControlProps, setImageControlProps] = useState<any>({ variant, type });
   const [reloadTrigger, setReloadTrigger] = useState(0); // state to trigger reload
   const imgRef = useRef<any>();
@@ -32,7 +33,6 @@ const UiMedia: React.FC<IMedia> = ({ src, variant, type, alt, loadingText, rotat
 
   const handleError = (event: any) => {
     event.preventDefault();
-    // console.log('[ ERROR ]', event)
     if (!imageControlProps.error) {
       setImageControlProps({ ...imageControlProps, error: <RefreshLoadingText />});
     }
@@ -48,14 +48,18 @@ const UiMedia: React.FC<IMedia> = ({ src, variant, type, alt, loadingText, rotat
     // Effect logic here if needed
     if(rotate && imgRef?.current){
       imgRef.current.style.transform = `rotate(${rotate}deg)`
-    }else if(!rotate && imgRef?.current?.style.transform)delete imgRef.current.style
-
-  }, [handleError, imageControlProps,handleReload,  imgRef?.current]); // 
+    }else if(!rotate && imgRef?.current?.style.transform)delete imgRef.current.style;
+    // console.log({loadingText,imageControlProps})
+    if(onLoad && imgRef?.current){
+      onLoad(imageControlProps)
+    }
+// console.log({imageControlProps})
+  }, [handleError, imageControlProps, handleReload, imgRef?.current]); // 
 
   return (
     <>
       <style jsx>{styles}</style>
-      <ImageControl {...imageControlProps}>
+      <ImageControl {...imageControlProps} onComplete={onLoad}>
         {!imageControlProps.error &&
           <img ref={imgRef} src={src} alt={alt} onError={handleError} key={reloadTrigger} /> // Apply rotation style here
         }

@@ -4,10 +4,11 @@ import { EventEmitter } from "@webstack/helpers/EventEmitter";
 import environment from "~/src/core/environment";
 import CustomToken from "~/src/models/CustomToken";
 import MemberToken from "~/src/models/MemberToken";
-import UserContext, { GuestContext } from "~/src/models/UserContext";
-import ApiService, { ApiError } from "../ApiService";
+import IAuthenticatedUser, { GuestContext } from "~/src/models/ICustomer";
+
+import ApiService, { ApiError, FormFieldsException } from "../ApiService";
 import IMemberService, { IDecryptJWT, IEncryptJWT, IEncryptMetadataJWT, IResetPassword, ISessionData, OResetPassword } from "./IMemberService";
-import { IPaymentMethod } from "~/src/modules/user/model/IMethod";
+import { IPaymentMethod } from "~/src/modules/profile/model/IMethod";
 import { encryptString } from "@webstack/helpers/Encryption";
 import errorResponse from "../../errors/errorResponse";
 import { ICustomer } from "~/src/models/CustomerContext";
@@ -45,39 +46,13 @@ export default class MemberService
   constructor() {
     super(environment.serviceEndpoints.membership);
   }
-  private _userContext: UserContext | undefined;
-  private _guestContext: UserContext | undefined;
+  private _userContext: IAuthenticatedUser | undefined;
+  private _guestContext: IAuthenticatedUser | undefined;
   private _guestToken: string | undefined;
   private _userToken: string | undefined;
   private _timeout: number | undefined;
-  public userChanged = new EventEmitter<UserContext | undefined>();
+  public userChanged = new EventEmitter<IAuthenticatedUser | undefined>();
   public guestChanged = new EventEmitter<GuestContext | undefined>();
-
-  public async signIn(cust: any): Promise<any> {
-    if (!cust.email) {
-      throw new ApiError("Email is required", 400, "MS.SI.01");
-    }
-    if (!cust.metadata.user.password) {
-      throw new ApiError("Password is required", 400, "MS.SI.02");
-    }
-
-    // Encrypt the login data
-    const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION?.trim();
-
-    const encryptedLoginData = encryptString(JSON.stringify(cust), ENCRYPTION_KEY);
-    const memberJwt:any = await timeoutPromise(
-      await this.post<{}, any>(
-        "usage/auth/login",
-        { data: encryptedLoginData },
-      ),
-      TIMEOUT // 5 seconds timeout
-    );
-    if(memberJwt){
-      this.saveMemberToken(memberJwt);
-      this.saveLegacyAuthCookie(memberJwt);
-      return this._getCurrentUser(true)!;
-    }
-  };
   public async verifyEmail(token: string): Promise<any> {
     if (!token) {
       throw new ApiError("No Token Provided", 400, "MS.SI.02");
@@ -90,7 +65,7 @@ export default class MemberService
         this.get<any>(`/usage/auth/verify-email?token=${encodedToken}`),
         TIMEOUT // 5 seconds timeout
       );
-console.log("[verifiedMemberResp  ]",verifiedMemberResp)
+      // console.log("[verifiedMemberResp  ]",verifiedMemberResp)
       // Check if the response is an ApiError
       if (verifiedMemberResp instanceof ApiError) {
         throw verifiedMemberResp;
@@ -100,16 +75,45 @@ console.log("[verifiedMemberResp  ]",verifiedMemberResp)
       //   this.saveLegacyAuthCookie(verifiedMemberResp.data);
       //   return this._getCurrentUser(true)!;
       // }
-      console.log("[ verifiedMemberResp ]:",verifiedMemberResp)
-      
-      return verifiedMemberResp;
-      
-    } catch (error) {
-      console.log("[ verifiedMemberResp ]:",error)
+      // console.log("[ verifiedMemberResp ]:",verifiedMemberResp)
 
-return error
+      return verifiedMemberResp;
+
+    } catch (error) {
+      console.error("[ verifiedMemberResp ]:", error)
+
+      return error
     }
   }
+  public async signIn(cust: any): Promise<any> {
+    // console.log({cust})
+    if (!cust.email) {
+      throw new ApiError("Email is required", 400, "MS.SI.01");
+    }
+    if (!cust.metadata.user.password) {
+      throw new FormFieldsException([{name:"password", "error": "Password is required"}], 400, "MS.SI.02");
+    }
+
+    // Encrypt the login data
+    const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION?.trim();
+
+    const encryptedLoginData = encryptString(JSON.stringify(cust), ENCRYPTION_KEY);
+
+    const memberJwt: any = await timeoutPromise(
+      await this.post<{}, any>(
+        "usage/auth/login",
+        { data: encryptedLoginData },
+        ), TIMEOUT 
+      );
+    // console.log("[ signIn ]", memberJwt)
+    if (!memberJwt?.fields) {
+      this.saveMemberToken(memberJwt);
+      this.saveLegacyAuthCookie(memberJwt);
+      return this._getCurrentUser(true)!;
+    }
+    return memberJwt
+  };
+
 
   public async verifyPassword(token: string): Promise<any> {
     if (!token) {
@@ -212,34 +216,34 @@ return error
       throw new ApiError("No ID Provided", 400, "MS.SI.02");
     }
   }
-public async processTransaction(sessionData: ISessionData) {
+  public async processTransaction(sessionData: ISessionData) {
     const { cart_items, customer_id, method_id } = sessionData;
 
     if (!cart_items || !customer_id || !method_id) {
-        const missingFields = [];
-        if (!cart_items) missingFields.push("cart_items");
-        if (!customer_id) missingFields.push("customer_id");
-        if (!method_id) missingFields.push("method_id");
-        
-        throw new ApiError(`Missing required field(s): ${missingFields.join(', ')}`, 400, "MS.SI.01");
+      const missingFields = [];
+      if (!cart_items) missingFields.push("cart_items");
+      if (!customer_id) missingFields.push("customer_id");
+      if (!method_id) missingFields.push("method_id");
+
+      throw new ApiError(`Missing required field(s): ${missingFields.join(', ')}`, 400, "MS.SI.01");
     }
 
     let session = {
-        cart_items,
-        customer_id: customer_id || this._getCurrentUser(false)?.id,
-        method_id
+      cart_items,
+      customer_id: customer_id || this._getCurrentUser(false)?.id,
+      method_id
     };
 
 
-      const res = await this.post<{}, any>(
-        "usage/checkout/process",
-        session
-      )
-      this.saveTransactionToken(res);
-      this.saveLegacyTransactionCookie(res);
-      
-      return res
-}
+    const res = await this.post<{}, any>(
+      "usage/checkout/process",
+      session
+    )
+    this.saveTransactionToken(res);
+    this.saveLegacyTransactionCookie(res);
+
+    return res
+  }
 
 
   public async encryptMetadataJWT(props: IEncryptMetadataJWT) {
@@ -271,10 +275,10 @@ public async processTransaction(sessionData: ISessionData) {
     )
     return res
   }
-  public async decryptJWT({ token, secret, algorithm }: IDecryptJWT) {
+  public async decryptJWT({ token, secret, algorithm, verify }: IDecryptJWT) {
     if (!token || !secret || !algorithm) throw new ApiError("No Encryption Data Provided", 400, "MS.SI.02");
     const res = await this.post<{}, any>(
-      "api/decrypt-jwt", { token, secret, algorithm }
+      "api/decrypt-jwt", { token, secret, algorithm, verify }
     )
     return res
   }
@@ -298,28 +302,67 @@ public async processTransaction(sessionData: ISessionData) {
 
   public async signUp(
     props: any
-  ): Promise<UserContext> {
+  ): Promise<IAuthenticatedUser> {
     if (!props.email) {
       throw new ApiError("Email is required", 400, "MS.SI.01");
     }
+    console.log("[ SIGNUP PROPS ]", props)
     const encryptedSignUp = encryptString(JSON.stringify(props), ENCRYPTION_KEY);
-    // console.log("[ SIGN UP ]", props)
     const res = await this.post<{}, any>(
       "usage/auth/sign-up",
-      {data: encryptedSignUp},
+      { data: encryptedSignUp },
     );
     // GUEST TEMP SIGN IN
-    console.log("[ RES ]", res)
     if (res?.status === "guest") {
       const guestJwt = await res.data;
       this.saveguestToken(guestJwt);
       this.saveLegacyguestCookie(guestJwt);
     }
-    // console.log("[ SIGN UP RES ]", res)
+    // console.log("[ SIgn Up Response ]: ", {res})
     return res;
+
+    //   {
+    //     "name": "test signup",
+    //     "email": "lando@deepturn.com",
+    //     "metadata": {
+    //         "user": {
+    //             "email": "lando@deepturn.com",
+    //             "device": {
+    //                 "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    //                 "user_agent_data": {
+    //                     "brands": [
+    //                         {
+    //                             "brand": "Chromium",
+    //                             "version": "124"
+    //                         },
+    //                         {
+    //                             "brand": "Google Chrome",
+    //                             "version": "124"
+    //                         },
+    //                         {
+    //                             "brand": "Not-A.Brand",
+    //                             "version": "99"
+    //                         }
+    //                     ],
+    //                     "mobile": false,
+    //                     "platform": "macOS"
+    //                 },
+    //                 "wan": "71.199.63.98",
+    //                 "created": "1718919471323"
+    //             },
+    //             "password": "1Wasatch!"
+    //         },
+    //         "merchant": {
+    //             "mid": "mb1",
+    //             "name": "deepturn",
+    //             "url": "http://localhost:3000",
+    //             "stripeId": "acct_1G38IXIodeKZRLDV"
+    //         }
+    //     }
+    // }
+
   }
   public async getMethods(customerId?: string): Promise<any> {
-    // let id = customerId || this._getCurrentUser(false)?.id;
     if (customerId) {
       const OGetMethods = await this.get<any>(
         `/api/method/customer/?id=${customerId}`,
@@ -345,22 +388,15 @@ public async processTransaction(sessionData: ISessionData) {
 
   };
 
-  public async modifyCustomer(customer:ICustomer): Promise<any> {
-    console.log('[ MEMBERSERVICE modifyCustomer(customer) ]',customer)
+  public async modifyCustomer(customer: ICustomer): Promise<any> {
     if (customer) {
       const encryptedSignUp = encryptString(JSON.stringify(customer), ENCRYPTION_KEY);
-
-      
-      // console.log('[ MODUFY ]', res)
-      //   const res = await this.put<any, any>(
-      //     `api/customer/`,
-      //     memberData
-      //   );
       try {
         const res = await this.put<{}, any>(
           `api/customer/`,
-          {data: encryptedSignUp},
+          { data: encryptedSignUp },
         );
+        console.log("[ MODIFY RES ]",{res})
         let memberJwt: any = null;
         if (res && res?.data) memberJwt = res?.data;
         this.saveMemberToken(memberJwt);
@@ -368,7 +404,6 @@ public async processTransaction(sessionData: ISessionData) {
         return this._getCurrentUser(true)!;
       } catch (error) {
         console.error("Error updating member: ", error);
-        // Handle error accordingly
       }
     }
 
@@ -434,7 +469,7 @@ public async processTransaction(sessionData: ISessionData) {
         const props: { [key: string]: string } = {};
         props.path = "/";
         props["max-age"] = diff.toString();
-        props['is_guest']='true';
+        props['is_guest'] = 'true';
         if (jwtCookie.domain) props.domain = jwtCookie.domain;
         CookieHelper.setCookie(jwtCookie.guestToken, customJwt, props);
       }
@@ -464,7 +499,7 @@ public async processTransaction(sessionData: ISessionData) {
   };
 
   private updateUserContext(
-    context: UserContext | undefined,
+    context: IAuthenticatedUser | undefined,
     token: string | undefined
   ) {
     if (context == null && this._userContext == null) {
@@ -490,7 +525,6 @@ public async processTransaction(sessionData: ISessionData) {
     }
     this._guestContext = context;
     // HERE
-    console.log('[ tokl ]', token)
     this._guestToken = token;
     this.guestChanged.emit(context);
   }
@@ -498,10 +532,10 @@ public async processTransaction(sessionData: ISessionData) {
   getCurrentGuest(): GuestContext | undefined {
     return this._getCurrentGuest(false);
   }
-  getCurrentUser(): UserContext | undefined {
+  getCurrentUser(): IAuthenticatedUser | undefined {
     return this._getCurrentUser(false);
   }
-  private _getCurrentUser(forceUpdate: boolean): UserContext | undefined {
+  private _getCurrentUser(forceUpdate: boolean): IAuthenticatedUser | undefined {
     if (!forceUpdate && this._userContext != null) {
       return this._userContext;
     }
@@ -514,7 +548,7 @@ public async processTransaction(sessionData: ISessionData) {
     const memberToken = this.parseToken(memberJwtString);
     const user = memberToken?.user;
     let guestJwtString = this.getguestTokenFromStorage();
-    if(guestJwtString)this.signOutguest();
+    if (guestJwtString) this.signOutguest();
     if (memberJwtString) {
       this.updateUserContext(undefined, undefined);
     }
@@ -554,7 +588,6 @@ public async processTransaction(sessionData: ISessionData) {
       return;
     }
     const guestToken = this.parseToken(guestJwtString);
-    // console.log('[ MEMBER TOKEN ]', memberToken)
     const guest = guestToken?.user;
 
     if (guest == null) {
@@ -584,19 +617,19 @@ public async processTransaction(sessionData: ISessionData) {
   }
 
   private saveTransactionToken(tranactionToken: string) {
-    if (!this.isBrowser)return;
+    if (!this.isBrowser) return;
     localStorage?.setItem(TRANSACTION_TOKEN_NAME, tranactionToken);
   }
   private saveMemberToken(memberJwt: string) {
-    if (!this.isBrowser)return;
+    if (!this.isBrowser) return;
     const existingguestToken = this.getguestTokenFromStorage();
-    if (existingguestToken)this.deleteguestToken();
+    if (existingguestToken) this.deleteguestToken();
     localStorage?.setItem(MEMBER_TOKEN_NAME, memberJwt);
   }
   private saveguestToken(guestJwt: string) {
-    if (!this.isBrowser)return;
+    if (!this.isBrowser) return;
     const existingMemberToken = this.getMemberTokenFromStorage();
-    if (existingMemberToken)this.deleteMemberToken();
+    if (existingMemberToken) this.deleteMemberToken();
     localStorage?.setItem(GUEST_TOKEN_NAME, guestJwt);
   }
   private get isBrowser(): boolean {
@@ -698,7 +731,6 @@ public async processTransaction(sessionData: ISessionData) {
       return null;
     }
     const jwt = localStorage?.getItem(MEMBER_TOKEN_NAME);
-    // console.log("[ JWT ** ]", jwt)
     if (jwt == null) {
       return null;
     }
@@ -719,6 +751,7 @@ public async processTransaction(sessionData: ISessionData) {
   protected appendHeaders(headers: { [key: string]: string }) {
     super.appendHeaders(headers);
     const token = this.getCurrentUserToken();
+    // console.log("[ TOKEM ]", token)
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
     }

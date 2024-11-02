@@ -55,7 +55,11 @@ export interface IHomeService {
   hue_toggle(id: any, hue_object?: string): Promise<any>;
   lightsOn(): Promise<any>;
   hue_rename(lightRename: IHomePostLightRename): Promise<any>;
-  stream(cameraId: string): Promise<string>;
+
+  wbInfo(cameraId: string): Promise<string>;
+  wbSnapshot(cameraId: string): Promise<string>;
+  wbListCameras(): Promise<string>;
+
   startVehicle(request: any): Promise<any>;
   getVehicles(access: any): Promise<any>;
 }
