@@ -7,6 +7,11 @@
   font-style: normal;
 }
 @font-face {
+  font-family: Nabla;
+  src: url("/fonts/Nabla/Nabla-Regular.ttf") format("opentype");
+  font-style: normal;
+}
+@font-face {
   font-family: Eros;
   src: url("/fonts/eros/erosyt.ttf") format("opentype");
   font-style: normal;
@@ -49,9 +54,9 @@
   --primary-10: #e68366;
   --primary-30: #d97a5d;
   --primary-50: #cc6f50;
+  --primary-50-o: #cc6f5070;
   --primary-70: #b35944;
   --primary-90: #994d3a;
-  --primary-o: #cc6f5070;
 
   --secondary-10: #d6c8b7;
   --secondary-30: #ccbfae;
@@ -109,20 +114,25 @@
   --green-70: #2d8c3b;
   --green-90: #257029;
   
-  --blue-o: #3A7BD5; /* Softer transparent blue */
-  --blue-10: #2B8FDB; /* Light blue with a trustworthy feel */
-  --blue-30: #2277B5; /* Slightly darker light blue */
-  --blue-50: #1A5E92; /* Mid-tone blue */
-  --blue-70: #13487A; /* Darker blue */
-  --blue-90: #031d40; /* Deep, dark blue */
+  --blue-10-o: #2B8FDB70;
+  --blue-10: #2B8FDB;
+  --blue-30: #2277B5;
+  --blue-50: #1A5E92;
+  --blue-60: #18527f;
+  --blue-70: #13487A;
+  --blue-90: #031d40;
 
-
-  --purple-50: #9b59b6;
+  
   --purple-10: #d0a1e2;
+  --purple-10-o: #d0a1e270;
   --purple-30: #b97acc;
-  --purple-70: #7d3a98;
-  --purple-90: #5d2975;
+  --purple-30-o: #b97acc70;
+  --purple-50: #9b59b6;
   --purple-50-o: #9b59b670;
+  --purple-70: #7d3a98;
+  --purple-70-o: #7d3a9870;
+  --purple-90: #5d2975;
+  --purple-90-o: #5d297570;
   
   --pink: #e91e63;
   --pink-10: #ff80ab;
@@ -256,6 +266,7 @@
     border: var(--border-focus);
   }
 }
+
 .c-success {
   background-color: #00371b;
   border-color: #5fe341;
@@ -395,17 +406,17 @@ body {
   align-items: center;
 }
 .justify-start {
-  justify-content: flex-start;
+  justify-content: flex-start !important;
 }
 
 .justify-end {
-  justify-content: flex-end;
+  justify-content: flex-end !important;
 }
 .justify-around {
-  justify-content: space-around;
+  justify-content: space-around !important;
 }
 .justify-between {
-  justify-content: space-between;
+  justify-content: space-between !important;
 }
 
 .s-1 {
