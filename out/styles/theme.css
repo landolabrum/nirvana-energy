@@ -333,7 +333,7 @@
   }
 }
 html {
-  overflow: hidden;
+  overflow-x: hidden;
 }
 body {
   font-family: "Play", sans-serif;
@@ -344,7 +344,7 @@ body {
   font-weight: 300;
 
   -webkit-overflow-scrolling: touch;
-  overflow-y: hidden;
+  overflow-y: auto;
   overflow-x: hidden;
   #__next {
 
