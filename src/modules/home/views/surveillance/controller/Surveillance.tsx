@@ -10,6 +10,8 @@ import IHomeService from '~/src/core/services/HomeService/IHomeService';
 import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
 import { dateFormat } from '@webstack/helpers/userExperienceFormats';
 import SurveillanceItem from '../views/SurveillanceItem/SurveillanceItem';
+import UiDev from '@webstack/components/UiDev/UiDev';
+import SurveillanceDetails from '../views/SurveillanceDetails/SurveillanceDetails';
 interface ICameraInfo {
   apartalarmParm: {
     heightY: string;
@@ -124,13 +126,17 @@ interface ISurveillanceCam {
 const Surveillance: React.FC = () => {
   const homeService = getService<IHomeService>("IHomeService");
   const [camData, setCamData] = useState<any>();
-  const [main,setMain]=useState<any>();
-  const handleMain= (id:string)=>{
-    console.log('[ HANDLE MAIN ]',id)
+  const [main, setMain] = useState<string| undefined>();
+  const handleMain = (id: string) => {
+    const camName = id.toLowerCase();
+    if(camData.cameras?.[camName] && !main) return setMain(camName);
+    setMain(undefined);
+    // if (!main)
+    // 
   }
   const getCameras = async () => {
-    if(camData)return;
-    const response: any = await homeService.wbListCameras()
+    if (camData) return;
+    const response: any = await homeService.wbListCameras();
     try {
       setCamData(response)
     } catch (error) {
@@ -138,28 +144,30 @@ const Surveillance: React.FC = () => {
     }
   }
 
-  useEffect(() => {  getCameras() }, []);
+  useEffect(() => { getCameras();
+
+  }, [camData]);
+  if(main)return <SurveillanceDetails id={main}/>;
   return (
     <>
       <style jsx>{styles}</style>
+      
       <div className='surveillance'>
         {camData?.available && (<>
           {/* <small><h4>CamData: </h4>{JSON.stringify(Object.keys(camData))}</small> */}
           <div className='surveillance__header'>
-              <AdaptGrid xs={2} md={3} variant='card' gap={10}>
-                {['available', 'enabled', 'total'].map((d: any) =>
-                  <div key={d}>
-                    {d}: {camData[d]}
-                  </div>
-                )}
-              </AdaptGrid>
+            <AdaptGrid xs={2} md={3} variant='card' gap={10}>
+              {['available', 'enabled', 'total'].map((d: any) =>
+                <div key={d}>
+                  {d}: {camData[d]}
+                </div>
+              )}
+            </AdaptGrid>
           </div>
         </>
 
-        )
+        )||"still loading..."
         }
-        {/* {camData?.cameras && JSON.stringify(camData.cameras)} */}
-        {main && main}
         {camData?.cameras && <AdaptGrid xs={2} md={3} variant='card' gap={10}>
           {Object.values(camData.cameras).map(
             (cameraData: any, idx: number) => {
@@ -170,21 +178,7 @@ const Surveillance: React.FC = () => {
             })}
         </AdaptGrid>
         }
-
-        {/* {cameras && Object.entries(cameras).map(cam=>JSON.stringify(cam))} */}
-        {/* <AdaptGrid xs={1} md={2} padding="0 0 200px">
-          <div>
-            <UiMedia src={url1} loadingText='loading Shit Room' />
-          </div>
-          <div>
-          <UiMedia src={`${environment.serviceEndpoints.membership}/api/stream/rtsp?id=pam`} loadingText="loading Triscuit's Palace 😽" />
-          <UiMedia src={`${environment.serviceEndpoints.membership}/api/stream/rtsp?id=tilty`} loadingText='loading camera CarPort' />
-          </div>
-          <div> 
-          </div>
-        </AdaptGrid> */}
       </div>
-
     </>
   );
 };

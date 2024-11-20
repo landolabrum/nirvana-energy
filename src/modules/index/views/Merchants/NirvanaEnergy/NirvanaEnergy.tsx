@@ -6,11 +6,12 @@ import HomeGridItem from '../../HomeGridItem/HomeGridItem';
 import ProductQuote from '~/src/modules/ecommerce/Products/views/ProductDescription/ProductQuote/Version1/controller/ProductQuote';
 import AdapTable from '@webstack/components/AdapTable/views/AdapTable';
 import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
-import { useUser } from '~/src/core/authentication/hooks/useUser';
-import capitalize from '@webstack/helpers/Capitalize';
 import { upperCase } from 'lodash';
-import UiViewLayout from '@webstack/layouts/UiViewLayout/controller/UiViewLayout';
-
+import UiMedia from '@webstack/components/UiMedia/controller/UiMedia';
+import useScroll from '@webstack/hooks/useScroll';
+import GLBViewer from '@webstack/components/ThreeComponents/ThreeGLB/ThreeGLB';
+import useWindow from '@webstack/hooks/window/useWindow';
+import { visibility } from 'html2canvas/dist/types/css/property-descriptors/visibility';
 
 const NirvanaEnergyIcon = () => {
   const nStyle = `.nirv{
@@ -32,6 +33,9 @@ const NirvanaEnergyIcon = () => {
 }
 // Remember to create a sibling SCSS file with the same name as this component
 const NirvanaEnergy = () => {
+  const { width } = useWindow();
+
+  const [currentScrollYPosition] = useScroll();
   const [view, setView] = useState('start');
   const outputValue = (powerInKW: number) => {
     const volts = 240;
@@ -78,39 +82,79 @@ const NirvanaEnergy = () => {
         <NirvanaEnergyIcon />, 'capacity': "15 kW", 'output': outputValue(12)
     },
   ];
-  
-  // useEffect(() => {console.log({sv: view})}, [setView]);
+  const bgOpacity = (): any => {
+    const scrollFadeMatrix = -currentScrollYPosition * .002 + 1
+    if (scrollFadeMatrix < 0) return { opacity: 0, visibility: 'hidden' };
+    return currentScrollYPosition > 10 ? {
+      opacity: scrollFadeMatrix,
+      visibility: 'visible'
+    } : {}
+  }
+
+  useEffect(() => { }, [setView]);
   return (
     < >
       <style jsx>{styles}</style>
-
-      <div id='nirvana-index'
-        className='nirvana-index'
+      <div
+        id='nirvana-index'
+        className='nirvana-energy'
       >
-        <div className='nirvana-index__content'>
-          <ProductQuote 
-            id='product-quote'
-           startButton='configure your back up system' view={view} setView={setView} />
+
+        <div className='nirvana-energy__bg'
+          style={
+            bgOpacity()}>
+          <div className='nirvana-energy__bg--video'>
+            {width > 1100 && <UiMedia playbackSpeed={.7} // Plays video at 1.5x speed
+            type='video' autoplay muted loop src="https://github.com/landolabrum/assets/raw/refs/heads/main/nirv1/b-roll/home.webm" />}</div>
+          <div className='nirvana-energy__bg--content'>
+            <ProductQuote
+              id='product-quote'
+              startButton={<>
+                <div className='configure-btn__text'>
+                  configure your back up system.
+                </div>
+                <div className='configure-btn__model'>
+                  <GLBViewer
+                    width={width > 1100 ? "400px" : "90vw"}
+                    height={width > 1100 ? "500px" : "90vw"}
+                    modelPath='/merchant/nirv1/3dModels/products/CustomBox/prod_P5lI35r2EWTAxi.glb'
+                  />
+                </div>
+              </>
+              } view={view} setView={setView} />
+
+          </div>
+        </div>
+        {/* <video controls autoPlay muted>
+  <source src="https://github.com/landolabrum/assets/raw/refs/heads/main/nirv1/b-roll/1CB9037F-80AE-4FFA-8D34-2CDDA39AF929.webm" type="video/webm"/>
+  Your browser does not support the video tag.
+</video> */}
+        <div className='nirvana-energy__content--first'>
+          <div className='nirvana-energy__content--title'>
+            It&apos;s Time to Create your Nirvana!
+          </div>
+          <div className='nirvana-energy__content--label'>
+            On and Off-grid battery back up
+            If you&apos;re thinking about going off grid or want to learn more about backup battery systems, it&apos;s time to create your Nirvana.
+          </div>
+        </div>
+        <div className='nirvana-energy__content'>
+
+
           {view == 'start' && <>
             <div className='list'>
-              <h3>6 Key Questions to Enhance Your Solar System with Batteries</h3>
-              <h4><UiIcon icon="fa-cube" />Can I add batteries to my exisiting solar system?</h4>
-              <h4><UiIcon icon="fa-cube" />What determines that the battery will back up what I need?</h4>
-              <h4><UiIcon icon="fa-cube" />Will this battery keep me backed up if the grid stays down?</h4>
-              <h4><UiIcon icon="fa-cube" />What does this battery setup have that others dont?</h4>
-              <h4><UiIcon icon="fa-cube" />Is there a limit to how much the batteries can power in my home at the same time?</h4>
-              <h4><UiIcon icon="fa-cube" />Can I change what I want backed up in the future</h4>
+              <div className='nirvana-energy__content--sub-title'>6 Key Questions to Enhance Your Solar System with Batteries</div>
+              <div className='nirvana-energy__content--label'><UiIcon icon="fa-cube" />Can I add batteries to my exisiting solar system?</div>
+              <div className='nirvana-energy__content--label'><UiIcon icon="fa-cube" />What determines that the battery will back up what I need?</div>
+              <div className='nirvana-energy__content--label'><UiIcon icon="fa-cube" />Will this battery keep me backed up if the grid stays down?</div>
+              <div className='nirvana-energy__content--label'><UiIcon icon="fa-cube" />What does this battery setup have that others dont?</div>
+              <div className='nirvana-energy__content--label'><UiIcon icon="fa-cube" />Is there a limit to how much the batteries can power in my home at the same time?</div>
+              <div className='nirvana-energy__content--label'><UiIcon icon="fa-cube" />Can I change what I want backed up in the future</div>
             </div>
-            <h2>
-              Time to Create your Nirvana!
-            </h2>
-            <h4>
-              On and Off-grid battery back up
-              If you&apos;re thinking about going off grid or want to learn more about backup battery systems, it&apos;s time to create your Nirvana.
-            </h4>
-            <h2>
+
+            <div className='nirvana-energy__content--title'>
               The Importance of Backup Batteries
-            </h2>
+            </div>
             <AdaptGrid sm={1} md={3} margin='0 0 45px' gap={15}>
               <HomeGridItem icon='fal-cloud-bolt-sun' title='power outages' >
                 With backup batteries, you can be sure your home will have

@@ -47,7 +47,6 @@ const CartListItem: React.FC<any> = ({item, traits, variant,adjustable}:{item:an
                             {item?.description}
                         </div>
                         <div className="cart-list-item-amount">
-                            {JSON.stringify(item?.price)}
                             {item?.price?.unit_amount ? numberToUsd(item?.price.unit_amount) : 'price not available'}
                         </div>
                     </div>

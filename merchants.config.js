@@ -6,7 +6,13 @@ module.exports = {
         mid: "mb1",
         name: "deepturn",
         url: "https://deepturn.com",
-        stripeId:"acct_1G38IXIodeKZRLDV"
+        stripeId:"acct_1G38IXIodeKZRLDV",
+        settings:{
+         about:{
+          title:'',
+          description:'',
+         }
+        }
       },
       ah1: {
         mid: "ah1",
@@ -22,10 +28,10 @@ module.exports = {
         settings:{
          ecommerce:{
           productListing:{
-            layoutStyle:'list',
+            layoutStyle:'grid',
             size: 'xl'
           }
-         }
+         },
         }
       },
     },

@@ -11,6 +11,7 @@ import QuoteForm from '../views/SurveyForm/SurveyForm';
 import useScrollTo from '@webstack/components/AdapTable/hooks/useScrollTo';
 import useDevice from '~/src/core/authentication/hooks/useDevice';
 import UiLoader from '@webstack/components/UiLoader/view/UiLoader';
+import { useModal } from '@webstack/components/modal/contexts/modalContext';
 
 
 export const applianceArray: IProductQuoteField[] = [
@@ -24,6 +25,7 @@ export const applianceArray: IProductQuoteField[] = [
     { name: "dryer", selected: false, value: 30 },
     { name: "oven", selected: false, value: 20 },
     { name: "air conditioner", selected: false, value: 15 },
+    { name: "mini split", selected: false, value: 20 },
     { name: "vacuum cleaner", selected: false, value: 11 },
     { name: "toaster", selected: false, value: 9 },
     { name: "blender", selected: false, value: 6 },
@@ -47,7 +49,7 @@ interface IProductQuote {
     id: string;
     title?: string;
     view: string;
-    startButton?: string;
+    startButton?: any;
     setView: (e: string) => void;
     subtitle?: string;
     quote?: IProductQuoteField[];
@@ -64,6 +66,8 @@ const ProductQuote: React.FC<IProductQuote> = ({
 }) => {
     const memberService = getService<IMemberService>('IMemberService');
     const optionsRef = useRef<any | undefined>();
+    const { openModal, closeModal, replaceModal, isModalOpen } = useModal();
+    const [lastView, setLastView] = useState<string | undefined>();
     const [user, setUser] = useState<any | undefined>();
     const [fieldErrors, setFieldErrors] = useState<any>();
     const [message, setMessage] = useState<string | null>(null);
@@ -71,6 +75,7 @@ const ProductQuote: React.FC<IProductQuote> = ({
     const device = useDevice();
     const { scrollTo, setScrollTo } = useScrollTo();
     const handleView = (newView?: any) => {
+        setLastView(view);
         setScrollTo(id);
         setView?.(newView);
     };
@@ -132,61 +137,81 @@ const ProductQuote: React.FC<IProductQuote> = ({
         onSubmit();
 
     };
+    const views: any = {
+        'invalid': <div className='product-quote__invalid'>
+            <div className='product-quote__invalid--status'>
+                Invalid<UiIcon icon='fa-exclamation-triangle' />
+            </div>
+            <div className='product-quote__invalid--message'>{message || ''}</div>
+            <UiButton onClick={() => handleView('contact')}>return to contact appliances</UiButton>
+        </div>,
+        'contact': <div className='product-quote__contact-form'>
+            <div className='product-quote__description'>
+                <h2>Contact Information</h2>
+                <p>Please provide your contact information so we can reach out to you with the quote.</p>
+            </div>
+            <ContactForm
+                fieldErrors={fieldErrors}
+                title={false}
+                user={user}
+                onSubmit={onContactSubmit}
+            />
+        </div>,
+        appliances: <QuoteForm
+            title={title}
+            handleView={handleView}
+            quote={appliances}
+            setQuote={setAppliances}
+        />,
+        success
+            : <div className='product-quote__success c-success'>
+                <div className='product-quote__success--status'>
 
+                    Success<UiIcon icon='fa-circle-check' />
+                </div>
+                <div>
+                    A verification email to
+                    <span className='product-quote__success--email'> {message}, </span>
+                    has been sent.
+                </div>
+                <div>To complete the process, simply click on the link in the email.</div>
+            </div>,
+        error: <div className='c-error'>
+            <h1>An error occurred</h1>
+        </div>
+    };
+    const DefaultView = () => <>
+        <style jsx>{styles}</style>
+        <div className='product-quote__default'>
 
+            {!['loading', 'start']?.includes(view) && (
+                <div onClick={() => handleView('start')} className='d-flex justify-end s-w-100'><UiIcon icon='fa-xmark' />
+                </div>
+
+            )}
+
+            {views[view]}
+        </div>
+
+    </>;
+
+    useEffect(() => {
+        if (views[view]) {
+            if (!isModalOpen) openModal({ children: <DefaultView />, dismissable: false });
+            else replaceModal({ children: <DefaultView />, dismissable: false, })
+        } else if (view == 'start' && isModalOpen) {
+            closeModal()
+        }
+
+    }, [view,]);
     if (!id) return <>No ID FOR PRODUCT REQUEST</>;
     return (
-        <>
-            <style jsx>{styles}</style>
+        <><style jsx>{styles}</style>
             <div id='product-quote' className='product-quote' ref={optionsRef}>
                 {view == 'loading' && <UiLoader position='fixed' />}
                 {view == 'start' &&
                     <div className='product-quote-btn-view' onClick={() => handleView('appliances')}>
-                        <div className='button-text'>{startButton}</div>
-                    </div>}
-                {view == 'contact' &&
-                    <div className='product-quote__contact-form'>
-                        <div className='product-quote__description'>
-                            <h2>Contact Information</h2>
-                            <p>Please provide your contact information so we can reach out to you with the quote.</p>
-                        </div>
-                        <ContactForm
-                            fieldErrors={fieldErrors}
-                            title={false}
-                            user={user}
-                            onSubmit={onContactSubmit}
-                        />
-                    </div>
-                }
-
-                {view == 'appliances' && <QuoteForm
-                    title={title}
-                    handleView={handleView}
-                    quote={appliances}
-                    setQuote={setAppliances}
-                />}
-                {view == 'error' && <div className='c-error'>
-                    <h1>An error occurred</h1>
-                </div>}
-                {view == 'success' && <div className='product-quote__success c-success'>
-                    <div className='product-quote__success--status'>
-                        
-                        Success<UiIcon icon='fa-circle-check' />
-                    </div>
-                    <div>
-                        A verification email to
-                        <span className='product-quote__success--email'> {message}, </span>
-                        has been sent.
-                    </div>
-                    <div>To complete the process, simply click on the link in the email.</div>
-                </div>}
-                {view == 'invalid' &&
-                    <div className='product-quote__invalid'>
-                        <div className='product-quote__invalid--status'>
-                            Invalid<UiIcon icon='fa-exclamation-triangle' />
-                        </div>
-                        <div className='product-quote__invalid--message'>{message || ''}</div>
-                        <UiButton onClick={() => handleView('contact')}>return to contact appliances</UiButton>
+                        {startButton}
                     </div>}
             </div>
         </>

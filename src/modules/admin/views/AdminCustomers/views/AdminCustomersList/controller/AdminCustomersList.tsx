@@ -32,7 +32,7 @@ const AdminCustomers: React.FC = () => {
   };
 
 useEffect(() => {}, [query]);
-  if(!query?.vid || query?.vid !== 'customers')return;
+  if(!query?.vid || query?.vid !== 'customers')return<></>;
   return (
     <>
       <style jsx>{styles}</style>

@@ -139,7 +139,7 @@ const Deepturn = () => {
       {/* <div className='dev'>{JSON.stringify(userData, null, 2)}</div> */}
       <div className='deepturn'>
         <img className='deepturn__bg' src="/assets/backgrounds/contour_bg.gif" />
-        <div className='component--terrain'>fd
+        <div className='component--terrain'>
           <TJSCube
             icon={{
               bevel: {

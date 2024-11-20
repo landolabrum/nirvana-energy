@@ -77,6 +77,7 @@ export const routes: IRoute[] = [
     items: [
       { label: "surveillance",  href: "home?vid=surveillance", icon: "fa-camera-security", active: true },
       { label: "lights", href: "home?vid=light", icon: "fa-lightbulb-on", active: true},
+      { label: "spotify", href: "home?vid=spotify", icon: "fa-music", active: true},
     ],
   },
   {
@@ -103,7 +104,7 @@ export const routes: IRoute[] = [
     icon: 'fa-circle-user',
     clearance: 0,
   },
-  { label: "about", href: "/about", icon: "fal-circle-info" , active: true },
+  // { label: "about", href: "/about", icon: "fal-circle-info" , active: true },
   { label: "", href: "/cart", icon: "fal-bag-shopping" },
   { label: "", href: "/checkout", hide: true},
 ];

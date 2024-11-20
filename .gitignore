@@ -50,4 +50,5 @@ yarn-error.log*
 # Ignore large files by file extension
 *.pack
 *.node
-*.git
+*.git.DS_Store
+.DS_Store

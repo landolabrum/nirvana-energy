@@ -3,25 +3,27 @@ import { ModalContext, ModalContextType } from '../contexts/modalContext';
 import styles from "@webstack/components/modal/views/modalOverlay.scss";
 import UiButton from '@webstack/components/UiButton/UiButton';
 import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
+import { useRouter } from 'next/router';
 
 const ModalOverlay: React.FC<any> = () => {
+  const router = useRouter();
   const modalRef = useRef<HTMLDivElement>(null);
   const { isModalOpen, closeModal, modalContent, replaceModal }: ModalContextType = useContext(ModalContext) as ModalContextType;
-  if (!isModalOpen || !modalContent) return null;
-
   const { confirm, title, children, footer, variant, dismissable = true }: any = modalContent;
-
+  
   const handleClick = (btn: any) => {
-    btn?.onClick();
+    btn?.onClick && btn.onClick();
+    btn?.href && router.push(btn.href)
     closeModal();
   };
-
+  
   const classMaker = (c: string): string => {
     if (!c && !variant) return '';
     else if (c && variant) return `${c} ${c}__${variant}`;
     return c;
   };
-
+  
+  if (!isModalOpen || !modalContent) return <></>;
   return (
     <>
       <style jsx>{styles}</style>

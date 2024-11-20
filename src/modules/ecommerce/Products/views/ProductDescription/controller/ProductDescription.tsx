@@ -11,6 +11,7 @@ import UiButton from '@webstack/components/UiButton/UiButton';
 import Image from 'next/image';
 import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
 import environment from '~/src/core/environment';
+import GLBViewer from '@webstack/components/ThreeComponents/ThreeGLB/ThreeGLB';
 
 interface IProductDescription {
   product_id?: string,
@@ -70,8 +71,8 @@ const ProductDescription = ({ product_id, price_id }: IProductDescription) => {
 
   useEffect(() => {
     fetchProduct(); // Moved fetching into a useEffect to be run on mount and on changes of product_query_id and price_query_id
-  }, [product_id, price_id, product_query_id, price_query_id, fetchProduct]); // Dependencies updated
-
+  }, [fetchProduct]); // Dependencies updated
+  // product_id, price_id, product_query_id, price_query_id, 
   // useEffect(() => {
   // }, [product]); // Dependencies updated
   if (product == null) return (
@@ -109,13 +110,14 @@ const ProductDescription = ({ product_id, price_id }: IProductDescription) => {
         >
           <div className="product-description__img-default" >
             {product.images[0] ? (
-              <Image
-                src={product.images[0]}
-                alt={product.name}
-                fill // Use fill to make the image fill the container
-                // style={{ objectFit: 'cover' }} // Adjust object-fit as needed
-                unoptimized={true}
-              />
+              <GLBViewer modelPath='/merchant/nirv1/3dModels/OffGridBox.glb'/>
+              // <Image
+              //   src={product.images[0]}
+              //   alt={product.name}
+              //   fill // Use fill to make the image fill the container
+              //   // style={{ objectFit: 'cover' }} // Adjust object-fit as needed
+              //   unoptimized={true}
+              // />
             ) : (<div className='img-placeholder'>
             <UiIcon icon={`${environment.merchant.name}-logo`} />
             </div>

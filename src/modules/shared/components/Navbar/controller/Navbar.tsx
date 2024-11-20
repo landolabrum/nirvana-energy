@@ -109,6 +109,7 @@ const Navbar = () => {
   const navClass = `navbar__container ${isMobile ? 'navbar__container--hide' : ''} ${merchantName}`;
 
   useEffect(() => {
+    // console.log(toggled)
     if (!isModalOpen && toggled) {
       setToggled('');
     }

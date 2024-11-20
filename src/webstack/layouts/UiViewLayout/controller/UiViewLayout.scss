@@ -29,8 +29,9 @@
     }
     &--anchor{
         user-select: none;
-        width:max-content;
-        min-height: max-content;
+        width:var(--s-9-width);
+        min-height: 100%;
+        margin: 0;
     }
     &__actions {
         justify-content: flex-end;
