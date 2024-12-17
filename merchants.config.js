@@ -14,12 +14,12 @@ module.exports = {
          }
         }
       },
-      ah1: {
-        mid: "ah1",
-        name: "aire-hotel",
-        url: "https://airehotel.com",
-        stripeId:""
-      },
+      // ah1: {
+      //   mid: "ah1",
+      //   name: "aire-hotel",
+      //   url: "https://airehotel.com",
+      //   stripeId:""
+      // },
       nirv1: {
         mid: "nirv1",
         name: "nirvana-energy",

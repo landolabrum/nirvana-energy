@@ -44,7 +44,7 @@ const ProductBuyNow: React.FC<IProductBuyNow> = ({ product, traits, size, btnTex
 
     const handleCart = (newQty?: number) => {
         addCartItem({...product, price: {...product.price, qty: Number(newQty)}}); 
-        if(goToCart && newQty)openModal({confirm:{title:"added to cart",statements:[{label:'go to cart', href:'/cart'}]}})
+        if(goToCart && newQty)openModal({title:`${product.name}, added to cart`, confirm:{statements:[{label:'go to cart', href:'/cart'}, {label:'back', onClick:()=>closeModal()}]}})
     };
 
     return (

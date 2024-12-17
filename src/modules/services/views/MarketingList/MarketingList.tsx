@@ -14,7 +14,6 @@ interface IMarketingList {
 
 const MarketingList: React.FC<IMarketingList> = ({ setDetails }) => {
   const { products, loading } = useProducts();
-console.log({products})
   return (
     <>
       <style jsx>{styles}</style>
@@ -40,14 +39,14 @@ console.log({products})
           <UiLoader />
         ) : (
           <AdaptGrid gapY={20} xs={1} md={3} gap={10}>
-            {products != null && products?.map((product) => (
+            {products != null && products?.map((product,i) => (
               <div
-                key={product.id}
+                key={`${product.id}-${i}`}
                 className="marketing-product-card"
                 onClick={() => setDetails(product)}
               >
                 <h3>{product.name}</h3>
-                <ProductBuyNow product={product} />
+                <ProductBuyNow product={product} goToCart btnText={product?.name} />
               </div>
             ))}
           </AdaptGrid>

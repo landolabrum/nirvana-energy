@@ -1,0 +1,25 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "landolabrum"]
+	url = https://github.com/landolabrum/deepturn.git
+	fetch = +refs/heads/*:refs/remotes/landolabrum/*
+[branch "beta"]
+	remote = landolabrum
+	merge = refs/heads/beta
+[remote "origin"]
+	url = https://github.com/landolabrum/deepturn.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "gh-pages"]
+	remote = origin
+	merge = refs/heads/gh-pages
+[branch "nirvana"]
+	remote = origin
+	merge = refs/heads/nirvana
+[pull]
+	rebase = false
+[remote "nirvana-energy"]
+	url = https://github.com/landolabrum/nirvana-energy.git
+	fetch = +refs/heads/*:refs/remotes/nirvana-energy/*

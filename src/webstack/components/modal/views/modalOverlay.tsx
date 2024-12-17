@@ -6,24 +6,26 @@ import { UiIcon } from '@webstack/components/UiIcon/UiIcon';
 import { useRouter } from 'next/router';
 
 const ModalOverlay: React.FC<any> = () => {
-  const router = useRouter();
   const modalRef = useRef<HTMLDivElement>(null);
   const { isModalOpen, closeModal, modalContent, replaceModal }: ModalContextType = useContext(ModalContext) as ModalContextType;
+  const router = useRouter(); // Ensure useRouter is called unconditionally
+
+  if (!isModalOpen || !modalContent) return null;
+
   const { confirm, title, children, footer, variant, dismissable = true }: any = modalContent;
-  
+
   const handleClick = (btn: any) => {
     btn?.onClick && btn.onClick();
-    btn?.href && router.push(btn.href)
+    btn?.href && router.push(btn.href);
     closeModal();
   };
-  
+
   const classMaker = (c: string): string => {
     if (!c && !variant) return '';
     else if (c && variant) return `${c} ${c}__${variant}`;
     return c;
   };
-  
-  if (!isModalOpen || !modalContent) return <></>;
+
   return (
     <>
       <style jsx>{styles}</style>
@@ -34,8 +36,9 @@ const ModalOverlay: React.FC<any> = () => {
           <div className={classMaker("modal__header")}>
             <div className='modal-overlay__title'>{title}</div>
             {dismissable && (
-              <div className='close-btn' onClick={closeModal}>
-                <UiIcon icon='fa-xmark' />
+              <div className='close-btn' >
+                <UiButton onClick={closeModal} size='lg' traits={{beforeIcon:'fa-xmark'}}>close
+                </UiButton>
               </div>
             )}
           </div>

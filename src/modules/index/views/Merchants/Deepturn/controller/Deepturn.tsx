@@ -13,6 +13,7 @@ import ThreeDLayout from '@webstack/components/ThreeComponents/ThreeLayout/Three
 import useWindow from '@webstack/hooks/window/useWindow';
 import MBWaterMark from '../../../MindBurner/views/WaterMark/MBWaterMark';
 import UiLoader from '@webstack/components/UiLoader/view/UiLoader';
+import GLBViewer from '@webstack/components/ThreeComponents/ThreeGLB/ThreeGLB';
 
 
 
@@ -41,7 +42,8 @@ const Deepturn = () => {
   const { pathname } = useRouter()
 
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [view, setView] = useState<string>('entityChoice');
+  const [view, setView] = useState<string>('BallView');
+  // const [view, setView] = useState<string>('entityChoice');
   const handleLoad = () => {
     if (!loaded && pathname == '/') setLoaded(true);
   }
@@ -114,6 +116,11 @@ const Deepturn = () => {
       </div>
     </>
   }
+  const BallView = () => <GLBViewer
+  width={width > 1100 ? "400px" : "90vw"}
+  height={width > 1100 ? "500px" : "90vw"}
+  modelPath='/merchant/nirv1/3dModels/products/prod_P5lI35r2EWTAxi.glb'
+/>
   const ComingSoon = () => {
     return <>
       <style jsx>{styles}</style>
@@ -142,6 +149,7 @@ const Deepturn = () => {
   const views = {
     // "ENTER": <div><UiButton  size='xxl' onClick={() => setView('entityChoice')}>&zwnj; &zwnj; &zwnj; enter &zwnj; &zwnj; &zwnj; </UiButton></div>,
     entityChoice: <DeepturnEntitySelect />,
+    BallView:<BallView/>,
     "coming-soon": <ComingSoon />
   }
   const genLayouts = () => {
@@ -174,8 +182,7 @@ const Deepturn = () => {
     <>
       <style jsx>{styles}</style>
       <div className='deepturn'>
-        <div className='component--terrain'>
-          {/* {width&&width} */}
+        {/* <div className='component--terrain'>
           <ThreeDLayout
             layers={[
               {
@@ -185,7 +192,6 @@ const Deepturn = () => {
               },
               {
                 element: <div className='s-w-100 d-flex'>
-                  {/* <UiViewLayout variant='anchor' views={views} currentView={view} />  */}
                 </div>, position: [0, 0, 50]
               },
               { element: <div className='middle'>grid</div>, position: [0, 0, 50] },
@@ -202,7 +208,6 @@ const Deepturn = () => {
                 focalLength: 50,
               },
               scene: {
-                // size: [800, 600, 400], // Optional scene size
               },
             }}
             followMouse={{
@@ -211,9 +216,9 @@ const Deepturn = () => {
               disable: { x: false, y: false, z: true },
             }}
           />
+        </div> */}
           {/* <BrowserInteraction/> */}
 
-        </div>
         <UiViewLayout variant='anchor' views={views} currentView={view} />
       </div>
       <MBWaterMark />

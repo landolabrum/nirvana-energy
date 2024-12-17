@@ -50,6 +50,10 @@ export const routes: IRoute[] = [
     hide: true,
   },
   {
+    href:"/build",
+    hide: true,
+  },
+  {
     label: keyStringConverter(merchantName),
     icon: `${merchantName}-logo`,
     href:"/",

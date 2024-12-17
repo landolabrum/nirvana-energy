@@ -16,7 +16,11 @@ export const useProducts = () => {
   const [hasMore, setHasMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loader, setLoader] = useLoader();
-
+const activeFilter = (products:any)=>{
+  const filt = products.filter((product:any)=>product?.active);
+  return filt;
+  
+}
   const fetchProducts = useCallback(async () => {
     if (loading || products) return;
     const cachedData = sessionData?.products;
@@ -35,9 +39,10 @@ export const useProducts = () => {
         try {
             const response = await productService.getProducts({ limit: 10 }); // Adjust your API request here
             if (response?.data) {
-                const newData = { ...response, created: Date.now() };
+              const newData = { ...response, created: Date.now() };
+                const activeProducts = activeFilter(response.data);
                 setSessionItem("products", newData, { expiry: EXPIRY });
-                const merchantProducts = merchantProductHandler(response.data);
+                const merchantProducts = merchantProductHandler(activeProducts);
                 merchantProducts && setProducts(merchantProducts);
           setHasMore(response.has_more);
         }
