@@ -4,10 +4,10 @@ import { useRouter } from "next/router";
 import styles from "./ProductsListing.scss";
 import { useProducts } from "../../../hooks/useProducts";
 import UiSettingsLayout from "@webstack/layouts/UiSettingsLayout/controller/UiSettingsLayout";
-import AdaptGrid from "@webstack/components/AdaptGrid/AdaptGrid";
+import AdaptGrid from "@webstack/components/Containers/AdaptGrid/AdaptGrid";
 import ProductListingItem from "../views/ProductListingItem/ProductListingItem";
-import { UiIcon } from "@webstack/components/UiIcon/UiIcon";
-import UiButton from "@webstack/components/UiButton/UiButton";
+import { UiIcon } from "@webstack/components/UiIcon/controller/UiIcon";
+import UiButton from "@webstack/components/UiForm/views/UiButton/UiButton";
 
 
 

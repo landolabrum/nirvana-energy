@@ -66,8 +66,8 @@
         border-radius: var(--border-radius);
         overflow-x: hidden;
         overflow-y: auto;
-        background-color: var(--gray-80);
-
+        background-color: var(--gray-80-o);
+        // background-color: #f30 !important;
         &_light {
             color: var(--gray-70);
             background-color: var(--gray-40);
@@ -85,6 +85,7 @@
             justify-content: flex-start;
             &--full-width {
                 flex: unset;
+                
             }
         }
         
@@ -157,7 +158,6 @@
         bottom: 0;
         padding: var(--s-9);
         box-sizing: border-box;
-
         height: 100%;
 
         @media (max-width:1100px) {
