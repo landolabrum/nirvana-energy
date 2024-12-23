@@ -111,6 +111,7 @@ export default function AdaptGrid({
       <style jsx>{styles}</style>
       <div
         ref={ref}
+
         className={`adaptgrid ${align ? ` ${align}` : ""}${scroll ? ` ${scroll}` : ""}`}
       >
         {!variant && children && children}

@@ -11,9 +11,20 @@
     height: inherit;
     color: white;
     gap:var(--s-element);
+    width: 100%;
+    @media(max-width:900px){
+        height: 100%;
+    }
     &__body{
         height: 100%;
         width: 100%;
+        @extend .d-flex;
+        overflow: auto;
+        @media (min-width:1100px) {
+                width: inherit;
+                flex-direction: row;
+                height: inherit;
+        }
     }
     &__header {
         color: var(--primary-50);
