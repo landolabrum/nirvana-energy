@@ -4,6 +4,7 @@ import { Environment, PerspectiveCamera, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 import styles from "./ThreeGLB.scss";
+import { useRouter } from 'next/router';
 
 interface GLBViewerProps {
   modelPath: string;
@@ -12,19 +13,83 @@ interface GLBViewerProps {
   fov?: number;
   width?: number | string;
   height?: number | string;
+  animate?: boolean;
 }
 
+
+const Model = ({ gltf, containerSize, fov, animate }: any) => {
+  const modelRef = useRef<THREE.Group>(null);
+  const { camera } = useThree();
+
+  useEffect(() => {
+    if (modelRef.current && camera) {
+      const box = new THREE.Box3().setFromObject(modelRef.current);
+      const center = new THREE.Vector3();
+      const size = new THREE.Vector3();
+      box.getCenter(center);
+      box.getSize(size);
+
+      modelRef.current.position.sub(center);
+
+      const maxDimension = Math.max(size.x, size.y, size.z);
+      const wd = (containerSize?.width && !isNaN(parseFloat(containerSize.width))) ? containerSize.width : 1;
+      const ht = (containerSize?.height && !isNaN(parseFloat(containerSize.height))) ? containerSize.height : 1;
+      const aspectRatio = wd / ht;
+      camera.updateProjectionMatrix();
+
+      const cameraDistance = maxDimension / (2 * Math.tan((fov * Math.PI) / 180 / 2));
+      camera.position.set(-cameraDistance, -cameraDistance, cameraDistance + size.z);
+
+      if (animate) {
+        gsap.to(camera.position, {
+          x: 0,
+          y: 0,
+          z: cameraDistance + size.z,
+          duration: 1.5,
+          ease: 'power2.inOut',
+          onUpdate: () => {
+            camera.lookAt(0, 0, 0);
+            camera.updateProjectionMatrix();
+          },
+        });
+      } else {
+        camera.position.set(0, 0, cameraDistance + size.z);
+        camera.lookAt(0, 0, 0);
+        camera.updateProjectionMatrix();
+      }
+    }
+    // if(!currentPage)setCurrentPage(window.location?.pathname);
+    // console.log({currentPage});
+  }, [gltf, camera, containerSize, animate]);
+
+  return (
+    <primitive
+      object={gltf.scene}
+      // object={gltf.scene}
+      ref={modelRef}
+      scale={1}
+      position={[0, 0, 0]}
+    // rotation={[0, 0, 0]}
+    />
+  );
+};
+
 const GLBViewer: React.FC<GLBViewerProps> = ({
-  width = 100,
-  height = 100,
+  width = "100%",
+  height = "100%",
   modelPath,
   wireframe = false,
   wireframeColor = '#000000',
   fov = 100,
+  animate = true,
 }) => {
+
   const containerRef = useRef<HTMLDivElement>(null);
-  const [containerSize, setContainerSize] = useState({ width: 100, height: 100 });
+  const [containerSize, setContainerSize] = useState<any>({ width, height });
+  const [currentPage, setCurrentPage] = useState<any>();
   const [modelExists, setModelExists] = useState(true);
+  const [currentModelPath, setCurrentModelPath] = useState(modelPath);
+  const gltf = useGLTF(currentModelPath);
 
   const updateContainerSize = () => {
     if (containerRef.current) {
@@ -45,97 +110,36 @@ const GLBViewer: React.FC<GLBViewerProps> = ({
       if (!response.ok) {
         throw new Error('Model not found');
       }
+      setModelExists(true);
+      setCurrentModelPath(path);
     } catch (error) {
       setModelExists(false);
+      setCurrentModelPath('/servers/frontend/Deepturn/app/public/merchant/nirv1/3dModels/products/MetalBox.glb');
     }
   };
 
   useEffect(() => {
     checkModelPath(modelPath);
-  }, [modelPath]);
+  }, []);
 
-  const Model = () => {
-    const gltf = useGLTF(modelPath);
-    const modelRef = useRef<THREE.Group>(null);
-    const { camera } = useThree();
-
-    useEffect(() => {
-      if (modelRef.current && camera) {
-        const box = new THREE.Box3().setFromObject(modelRef.current);
-        const center = new THREE.Vector3();
-        const size = new THREE.Vector3();
-        box.getCenter(center);
-        box.getSize(size);
-
-        modelRef.current.position.sub(center);
-
-        const maxDimension = Math.max(size.x, size.y, size.z);
-        const aspectRatio = containerSize.width / containerSize.height;
-        camera.updateProjectionMatrix();
-
-        const cameraDistance = maxDimension / (2 * Math.tan((fov * Math.PI) / 180 / 2));
-        camera.position.set(-cameraDistance, -cameraDistance, cameraDistance + size.z);
-
-        gsap.to(camera.position, {
-          x: 0,
-          y: 0,
-          z: cameraDistance + size.z,
-          duration: 1.5,
-          ease: 'power2.inOut',
-          onUpdate: () => {
-            camera.lookAt(0, 0, 0);
-            camera.updateProjectionMatrix();
-          },
-        });
-      }
-    }, [gltf, camera, containerSize]);
-
-    useEffect(() => {
-      if (wireframe && modelRef.current) {
-        modelRef.current.traverse((child) => {
-          if ((child as THREE.Mesh).isMesh) {
-            const mesh = child as THREE.Mesh;
-            mesh.material = new THREE.MeshBasicMaterial({
-              color: wireframeColor,
-              wireframe: true,
-            });
-          }
-        });
-      }
-    }, [wireframe, wireframeColor]);
-
-    return <primitive ref={modelRef} object={gltf.scene} />;
-  };
-
-  useEffect(() => {
-    if (containerRef?.current) {
-      containerRef.current.style.minWidth = typeof width === 'number' ? `${width}px` : width;
-      containerRef.current.style.minHeight = typeof height === 'number' ? `${height}px` : height;
-    }
-  }, [width, height]);
+  const modelProps = { gltf, containerSize, fov, animate }
 
   return (
-    <>
+    <div ref={containerRef} style={{ width, height }}>
       <style jsx>{styles}</style>
-      <div ref={containerRef} className="three-glb">
-        <div className="three-glb--content">
-          {modelExists ? (
-            <Canvas>
-              <Environment preset="sunset" />
-              <ambientLight intensity={0.5} />
-              <directionalLight position={[5, 5, 20]} intensity={0.7} />
-
-              <Suspense fallback={null}>
-                <Model />
-              </Suspense>
-              <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={fov} />
-            </Canvas>
-          ) : (
-            <div className="no-glb">No GLB model found at the provided path.</div>
-          )}
-        </div>
-      </div>
-    </>
+      {modelExists ? (
+        <Canvas>
+          <Suspense fallback={null}>
+            <PerspectiveCamera makeDefault fov={fov} position={[0, 0, 5]} />
+            <ambientLight intensity={0.5} />
+            <Environment preset="sunset" />
+            <Model {...modelProps} />
+          </Suspense>
+        </Canvas>
+      ) : (
+        <div>No GLB model found</div>
+      )}
+    </div>
   );
 };
 

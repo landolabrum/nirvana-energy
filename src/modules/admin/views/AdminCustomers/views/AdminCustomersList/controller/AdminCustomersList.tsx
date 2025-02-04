@@ -31,14 +31,14 @@ const AdminCustomers: React.FC = () => {
     add: <AdminCustomerAdd />,
   };
 
-useEffect(() => {}, [query]);
+  useEffect(() => {}, [query]);
   if(!query?.vid || query?.vid !== 'customers')return<></>;
   return (
     <>
       <style jsx>{styles}</style>
       <div className='admin-customer'>
         <div className='admin-customer__header-container'>
-          {/* <UiHeader title='Customer' subTitle={query.cid && String(query.cid)} /> */}
+          <UiHeader title='Customer' subTitle={query.cid && String(query.cid)} />
           <div className='actions'>
             {query.cid !== 'add' && (
               <UiButton

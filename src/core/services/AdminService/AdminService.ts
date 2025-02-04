@@ -56,8 +56,9 @@ export default class AdminService
   public async deleteCustomer(customerId: string): Promise<any> {
     if (customerId) {
       try {
-        const customer = await this.get<any>(`/usage/admin/customer/delete?id=${customerId}`);
-        return customer;
+        // const customer = await this.delete<any>(`/usage/admin/customer/delete`);
+        return await this.post<any, any>(`/usage/admin/customer/delete`, {ids:[customerId]});
+        // return customer;
       } catch (error: any) {
         return error;
       }

@@ -49,7 +49,7 @@ const useAdminCustomerDelete = (customer_id?: string) => {
           confirm: {
             statements: [{
               label: 'customers',
-              onClick: () => router.push(router.pathname, { query: { cid: 'list' } })
+              onClick: () => router.push(router.pathname, { query: { vid: 'list' } })
             }]
           }
         };

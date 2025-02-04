@@ -1,5 +1,5 @@
 // Relative Path: ./MbOne.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from "./NirvanaEnergy.scss";
 import AdaptGrid from '@webstack/components/Containers/AdaptGrid/AdaptGrid';
 import HomeGridItem from '../../HomeGridItem/HomeGridItem';
@@ -102,24 +102,30 @@ const NirvanaEnergy = () => {
         className='nirvana-energy'
       >
         <div className='nirvana-energy__bg-overlay'
+        onClick={()=>push('/build')}
           style={
             bgOpacity()}>
           {/* <div className='nirvana-energy__bg-overlay--media'> */}
           {width > 1100 ? (<UiMedia playbackSpeed={.7}
           onLoad={(props) => setBgLoaded(true)}
             type='video' autoplay muted loop variant='background' src="https://github.com/landolabrum/assets/raw/refs/heads/main/nirv1/b-roll/home.webm" />) : (
-            <UiMedia variant='background' alt='nirv1-home' src='/merchant/nirv1/backgrounds/redrock-wall.jpeg' />
+            <UiMedia           onLoad={(props) => setBgLoaded(true)}
+             variant='background' alt='nirv1-home' src='/merchant/nirv1/backgrounds/redrock-wall.jpeg' />
           )}
           {/* </div> */}
           <div className='nirvana-energy__bg-overlay--content'>
-            <div className='nirvana-energy__bg-overlay--content__action' onClick={()=>push('/build')}>
-              {bgLoaded && <UiTextBalance text="Configure your backup system"/>}
+            <div className='nirvana-energy__bg-overlay--content__text' >
+              {bgLoaded && <UiTextBalance text="CONFIGURE YOUR BACKUP SYSTEM"/>}
             </div>
-            {view == 'start' && <GLBViewer
-              width={width > 1100 ? "400px" : "90vw"}
-              height={width > 1100 ? "500px" : "10vh"}
+            {view == 'start' && 
+            <div className='nirvana-energy__bg-overlay--content__glb' >
+            <GLBViewer
+              // width={width > 1100 ? "var(--s-9-width)" : `100%`} 
+              // height={width > 1100 ? "var(--s-9-width)" : "100%"}
               modelPath='/merchant/nirv1/3dModels/products/MetalBox.glb'
-            />}
+            />
+            </div>}
+
             {/* <ProductQuote
               id='product-quote'
               startButton={<>

@@ -7,7 +7,7 @@ type FindClosestProps = {
   breakpoint: number;
   value?: number;
 };
-interface GridProps {
+export interface IAdaptGrid {
   xs?: number;
   sm?: number;
   md?: number;
@@ -47,7 +47,7 @@ export default function AdaptGrid({
   reverse,
   align,
   backgroundColor,
-}: GridProps) {
+}: IAdaptGrid) {
   const {width} = useWindow();
   const ref = useRef<any>(null);
 
@@ -111,6 +111,7 @@ export default function AdaptGrid({
       <style jsx>{styles}</style>
       <div
         ref={ref}
+
         className={`adaptgrid ${align ? ` ${align}` : ""}${scroll ? ` ${scroll}` : ""}`}
       >
         {!variant && children && children}

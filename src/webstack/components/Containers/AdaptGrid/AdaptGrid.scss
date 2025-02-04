@@ -5,9 +5,17 @@
   grid-template-rows: auto;
   width: 100%;
   &.scroll-x {
-    overflow-x: auto;
-    &::-webkit-scrollbar {
+    overflow-x: scroll;
+    width:max-content;
+    max-width: 100%;
+    ::-webkit-scrollbar{  
       display: none;
+    }
+    &:hover, &:focus-within{
+      ::-webkit-scrollbar{  
+        display: unset;
+        padding-top:var(--s-9)
+      }
     }
   }
   &.scroll-y {
