@@ -1,1 +1,0 @@
-(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[3492],{54517:(_,e,n)=>{"use strict";n.r(e),n.d(e,{default:()=>u});let u=n(10536).A},64784:(_,e,n)=>{(window.__NEXT_P=window.__NEXT_P||[]).push(["/index/Index",function(){return n(54517)}])}},_=>{var e=e=>_(_.s=e);_.O(0,[3624,6834,2266,9965,551,9270,536,636,6593,8792],()=>e(64784)),_N_E=_.O()}]);
