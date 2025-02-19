@@ -330,7 +330,7 @@
 }
 
 .a-light-wipe:hover {
-  /* transform: translate(10px, 10px) skewX(10deg) skewY(10deg) rotate(10deg); */
+  transform: translate(10px, 10px) skewX(10deg) skewY(10deg) rotate(10deg);
 }
 .a-light-wipe:hover::before {
   z-index: -1;
