@@ -257,7 +257,7 @@
   --s-element-width: calc(100% - calc(var(var(--s-element))));
   --s-nav-height: 45px;
   --s-nav-height-neg: calc(100vh - var(--s-nav-height));;
-
+  
   /* PAGE BREAKS */
   --breakpoint-xs: 600px;
   --breakpoint-sm: 1100px;
@@ -266,7 +266,7 @@
   --breakpoint-xl: 1600px;
   --border-radius: 8px;
   --s-element: 45px;
-
+  
   @media (max-width: 1100px) {
     --border-radius: 5px;
   }
