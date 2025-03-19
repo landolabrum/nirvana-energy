@@ -1,0 +1,1 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[1561],{42202:(_,e,s)=>{"use strict";s.r(e),s.d(e,{default:()=>u});let u=s(79393).A},83157:(_,e,s)=>{(window.__NEXT_P=window.__NEXT_P||[]).push(["/social",function(){return s(42202)}])}},_=>{var e=e=>_(_.s=e);_.O(0,[9393,636,6593,8792],()=>e(83157)),_N_E=_.O()}]);
