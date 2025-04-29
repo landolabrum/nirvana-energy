@@ -8,7 +8,7 @@ import IAuthenticatedUser, { GuestContext } from "~/src/models/ICustomer";
 
 import ApiService, { ApiError, FormFieldsException } from "../ApiService";
 import IMemberService, { IDecryptJWT, IEncryptJWT, IEncryptMetadataJWT, IResetPassword, ISessionData, OResetPassword } from "./IMemberService";
-import { IPaymentMethod } from "~/src/modules/profile/model/IMethod";
+import { IPaymentMethod } from "~/src/modules/user-account/model/IMethod";
 import { encryptString } from "@webstack/helpers/Encryption";
 import errorResponse from "../../errors/errorResponse";
 import { ICustomer } from "~/src/models/CustomerContext";
@@ -414,13 +414,13 @@ export default class MemberService
 
   public async getPersonalInformation(): Promise<any | null> {
     return this.get<any | null>(
-      "member/profile-info"
+      "member/user-account-info"
     );
   }
   public async getMemberProfileInformation(
     memberId: string
   ): Promise<any | null> {
-    return this.post(`/reports/profile-info/${memberId}`);
+    return this.post(`/reports/user-account-info/${memberId}`);
   }
   private saveLegacyAuthCookie(customJwt: string) {
     if (environment.legacyJwtCookie?.authToken) {

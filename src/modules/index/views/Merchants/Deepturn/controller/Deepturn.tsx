@@ -8,11 +8,8 @@ import environment from '~/src/core/environment';
 import UiViewLayout from '@webstack/layouts/UiViewLayout/controller/UiViewLayout';
 import { capitalizeAll } from '@webstack/helpers/Capitalize';
 import { UiIcon } from '@webstack/components/UiIcon/controller/UiIcon';
-import useTab from '@webstack/hooks/window/useBrowser';
-import ThreeDLayout from '@webstack/components/ThreeComponents/ThreeLayout/ThreeLayout';
 import useWindow from '@webstack/hooks/window/useWindow';
 import MBWaterMark from '../../../MindBurner/views/WaterMark/MBWaterMark';
-import UiLoader from '@webstack/components/UiLoader/view/UiLoader';
 import GLBViewer from '@webstack/components/ThreeComponents/ThreeGLB/ThreeGLB';
 
 
@@ -117,9 +114,9 @@ const Deepturn = () => {
     </>
   }
   const BallView = () => <GLBViewer
-  width={width > 1100 ? "400px" : "90vw"}
-  height={width > 1100 ? "500px" : "90vw"}
-  modelPath='/merchant/nirv1/3dModels/products/prod_P5lI35r2EWTAxi.glb'
+  // width={width > 1100 ? "400px" : "90vw"}
+  // height={width > 1100 ? "500px" : "90vw"}
+  modelPath='/assets/threeModels/red_sand_desert_canyon1K.glb'
 />
   const ComingSoon = () => {
     return <>

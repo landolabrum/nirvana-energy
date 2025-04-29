@@ -56,7 +56,7 @@ const useRoute = (): ORoute => {
         const notCurrent = matchingRoute?.href && !router.asPath.includes(matchingRoute?.href) || 'current-route';
         const canNavigate = Boolean( typeof hrefIsString === 'boolean' && typeof notCurrent === 'boolean');
         const emailVerified = Boolean(router.pathname == '/verify' && router?.query?.vid == 'email' && user);
-        if(emailVerified)router.push('/profile');
+        if(emailVerified)router.push('/user-account');
         if(canNavigate){
           router.push(String(matchingRoute.href), undefined, { shallow: true });
         }

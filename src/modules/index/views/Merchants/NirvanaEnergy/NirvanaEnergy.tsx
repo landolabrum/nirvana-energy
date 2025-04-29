@@ -85,7 +85,7 @@ const NirvanaEnergy = () => {
       visibility: 'visible'
     } : {}
   }
-  const service = getService("IAdminService");
+  const service:any = getService("IAdminService");
   const listThreas = async () => {
     try {
       const response = await service.listThreats();
@@ -143,11 +143,11 @@ const NirvanaEnergy = () => {
             {/* <ProductQuote
               id='product-quote'
               startButton={<>
-                <div className='configure-btn__model'>
-                </div>
-                <div className='configure-btn__text a-light-wipe'>
-                  configure your back up system.
-                </div>
+              <div className='configure-btn__model'>
+              </div>
+              <div className='configure-btn__text a-light-wipe'>
+              configure your back up system.
+              </div>
               </>
               } view={view} setView={setView} /> */}
           </div>

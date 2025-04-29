@@ -13,6 +13,7 @@ import AdminDashboard from '../views/AdminDashboard/controller/AdminDashboard';
 import AdminSales from '../views/AdminSales/controller/AdminSales';
 import AdminCustomers from '../views/AdminCustomers/views/AdminCustomersList/controller/AdminCustomersList';
 import environment from '~/src/core/environment';
+import AdminData from '../views/AdminData/controller/AdminData';
 // import AdminCustomers from '../views/AdminCustomers/views/AdminCustomersList/controller/AdminCustomersList';
 
 
@@ -20,6 +21,7 @@ import environment from '~/src/core/environment';
 const Admin = () => {
   const initialViews = {
     customers: <AdminCustomers/>,
+    data: <AdminData/>,
     products: <AdminProducts/>,
     sales: <AdminSales/>,
     operations: <h1>Operations</h1>,
@@ -46,9 +48,14 @@ const Admin = () => {
   //   messenger: <AdminMesenger />,
   //   marketing: <AdminMarketing />,
   // }
-  const level = useClearance();
+  const _level = useClearance();
+  const [level, setLevel] = useState<number>(_level);
+  const updateLevel = (level: number) => {
+    setLevel(level);
+  }
   useEffect(() => {
     if(level < 10 && views )return;
+
     if (level &&  level >= 10 )setViews({...initialViews, ['accounts']:<AdminAccounts />});
     else setViews(initialViews);
   }, []);
@@ -59,7 +66,7 @@ const Admin = () => {
       {/* {JSON.stringify(Object(environment.serviceEndpoints))} */}
       <UiSettingsLayout
         title="admin"
-        // subTitle={}
+        subTitle={"admin: level ${level}"}
         views={views}
       />
     </>

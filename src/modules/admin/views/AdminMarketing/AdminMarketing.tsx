@@ -5,7 +5,7 @@ import environment from '~/src/core/environment';
 import CreatePDF from '@webstack/components/CreatePDF/controller/CreatePDF';
 import UiButton from '@webstack/components/UiForm/views/UiButton/UiButton';
 import AdaptGrid from '@webstack/components/Containers/AdaptGrid/AdaptGrid';
-import UserMethods from '~/src/modules/profile/views/UserMethods/controller/UserMethods';
+import UserMethods from '~/src/modules/user-account/views/UserMethods/controller/UserMethods';
 
 const AdminMarketing: React.FC = () => {
   const [view, setView] = useState('start')

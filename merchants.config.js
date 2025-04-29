@@ -14,6 +14,18 @@ module.exports = {
          }
         }
       },
+      xi1: {
+        mid: "xi1",
+        name: "xInsurance",
+        url: "https://deepturn.com",
+        stripeId:"acct_1G38IXIodeKZRLDV",
+        settings:{
+         about:{
+          title:'',
+          description:'',
+         }
+        }
+      },
       // ah1: {
       //   mid: "ah1",
       //   name: "aire-hotel",

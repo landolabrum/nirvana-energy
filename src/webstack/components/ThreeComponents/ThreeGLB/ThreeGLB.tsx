@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { gsap } from 'gsap';
 import styles from "./ThreeGLB.scss";
 import { useRouter } from 'next/router';
+import { OrbitControls } from '@react-three/drei';
 
 interface GLBViewerProps {
   modelPath: string;
@@ -81,7 +82,7 @@ const GLBViewer: React.FC<GLBViewerProps> = ({
   wireframe = false,
   wireframeColor = '#000000',
   fov = 100,
-  animate = true,
+  animate,
 }) => {
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -133,9 +134,11 @@ const GLBViewer: React.FC<GLBViewerProps> = ({
             <PerspectiveCamera makeDefault fov={fov} position={[0, 0, 5]} />
             <ambientLight intensity={0.5} />
             <Environment preset="sunset" />
+            <OrbitControls enablePan={true} enableRotate={true} enableZoom={true} />
             <Model {...modelProps} />
           </Suspense>
         </Canvas>
+
       ) : (
         <div>No GLB model found</div>
       )}

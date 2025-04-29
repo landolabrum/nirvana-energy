@@ -68,7 +68,7 @@ const Authentication: React.FC<any> = (props: any) => {
         const adminClearance = useClearance() > 9;
         const onProfileClick = (isAdmin: boolean) => {
           if (isAdmin && adminClearance) router.push('/admin');
-          else router.push('/profile');
+          else router.push('/user-account');
           closeModal();
         }
         return (

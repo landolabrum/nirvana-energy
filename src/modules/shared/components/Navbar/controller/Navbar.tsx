@@ -144,7 +144,7 @@ const Navbar = () => {
                 className={`nav__nav-item nav__nav-item--${route.label ? (
                   isBrandRoute(route) ? 'brand' : route.label.toLowerCase()) : (
                   String(route.href).split('/')[1]
-                )}${toggled === route.label ? ' nav__nav-item__active' : ''}${route.label === 'profile' && total === 0 && ' no-cart' || ''
+                )}${toggled === route.label ? ' nav__nav-item__active' : ''}${route.label === 'user-account' && total === 0 && ' no-cart' || ''
                   }`}
                 onDoubleClick={() => route?.href && handleSelect({ href: route.href })}
               >
@@ -164,12 +164,12 @@ const Navbar = () => {
                   </UiButton>
                 ) : (
                   <UiSelect
-                    openDirection={route?.label === 'profile' && 'left' || undefined}
+                    openDirection={route?.label === 'user-account' && 'left' || undefined}
                     overlay={{ zIndex: 997 }}
                     traits={route?.icon ? { afterIcon: { icon: route.icon } } : undefined}
                     openState={Boolean(toggled && toggled === route.label) ? 'open' : 'closed'}
                     variant={`nav-item${toggled===route?.label ?'--active':''}`}
-                    value={route.label === 'profile' ? displayName : route.label}
+                    value={route.label === 'user-account' ? displayName : route.label}
                     options={route?.items}
                     onSelect={handleSelect}
                     onToggle={() => route.label && handleToggle(route.label)}

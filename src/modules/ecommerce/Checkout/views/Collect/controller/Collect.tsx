@@ -2,8 +2,8 @@ import styles from "./Collect.scss";
 import { useState } from "react";
 import CheckoutButton from "../../CheckoutButton/CheckoutButton";
 import { ISessionCartItem } from "~/src/core/services/MemberService/IMemberService";
-import UserMethods from "~/src/modules/profile/views/UserMethods/controller/UserMethods";
-import { IMethod } from "~/src/modules/profile/model/IMethod";
+import UserMethods from "~/src/modules/user-account/views/UserMethods/controller/UserMethods";
+import { IMethod } from "~/src/modules/user-account/model/IMethod";
 import UiLoader from "@webstack/components/UiLoader/view/UiLoader";
 import { useModal } from "@webstack/components/Containers/modal/contexts/modalContext";
 interface ICollect {

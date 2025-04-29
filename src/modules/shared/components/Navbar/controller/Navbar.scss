@@ -107,14 +107,14 @@
       --ui-icon-color: $defaultColor;
       min-height: var(--s-nav-height);
       &--about { margin-left: auto; }
-      &--profile,
+      &--user-account,
       &--login {
         align-self: flex-end;
         justify-self: flex-end;
         @media(max-width:1100px) { position: inherit; }
       }
       &.no-cart { padding-right: 0; }
-      &--login, &--profile{
+      &--login, &--user-account{
         margin-left:auto;
       }
       &--cart {

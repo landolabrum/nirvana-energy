@@ -86,15 +86,16 @@ export const routes: IRoute[] = [
     ],
   },
   {
-    label: "profile",
+    label: "user-account",
     icon: 'fal-circle-user',
     clearance: 1,
     items: [
       { href: "/admin?vid=customers", label: "admin", clearance: 10},
-      { href: "/profile", label: "profile" , clearance: 1},
+      { href: "/user-account", label: "user-account" , clearance: 1},
       { href: "/authentication/signout", label: "logout", clearance: 1 },
     ],
   },
+  { href: "/3d", label: "3d" ,},
   // {
   //   label: "auto",
   //   icon: "fa-engine",
@@ -134,8 +135,8 @@ export const useClearanceRoutes = () => {
 
     // Your existing sorting logic here
     const sortedAndFilteredRoutes = filterRoutes(routes).sort((a, b) => {
-      // Prioritize 'login', 'profile', and 'cart' to be at the end
-      const lastLabels = ['login', 'profile'];
+      // Prioritize 'login', 'user-account', and 'cart' to be at the end
+      const lastLabels = ['login', 'user-account'];
       const aIndex = a.label && lastLabels.includes(a.label) ? lastLabels.indexOf(a.label) : a.href === '/cart' ? lastLabels.length : -1;
       const bIndex = b.label && lastLabels.includes(b.label) ? lastLabels.indexOf(b.label) : b.href === '/cart' ? lastLabels.length : -1;
 
