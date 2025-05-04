@@ -134,6 +134,11 @@ const UiMedia: React.FC<IMedia> = ({
         showPlayPause={type === 'video'}
       >
         {isLoading && <div className="loading">{loadingText || 'Loading...'}</div>}
+        {!autoplay && !isPlaying &&  poster && <div className="ui-media--poster">
+          <div className="ui-media--poster__content">
+          {poster}
+          </div>
+          </div>}
 
         {/* If no error, render video or image */}
         {!imageControlProps.error && (

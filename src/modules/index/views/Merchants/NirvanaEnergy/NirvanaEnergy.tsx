@@ -119,7 +119,7 @@ const NirvanaEnergy = () => {
             onLoad={handleBackgroundLoad}
             type='video' autoplay muted loop variant='background' src="https://github.com/landolabrum/assets/raw/refs/heads/main/nirv1/b-roll/home.webm" />) : (
             <UiMedia onLoad={handleBackgroundLoad}
-              variant='background' alt='nirv1-home' src='merchant/nirv1/backgrounds/havasu-Falls.jpg' />
+              variant='background' alt='nirv1-home' src='/merchant/nirv1/backgrounds/havasupai_1x1.png' />
           )}
           {/* </div> */}
           <div className='nirvana-energy__bg-overlay--content'>
@@ -134,6 +134,7 @@ const NirvanaEnergy = () => {
             {view == 'start' &&
               <div className='nirvana-energy__bg-overlay--content__glb' >
                 <GLBViewer
+                  controls={false}
                   // width={width > 1100 ? "var(--s-9-width)" : `100%`} 
                   // height={width > 1100 ? "var(--s-9-width)" : "100%"}
                   modelPath='/merchant/nirv1/3dModels/products/MetalBox.glb'
@@ -167,6 +168,7 @@ const NirvanaEnergy = () => {
 
           {view == 'start' && <>
             <UiMedia type='video' 
+            poster='Should you install a backup battery?'
              src="https://github.com/landolabrum/assets/raw/refs/heads/main/nirv1/b-roll/nirv1_questions.webm" />
             <div className='d-flex s-w-100' style={{ minHeight: '500px' }}>
               {/* <video src="/merchant/nirv1/videos/nirv1_questions.mp4" width='100%' autoPlay={true} muted/> */}

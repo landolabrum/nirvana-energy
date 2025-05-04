@@ -39,6 +39,8 @@ export const LinkProvider: FC<ILinkProvider> = ({ href, target, children, rel, f
 };
 export interface IButton extends IFormControl {
   onClick?: (e: any) => void;
+  onEnter?: (e: any) => void;
+  onLeave?: (e: any) => void;
   disabled?: boolean;
   busy?: boolean;
   href?: string;
@@ -48,41 +50,59 @@ export interface IButton extends IFormControl {
   variant?: IFormControlVariant;
 }
 
+
 interface IButtonContext extends IButton {
   context: IButton;
 }
 
 const ButtonContext = ({ context }: IButtonContext) => {
-  let traits = context.traits ? context.traits : {};
+  let traits = context.traits ?? {};
   traits['disabled'] = context.disabled;
-  const handleClick = (e:any) =>{
-    context?.onClick && context?.onClick(e)
-  }
-  if(context?.disabled)context.variant='disabled';
-  const _type: any = context?.type && !['tel', 'email'].includes(context.type) && context.type;
-  useEffect(() => {}, [context]);
+
+  const handleClick = (e: any) => {
+    context?.onClick?.(e);
+  };
+
+  const handleEnter = (e: any) => {
+    context?.onEnter?.(e);
+  };
+
+  const handleLeave = (e: any) => {
+    context?.onLeave?.(e);
+  };
+
+  if (context?.disabled) context.variant = 'disabled';
+
+  const _type: any = context?.type && !['tel', 'email'].includes(context.type) ? context.type : undefined;
+
   return (
     <>
       <style jsx>{styles}</style>
       <FormControl label={context.label} size={context.size} variant={context.variant} traits={traits}>
         <button
-          data-element='button'
-          type={_type || undefined}
-          className={context?.variant ? context?.variant : ""}
+          data-element="button"
+          type={_type}
+          className={typeof context?.variant === "string" ? context.variant : ""}
           onClick={handleClick}
-          disabled={context?.disabled || context?.variant == "disabled"}
+          onMouseEnter={handleEnter}
+          onMouseLeave={handleLeave}
+          onTouchStart={handleEnter}
+          onTouchEnd={handleLeave}
+          disabled={context?.disabled || context?.variant === "disabled"}
         >
-          {context?.busy && (
+          {context?.busy ? (
             <div className="busy-spinner">
               <UiIcon icon="spinner" />
             </div>
+          ) : (
+            context?.children
           )}
-          {!context?.busy && context?.children}
         </button>
       </FormControl>
     </>
   );
 };
+
 
 const UiButton: NextComponentType<NextPageContext, {}, IButton> = ({
   href,

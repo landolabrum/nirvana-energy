@@ -6,6 +6,7 @@ import { gsap } from 'gsap';
 import styles from "./ThreeGLB.scss";
 import { useRouter } from 'next/router';
 import { OrbitControls } from '@react-three/drei';
+import ThreeGLBControls from './views/ThreeGLBControls';
 
 interface GLBViewerProps {
   modelPath: string;
@@ -15,7 +16,9 @@ interface GLBViewerProps {
   width?: number | string;
   height?: number | string;
   animate?: boolean;
+  controls?: boolean; // 👈 NEW
 }
+
 
 
 const Model = ({ gltf, containerSize, fov, animate }: any) => {
@@ -83,6 +86,7 @@ const GLBViewer: React.FC<GLBViewerProps> = ({
   wireframeColor = '#000000',
   fov = 100,
   animate,
+  controls
 }) => {
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -123,7 +127,7 @@ const GLBViewer: React.FC<GLBViewerProps> = ({
     checkModelPath(modelPath);
   }, []);
 
-  const modelProps = { gltf, containerSize, fov, animate }
+  const modelProps = { gltf, containerSize, fov, animate, }
 
   return (
     <div ref={containerRef} style={{ width, height }}>
@@ -134,7 +138,8 @@ const GLBViewer: React.FC<GLBViewerProps> = ({
             <PerspectiveCamera makeDefault fov={fov} position={[0, 0, 5]} />
             <ambientLight intensity={0.5} />
             <Environment preset="sunset" />
-            <OrbitControls enablePan={true} enableRotate={true} enableZoom={true} />
+            <ThreeGLBControls controls={controls} />
+
             <Model {...modelProps} />
           </Suspense>
         </Canvas>

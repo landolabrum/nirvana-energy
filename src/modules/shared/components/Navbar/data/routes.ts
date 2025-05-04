@@ -95,7 +95,7 @@ export const routes: IRoute[] = [
       { href: "/authentication/signout", label: "logout", clearance: 1 },
     ],
   },
-  { href: "/3d", label: "3d" ,},
+  { href: "/3d", label: "3d", hide: true },
   // {
   //   label: "auto",
   //   icon: "fa-engine",

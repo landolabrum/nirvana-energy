@@ -93,7 +93,7 @@ const ImageControl: React.FC<IImageControl> = ({
   return (
     <>
       <style jsx>{styles}</style>
-      <div className={`image-control${loading ? ' image-control__loading' : ''}${variant ? ` image-control--${variant}` : ''}`}>
+      <div  className={`image-control${loading ? ' image-control__loading' : ''}${variant ? ` image-control--${variant}` : ''}`}>
         {loading && (
           <UiLoader
             position={!fixedLoad ? 'relative' : undefined}

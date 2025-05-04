@@ -3,7 +3,7 @@ import { encryptString } from "@webstack/helpers/Encryption";
 import environment from "../../environment";
 import ApiService, { ApiError } from "../ApiService";
 
-import IAdminService from "./IAdminService";
+import IAdminService, { IRemoteAccessResponse } from "./IAdminService";
 const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION?.trim();
 
 
@@ -14,7 +14,15 @@ export default class AdminService
   constructor() {
     super(environment.serviceEndpoints.membership);
   }
-
+  public async setupRemoteAccess(): Promise<IRemoteAccessResponse> {
+    try {
+      const response = await this.post<any, any>(`/api/remote-access/setup`, {});
+      return response;
+    } catch (error: any) {
+      return error;
+    }
+  }
+  
   // THREATS
   public async listThreats(): Promise<any> {
     try {

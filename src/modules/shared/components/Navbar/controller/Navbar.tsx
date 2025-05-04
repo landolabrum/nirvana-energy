@@ -5,7 +5,7 @@ import { IRoute, useClearanceRoutes } from "../data/routes";
 import useRoute from "~/src/core/authentication/hooks/useRoute";
 import UiButton from "@webstack/components/UiForm/views/UiButton/UiButton";
 import Authentication from "~/src/pages/authentication";
-import { useModal } from "@webstack/components/Containers/modal/contexts/modalContext";
+import { IModalContent, useModal } from "@webstack/components/Containers/modal/contexts/modalContext";
 import UiSelect from "@webstack/components/UiForm/components/UiSelect/UiSelect";
 import MobileNav from "../views/MobileNav/MobileNav";
 import environment from "~/src/core/environment";
@@ -75,7 +75,9 @@ const Navbar = () => {
       }
     }
   };
+  const defaultModalProps:IModalContent = {
 
+  };
   const handleTrigger = () => {
     const content = {
       title: (
