@@ -119,7 +119,7 @@ const GLBViewer: React.FC<GLBViewerProps> = ({
       setCurrentModelPath(path);
     } catch (error) {
       setModelExists(false);
-      setCurrentModelPath('/servers/frontend/Deepturn/app/public/merchant/nirv1/3dModels/products/MetalBox.glb');
+      setCurrentModelPath('/code/frontend/deepturn/public/merchant/nirv1/3dModels/products/MetalBox.glb');
     }
   };
 

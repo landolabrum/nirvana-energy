@@ -134,7 +134,7 @@ const UiMedia: React.FC<IMedia> = ({
         showPlayPause={type === 'video'}
       >
         {isLoading && <div className="loading">{loadingText || 'Loading...'}</div>}
-        {!autoplay && !isPlaying &&  poster && <div className="ui-media--poster">
+        {!autoplay && !isPlaying &&  poster && <div className="ui-media--poster" onClick={togglePlay}>
           <div className="ui-media--poster__content">
           {poster}
           </div>

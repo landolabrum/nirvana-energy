@@ -167,10 +167,10 @@ const NirvanaEnergy = () => {
 
 
           {view == 'start' && <>
+            <div className='d-flex s-w-100' style={{ minHeight: '500px' }}>
             <UiMedia type='video' 
             poster='Should you install a backup battery?'
              src="https://github.com/landolabrum/assets/raw/refs/heads/main/nirv1/b-roll/nirv1_questions.webm" />
-            <div className='d-flex s-w-100' style={{ minHeight: '500px' }}>
               {/* <video src="/merchant/nirv1/videos/nirv1_questions.mp4" width='100%' autoPlay={true} muted/> */}
               {/* {width > 1100 ? (<UiMedia height={500}
           // onLoad={(props) => setBgLoaded(true)}
