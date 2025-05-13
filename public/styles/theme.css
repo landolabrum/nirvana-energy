@@ -125,6 +125,7 @@
   --blue-60: #18527f;
   --blue-70: #13487A;
   --blue-90: #031d40;
+  --blue-100: #121e2f;
 
 
   --purple-10: #d0a1e2;
@@ -279,17 +280,15 @@
   transition: all 1s ease-in-out;
   overflow: hidden; /* Ensures the animation stays within bounds */
 }
+/* 
 
-.a-light-wipe:hover {
-  /* transform: translate(10px, 10px) skewX(10deg) skewY(10deg) rotate(10deg); */
-}
 .a-light-wipe:hover::before {
   z-index: -1;
   content: '';
   position: absolute;
   top: 0;
   left: -100%; /* Start outside the text bounds */
-  height: 100%;
+  /* height: 100%;
   width: 70px;
   background: linear-gradient(
     120deg,
@@ -299,7 +298,7 @@
   );
   transform: skewX(-25deg);
   animation: light-wipe 1.2s ease-in-out forwards;
-}
+} */
 
 
 

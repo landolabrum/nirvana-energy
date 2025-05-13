@@ -1,9 +1,18 @@
-const { merchants }= require('./merchants.config');
+const { merchants } = require('./merchants.config');
 
 const nextConfig = {
   reactStrictMode: true,
+  allowedDevOrigins: [
+    'local.tiktok.soy',
+    'http://localhost:3000',
+    'https://tiktok.soy',
+    'https://tiktok.soy:3000',
+    'https://172.17.0.1:3000',
+    '172.17.0.1'
+    
+  ], // ✅ Enables dev access from your tunnel domain
+
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    // Rule for .scss or .css files
     config.module.rules.push({
       test: /\.s?css$/,
       oneOf: [
@@ -22,23 +31,13 @@ const nextConfig = {
         },
       ],
     });
-    // config.module.rules.push({
-    //   test: /\.s?css$/,
-    //   use: [
-    //     defaultLoaders.babel,
-    //     {
-    //       loader: require("styled-jsx/webpack").loader,
-    //       options: { type: "scoped" },
-    //     },
-    //   ],
-    // });
 
-    // Add this to handle ES modules in node_modules
+    // Handle ES modules in node_modules
     if (!isServer) {
       config.module.rules.push({
         test: /\.m?js$/,
         resolve: {
-          fullySpecified: false, // disable the behavior
+          fullySpecified: false,
         },
         include: /node_modules/,
       });
@@ -46,6 +45,7 @@ const nextConfig = {
 
     return config;
   },
+
   output: "export",
   images: {
     unoptimized: true,
