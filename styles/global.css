@@ -24,8 +24,8 @@
   --s-7-w: calc(100% - calc(var(--s-7) * 2));
   --s-8-w: calc(100% - calc(var(--s-8) * 2));
   --s-9-w: calc(100% - calc(var(--s-9) * 2));
-  --s-10-width: calc(100% - calc(var(--s-10) * 2));
-  --s-12-width: calc(100% - calc(var(--s-12) * 2));
+  --s-10-w: calc(100% - calc(var(--s-10) * 2));
+  --s-12-w: calc(100% - calc(var(--s-12) * 2));
 
   /* Padding shorthand variables */
   --s-xxl-p: padding: var(--s-xxl);
@@ -86,7 +86,6 @@
 
 
 
-=== Utility classes === */
 
 /* Padding all */
 .s-xxl-p { padding: var(--s-xxl); }
@@ -380,17 +379,17 @@ body {
 
 .s-10 {
   padding: var(--s-10);
-  width: var(--s-10-width);
+  width: var(--s-10-w);
 }
 
 .s-11 {
   padding: var(--s-11);
-  width: var(--s-11-width);
+  width: var(--s-11-w);
 }
 
 .s-12 {
   padding: var(--s-12);
-  width: var(--s-12-width);
+  width: var(--s-12-w);
 }
 .s-maxW--maxC{
   max-width: max-content;
