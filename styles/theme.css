@@ -47,10 +47,16 @@
   font-family: Decimal;
   font-weight: 500;
   font-style: normal;
-  src: url("/fonts/decimal/Decimal-Book-Pro_Web.woff2") format("woff2"),
-    url("/fonts/decimal/Decimal-Book-Pro_Web.woff2") format("woff2");
+  src: url("/fonts/Decimal/Decimal-Book.woff2") format("woff2"),
+    url("/fonts/Decimal/Decimal-Book") format("woff2");
 }
-
+@font-face {
+  font-family: Decimal;
+  font-weight: 500;
+  font-style: Bold;
+  src: url("/fonts/Decimal/Decimal-Book-Pro_Web.woff2") format("woff2"),
+    url("/fonts/Decimal/Decimal-Book-Pro_Web.woff2") format("woff2");
+}
 :root {
   --user: #1880cf;
   --marker: #cf0f0f;
