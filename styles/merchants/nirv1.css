@@ -1,17 +1,17 @@
 :root {
 /* Solid colors */
---primary-10: #b4c68a;  /* light sage, accents */
---primary-30: #8fa35d;  /* muted olive green */
---primary-50: #6a8040;  /* strong industrial green */
---primary-70: #4c5e2b;  /* dark utility green */
---primary-90: #2e3d18;  /* near-military deep green */
+--primary-10: #cfff40;  /* vibrant lime – light accents */
+--primary-30: #bff230;  /* bright chartreuse – secondary UI */
+--primary-50: #76b900;  /* rich green – brand primary */
+--primary-70: #3f8500;  /* deep green – buttons, emphasis */
+--primary-90: #265600;  /* dark forest – backgrounds */
 
-/* 50% opacity versions */
---primary-10-o: #b4c68a80;
---primary-30-o: #8fa35d80;
---primary-50-o: #6a804080;
---primary-70-o: #4c5e2b80;
---primary-90-o: #2e3d1880;
+/* 50% opacity versions – maintain transparency */
+--primary-10-o: #cfff4080;
+--primary-30-o: #bff23080;
+--primary-50-o: #76b90080;
+--primary-70-o: #3f850080;
+--primary-90-o: #26560080;
 
   /* (Optional) keep your generic overlay */
   --primary-o: #9d8d2b70;
