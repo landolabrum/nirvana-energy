@@ -248,7 +248,6 @@ body {
 }
 *::-webkit-scrollbar:hover{
     width: var(--s-1);
-
   }
 *::-webkit-scrollbar-thumb {
   background-color: var(--gray-70-o);
