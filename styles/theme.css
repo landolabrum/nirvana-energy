@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Play:wght@300;500;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&display=swap');
 
 @font-face {
   font-family: Game;
@@ -42,21 +43,47 @@
     url("/fonts/freight/freight-sans-medium.woff") format("woff");
 }
 
+/* ===== Decimal Core (for body/UI) ===== */
 
+/* Light (300) */
 @font-face {
-  font-family: Decimal;
+  font-family: "Decimal";
+  src: url("/fonts/Decimal/Decimal-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Book (400) */
+@font-face {
+  font-family: "Decimal";
+  src:
+    url("/fonts/Decimal/Decimal-Book.woff2") format("woff2"),
+    url("/fonts/Decimal/Decimal-Book.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Decimal";
+  src:
+    url("/fonts/Decimal/Decimal-Medium.woff2") format("woff2"),
+    url("/fonts/Decimal/Decimal-Medium.woff")  format("woff");
   font-weight: 500;
   font-style: normal;
-  src: url("/fonts/Decimal/Decimal-Book.woff2") format("woff2"),
-    url("/fonts/Decimal/Decimal-Book") format("woff2");
+  font-display: swap;
 }
+
+/* ===== Decimal TD (display cut, opt-in only) ===== */
 @font-face {
-  font-family: Decimal;
-  font-weight: 500;
-  font-style: Bold;
-  src: url("/fonts/Decimal/Decimal-Book-Pro_Web.woff2") format("woff2"),
-    url("/fonts/Decimal/Decimal-Book-Pro_Web.woff2") format("woff2");
+  font-family: "Decimal TD";
+  src: url("/fonts/Decimal/Decimal-Medium-TD.woff") format("woff");
+  font-weight: 500;           /* use only when explicitly requested */
+  font-style: normal;
+  font-display: swap;
 }
+
+
 :root {
   --user: #1880cf;
   --marker: #cf0f0f;
