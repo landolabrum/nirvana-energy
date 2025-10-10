@@ -27,6 +27,11 @@
 }
 
 @font-face {
+  font-family: Linebeam;
+  src: url("/fonts/LinearBeam/Linebeam.ttf") format("opentype");
+  font-style: normal;
+}
+@font-face {
   font-family: FreightSans;
   font-weight: 700;
   font-style: normal;
