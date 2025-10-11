@@ -1,0 +1,34 @@
+{
+    "events": [
+        {
+            "id": 4,
+            "name": "test powell",
+            "starts_at": "2025-09-04T06:36:00+00:00",
+            "ends_at": "2025-09-04T07:36:00+00:00",
+            "timezone": "America/Denver",
+            "is_live": false,
+            "created_at": "2025-09-04T00:36:54.185840+00:00",
+            "updated_at": "2025-09-15T09:46:51.984455+00:00"
+        },
+        {
+            "id": 3,
+            "name": "PRO Class 1",
+            "starts_at": "2025-08-31T18:00:00+00:00",
+            "ends_at": "2025-08-31T19:00:00+00:00",
+            "timezone": "America/Chicago",
+            "is_live": false,
+            "created_at": "2025-08-31T07:12:48.463433+00:00",
+            "updated_at": "2025-09-15T09:50:39.974970+00:00"
+        },
+        {
+            "id": 2,
+            "name": "Super Cat, Factory Stock",
+            "starts_at": "2025-08-31T17:00:00+00:00",
+            "ends_at": "2025-08-31T18:00:00+00:00",
+            "timezone": "America/Chicago",
+            "is_live": true,
+            "created_at": "2025-08-31T07:12:48.453253+00:00",
+            "updated_at": "2025-09-15T10:09:47.067776+00:00"
+        }
+    ]
+}

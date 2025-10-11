@@ -1,112 +1,173 @@
 .d-flex {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-
-
 .tabs {
-    @media(max-width:900px) {
-        width: 100vw;
-        height: 100vh;
-    }
-    height: inherit;
-    background-color: var(--gray-90);
-    border-radius: var(--border-radius);
-    border: solid 1px var(--gray-70);
-    overflow: hidden;
-    
-    &__content {
-        @extend .d-flex;
-        flex-direction: column;
-        align-items: stretch;
-        height: inherit;
-        width: 100%;
-        .tabs__tabs {
-            border-bottom: solid 1px var(--gray-70);
-            background-color: var(--gray-80);
-            --ui-icon-color: transparent;
-            @extend .d-flex;
-            justify-content: center;
-            overflow: hidden;
-            z-index: 1;
-            .active{
-                background-color: var(--gray-60);
-                --ui-icon-color: var(--gray-60);
-            }
-            .tabs-layout__tab {
-                position: relative;
-                @extend .d-flex;
-                text-transform: capitalize;
-                width: 100%;
-                height: var(--s-element);
+  height: inherit;
+  background-color: var(--gray-90);
+  border-radius: var(--border-radius);
+  border: solid 1px var(--gray-70);
+  overflow: hidden;
 
-                &:hover {
-                    z-index: 2;
-                    cursor: pointer;
-                    @extend .active;
-                }
-                &--icon {
-                    width: var(--s-element);
-                    position: absolute;
-                    --ui-icon-width: var(--s-element);
-                    --ui-icon-height: var(--s-element);
-                    right: unset;
-                    left: unset;
-                }
+  @media (max-width: 900px) {
+    width: 100vw;
+    height: 100vh;
+  }
 
-                &--icon:first-child {
-                    right: calc(var(--s-element) * -1);
-                }
+  /* FULL VARIANT: fill viewport below nav and allow internal scroll */
+  &__full {
+    position: fixed;
+    top: calc(var(--s-nav-height) + var(--s-9));
+    left: 0;
+    right: 0;
+    bottom: 0;                     /* 👈 defines the bottom: no clipping */
+    width: auto;
+    height: auto;                  /* 👈 let inset define size */
+    border-radius: unset;
+    border: unset;
 
-                &--icon:last-child {
-                    transform: rotate(180deg);
-                    left: calc(var(--s-element) * -1);
-                }
-                &__active {
-                    position: relative;
-                    z-index: 2;
-                    @extend .active;
-                }
-            }
+    display: flex;                 /* 👇 flex column for header + scrollable body */
+    flex-direction: column;
+    overflow: hidden;              /* header stays put, body scrolls */
 
-        }
-
+    .tabs__content {
+      flex: 1 1 auto;              /* take remaining space */
+      min-height: 0;               /* 👈 critical for scroll in flex children */
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      overflow: hidden;            /* body controls scroll, not the wrapper */
     }
 
-    .tabs__actions {
-        background-color: var(--dark);
-        // background-color: #f30;
-        border-right: inset 1px var(--primary-50);
-        width: 400px;
-
-        @media(max-width:900px) {
-            padding: var(--s-4);
-            width: var(--s-4-width);
-        }
+    .tabs__tabs {
+      flex: 0 0 auto;              /* header does not grow */
+      width: 100%;
+      border-bottom: solid 1px var(--gray-70);
+      background-color: var(--gray-80);
+      --ui-icon-color: transparent;
+      @extend .d-flex;
+      justify-content: center;
+      overflow: hidden;
+      z-index: 1;
     }
 
     .tabs__view {
-        padding: var(--s-4);
-        width: auto;
-        @extend .d-flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        height: inherit;
-        @media(max-width:900px) {
-            border-left: solid 5px var(--gray-100);
-            height: max-content;
-            overflow: visible;
-            width: inherit;
-        }
-        
-        .tabs__view__title {
-            font-size: var(--s-1);
-            line-height: 2.5;
-            text-transform: capitalize;
-            color: var(--gray-70);
-        }
+      flex: 1 1 auto;              /* fill remaining space */
+      min-height: 0;               /* 👈 enables overflow to actually work */
+      overflow: auto;              /* 👈 scroll here */
+      width: 100%;
+      padding: var(--s-4);
+
+      &__full {
+        width: 100%;
+        padding: 0;
+      }
+
+      @media (max-width: 900px) {
+        border-left: solid 5px var(--gray-100);
+        width: inherit;
+      }
     }
+  }
+
+  &__content {
+    @extend .d-flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: inherit;
+    width: 100%;
+
+    .tabs__tabs {
+      width: 100%;
+      border-bottom: solid 1px var(--gray-70);
+      background-color: var(--gray-80);
+      --ui-icon-color: transparent;
+      @extend .d-flex;
+      justify-content: center;
+      overflow: hidden;
+      z-index: 1;
+
+      .active {
+        color: var(--blue-10);
+        background: radial-gradient(var(--gray-70-o), var(--gray-50-o));
+        --ui-icon-color: var(--gray-40-o);
+      }
+
+      &__full {
+        width: 100vw;
+        border-radius: unset;
+        border: unset;
+      }
+
+      .tabs-layout__tab {
+        position: relative;
+        @extend .d-flex;
+        text-transform: capitalize;
+        width: 100%;
+        height: var(--s-element);
+
+        &:hover {
+          z-index: 2;
+          cursor: pointer;
+          @extend .active;
+        }
+
+        &--icon {
+          width: var(--s-element);
+          position: absolute;
+          --ui-icon-width: var(--s-element);
+          --ui-icon-height: var(--s-element);
+          right: unset;
+          left: unset;
+          display: none;
+        }
+
+        &--icon:first-child { right: calc(var(--s-element) * -1); }
+        &--icon:last-child  { transform: rotate(180deg); left: calc(var(--s-element) * -1); }
+
+        &__active { position: relative; z-index: 2; @extend .active; }
+        &__full { background: unset; border: unset; }
+      }
+    }
+  }
+
+  .tabs__actions {
+    background-color: var(--dark);
+    border-right: inset 1px var(--primary-50);
+    width: 400px;
+
+    @media (max-width: 900px) {
+      padding: var(--s-4);
+      width: var(--s-4-w);
+    }
+  }
+
+  .tabs__view {
+    padding: var(--s-4);
+    width: auto;
+    @extend .d-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    height: inherit;
+
+    &__full { width: 100%; padding: 0; }
+
+    @media (max-width: 900px) {
+      border-left: solid 5px var(--gray-100);
+      height: max-content;
+      overflow: visible;
+      width: inherit;
+    }
+
+    .tabs__view__title {
+      font-size: var(--s-1);
+      line-height: 2.5;
+      text-transform: capitalize;
+      color: var(--gray-70);
+    }
+  }
 }

@@ -8,6 +8,8 @@ import AdminService from "~/src/core/services/AdminService/AdminService";
 import DocumentService from "~/src/core/services/DocumentService/DocumentService";
 import SocialService from "~/src/core/services/SocialService/SocialService";
 import GuestService from "~/src/core/services/GuestService/GuestService";
+import GPTService from "~/src/core/services/GPTService/GPTService";
+import IDataBaseService from "~/src/core/services/DataBaseService/DataBaseService";
 
 interface IProps { }
 export default class ServiceContainer extends React.Component<IProps> {
@@ -21,6 +23,8 @@ export default class ServiceContainer extends React.Component<IProps> {
     serviceProvider.registerService("IAdminService", AdminService);
     serviceProvider.registerService("IDocumentService", DocumentService);
     serviceProvider.registerService("ISocialService", SocialService);
+    serviceProvider.registerService("IGPTService", GPTService);
+    serviceProvider.registerService("IDataBaseService", IDataBaseService);
   }
 
   render() {

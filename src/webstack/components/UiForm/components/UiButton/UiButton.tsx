@@ -39,14 +39,16 @@ export const LinkProvider: FC<ILinkProvider> = ({ href, target, children, rel, f
 };
 export interface IButton extends IFormControl {
   onClick?: (e: any) => void;
+  checked?:any;
+  onChange?: (e: any) => void;
   disabled?: boolean;
   busy?: boolean;
   href?: string;
   name?: string;
   target?: string;
-  value?:any;
+  value?: any;
   size?: IFormControlSize;
-  type?: "button" | "submit" | "reset" | 'tel' | 'email'|'checkbox';
+  type?: "button" | "submit" | "reset" | "tel" | "email" | "checkbox" | "file";
   variant?: IFormControlVariant;
 }
 
@@ -58,6 +60,9 @@ const ButtonContext = ({ context }: IButtonContext) => {
   let traits = context.traits ? context.traits : {};
   traits['disabled'] = context.disabled;
   const handleClick = (e:any) =>{
+    if(e?.ariaChecked !== undefined) {
+      context.checked = e.ariaChecked;
+    }
     context?.onClick && context?.onClick(e)
   }
   if(context?.disabled)context.variant='disabled';
@@ -69,11 +74,13 @@ const ButtonContext = ({ context }: IButtonContext) => {
       <FormControl label={context.label} size={context.size} variant={context.variant} traits={traits}>
         <button
           data-element='button'
+          aria-checked={context?.checked}
           name={context?.name}
           value={context?.value}
           type={_type || undefined}
           className={context?.variant ? context?.variant : ""}
           onClick={handleClick}
+          onChange={context?.onChange}
           disabled={context?.disabled || context?.variant == "disabled"}
         >
           {context?.busy && (
@@ -103,6 +110,7 @@ const UiButton: NextComponentType<NextPageContext, {}, IButton> = ({
   label,
   value,
   type,
+  checked,
   name,
   size
 }: IButton) => {
@@ -116,12 +124,12 @@ const UiButton: NextComponentType<NextPageContext, {}, IButton> = ({
       <>
         <style jsx>{styles}</style>
         <LinkProvider href={href} target={target} formControl={false}>
-          <ButtonContext context={{ name, value, type, onClick, children, variant,size, disabled, busy, traits, label }} />
+          <ButtonContext context={{ checked, name, value, type, onClick, children, variant,size, disabled, busy, traits, label }} />
         </LinkProvider>
       </>
     );
 
-  return <ButtonContext context={{ name, value, onClick, children, variant,size, disabled, busy, traits, label }} />;
+  return <ButtonContext context={{ checked, name, value, onClick, children, variant,size, disabled, busy, traits, label }} />;
 };
 
 export default UiButton;

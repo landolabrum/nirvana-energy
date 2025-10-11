@@ -37,28 +37,38 @@ const onSubmit =(e:any) =>{
       merchant: environment.merchant
     }
   };
-  try{
     MemberService.signIn(request).then((response)=>{
-      console.log({response})
-      onSuccess?.(response)
+      const errorFields = response?.detail?.fields;
+      if(errorFields){
+       const newFields = fields.map((field:any)=>{
+        const errorField = findField(errorFields, field.name)
+        if(errorField){
+        return {...field,...errorField}
+        }
+        return field
+       }
+       // const message = findField(response?.detail?.fields, 'email')?.message
+      ) // updateField(fields, 'email', {exception, message})
+      // console.log({newFields})
+      setFields(newFields );
+    }else{
+        // console.log({response})
+        onSuccess?.(response)
+      }
+      
     })
-  }catch(exception:any){
-    console.error({exception})
-  }
+      // fields.forEach((field:any)=>{
+      //   console.log({field, exception})
+      // })
 
 }
 
   return (
     <>
       <style jsx>{styles}</style>
-      <UiForm 
-        fields={fields}
-        onChange={onChange}
-        onSubmit={onSubmit}
-        submitText='login'
-      />
+      <UiForm fields={fields} onChange={onChange} onSubmit={onSubmit} submitText="login" />
     </>
-  )
+  );
 }
 
 export default LoginView;

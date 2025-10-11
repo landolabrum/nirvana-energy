@@ -2,16 +2,20 @@ import { IPrice } from "./IPrice";
 
 export interface IStripeProduct {
     id: string;
+    mid: string;
     object: 'product';
     active: boolean;
-    attributes?: string[];
+    // attributes?: string[];
     created: number;
     default_price?: string;
     description?: string;
+
     images: string[];
     livemode: boolean;
     metadata: { [key: string]: string };
     name: string;
+    marketing_features?: string[]; // Add this property if it's missing
+
     package_dimensions?: {
         height: number;
         length: number;
@@ -26,7 +30,7 @@ export interface IStripeProduct {
     updated: number;
     url?: string;
     selected?: boolean;
-    price_id?:string;
+    price_id?: string;
 }
 export interface IProduct extends IStripeProduct {
     price: IPrice

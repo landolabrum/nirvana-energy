@@ -1,0 +1,64 @@
+/* AdminLiveStreamOverlays.scss */
+
+.d-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===== Overlay panel ===== */
+.admin-live-stream-add-overlay {
+  @extend .d-flex;
+  flex-direction: column;
+
+  /* Fill parent exactly; never create page scroll */
+  height: 100%;
+  justify-content: flex-start;
+
+  /* Layout/appearance */
+  padding: var(--s-9);
+  border: 1px solid var(--gray-70);
+  background: linear-gradient(var(--gray-80), var(--gray-100));
+  align-items: stretch;
+  border-radius: var(--border-radius);
+  position: relative;
+  gap: var(--s-1);
+  height: 100%;
+  /* No internal scroll in any breakpoint */
+
+  @media (min-width: 1260px) {
+    align-items: flex-start;
+  }
+
+  /* ===== list area ===== */
+  &--list {
+    @extend .d-flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: var(--s-9);
+    position: relative;
+
+    /* critical: allow it to shrink inside the fixed-height panel */
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  &__actions {
+    width: 100%;
+    @extend .d-flex;
+    align-items: flex-end;
+  }
+}
+
+/* Full-cover hint inside the panel */
+.form__hint {
+  @extend .d-flex;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}

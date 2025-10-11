@@ -1,0 +1,59 @@
+/* src/modules/stream/views/AdminLiveStreamPanel/AdminLiveStreamPanel.scss */
+.d-flex{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-live-stream-panel{
+  @extend .d-flex;
+  flex-direction: column;
+  padding: 1rem;
+background-color: var(--gray-80);
+  .panel-toolbar{
+    width: 100%;
+    @extend .d-flex;
+    justify-content: space-between;
+    margin-bottom: .75rem;
+
+    .title{
+      font-weight: 700;
+      font-size: 1rem;
+    }
+  }
+
+  .stream-row{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: .75rem 1rem;
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: .75rem;
+    margin-bottom: .5rem;
+
+    .meta{
+      display: flex;
+      flex-direction: column;
+      gap: .125rem;
+
+      .name{ font-weight: 600; }
+      .hint{ font-size: .75rem; color: #6b7280; }
+    }
+  }
+
+  .fab-add{
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .5rem .75rem;
+    border-radius: .75rem;
+    background: #2563eb;
+    color: #fff;
+    transition: opacity .15s ease-in-out;
+    cursor: pointer;
+    &:hover{ opacity: .9; }
+    &:disabled{ opacity: .5; cursor: not-allowed; }
+  }
+}

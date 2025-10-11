@@ -13,17 +13,21 @@ export interface MerchantSettingsLayout {
       size?: 'sm' | 'md' | 'lg' | 'xl'
 }
 export interface MerchantSettings {
+  optIn?:boolean;
   ecommerce?:{
     productListing?:MerchantSettingsLayout
-  }
-  about?: any
+  };
+  // [key:string]?: any; // Removed to improve type safety
 }
 export interface Merchant {
-  url: string;
+  url?: string;
+  dir?: string;
+  display?:string;
   name: string;
   mid: string;
   stripeId: string;
-  settings?: MerchantSettings;
+  settings?: {[key:string]:any;}
+  // settings?: MerchantSettings;
 }
 
 
@@ -45,6 +49,7 @@ export interface IEnvironment {
   };
   serviceEndpoints: {
     membership: string;
+    gpt: string;
     social: string;
     distributor: string;
     shopping: string;

@@ -1,42 +1,93 @@
 // Relative Path: ./Social.tsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from './Social.scss';
+import Twitch from '../views/twitch/controller/Twitch';
 import { useUser } from '~/src/core/authentication/hooks/useUser';
-import capitalize from '@webstack/helpers/Capitalize';
-import UiLoader from '@webstack/components/UiLoader/view/UiLoader';
-import Instagram from '../views/instagram/controller/Instagram';
-import { useRouter } from 'next/router';
-import UiSettingsLayout from '@webstack/layouts/UiSettingsLayout/controller/UiSettingsLayout';
 
 // Remember to create a sibling SCSS file with the same name as this component
 
-const DefaultSocial = (user?: any) => {
-  return <>
-    <style jsx>{styles}</style>
-    <div className='home__default'>
-      <div className='home__default--title'>
-        {user && user?.name && capitalize(user.name) || ''}, Social Automation.
-      </div>
-    </div>
-  </>
-}
-const Social: React.FC<any> = () => {
-  const router = useRouter();
-  const platform = router?.query?.platform;
+const Social: React.FC = () => {
   const user = useUser();
-
-  const [view, setView] = useState<string | undefined>();
-  const views = {
-    instagram: <Instagram />
-  };
-
-  useEffect(() => { if (platform && !view) setView(String(platform)) }, [platform]);
-  if (user && platform) return (
+  return (
     <>
       <style jsx>{styles}</style>
-     <UiSettingsLayout viewName={view} title="social" subTitle={view} views={views}/>
+      <div className='social'>
+  // Social.tsx (or wherever you render it)
+<Twitch user={user ?? {}} />
+
+      </div>
     </>
-  ); return <><UiLoader /></>
+  );
 };
 
 export default Social;
+
+// // Relative Path: ./Social.tsx
+// import React, { useMemo } from "react";
+// import styles from "./Social.scss";
+// import UiLoader from "@webstack/components/UiLoader/view/UiLoader";
+// import Instagram from "../views/instagram/controller/Instagram";
+// import { useRouter } from "next/router";
+// import capitalize from "@webstack/helpers/Capitalize";
+// import { useUser } from "~/src/core/authentication/hooks/useUser";
+
+// type SocialProps = {
+//   platform?: string; // e.g., "instagram"
+//   user?: any;
+//   title?: string;
+// };
+
+// const DefaultSocial: React.FC<{ user?: any }> = ({ user }) => (
+//   <div className="defaultWrap">
+//     <div className="title">
+//       {user?.name
+//         ? `${capitalize(user.name)}, Social Automation.`
+//         : "Social Automation"}
+//     </div>
+//     <div className="subtitle">Choose a platform to get started.</div>
+//   </div>
+// );
+
+// const Social: React.FC<SocialProps> = ({ platform, user: user, title }) => {
+//   const router = useRouter();
+//   const routePlatform = router?.query?.platform;
+//   const qp = Array.isArray(routePlatform) ? routePlatform[0] : routePlatform;
+//   // Fallback order: prop → query param → undefined
+//   const resolvedPlatform = (platform || qp || "")
+//     .toString()
+//     .trim()
+//     .toLowerCase() || undefined;
+
+//   const pageTitle = useMemo(
+//     () =>
+//       title ??
+//       (resolvedPlatform ? `Social · ${capitalize(resolvedPlatform)}` : "Social"),
+//     [title, resolvedPlatform]
+//   );
+
+//   if (!user) return <UiLoader />;
+
+//   let view: React.ReactNode;
+//   switch (resolvedPlatform) {
+//     case "instagram":
+//       view = <Instagram user={user} />;
+//       break;
+//     default:
+//       view = <DefaultSocial user={user} />;
+//       break;
+//   }
+
+//   return (
+//     <>
+//       <style jsx>{styles}</style>
+//       <div className="social" data-title={pageTitle}>
+//         {/* {view}
+//          */}
+         
+// {/* <Instagram user={user} /> */}
+//       </div>
+//     </>
+//   );
+// };
+
+// export default Social;

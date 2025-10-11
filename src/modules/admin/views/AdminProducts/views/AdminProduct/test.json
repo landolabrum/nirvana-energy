@@ -1,0 +1,212 @@
+{
+    "product": [
+        {
+            "name": "id",
+            "value": "prod_SjKzfNfBaWQwja",
+            "label": "id"
+        },
+        {
+            "name": "object",
+            "value": "product",
+            "label": "object"
+        },
+        {
+            "name": "active",
+            "value": true,
+            "label": "active"
+        },
+        {
+            "name": "attributes",
+            "value": [],
+            "label": "attributes"
+        },
+        {
+            "name": "created",
+            "value": 1753237323,
+            "label": "created",
+            "readonly": true
+        },
+        {
+            "name": "default_price",
+            "value": null,
+            "label": "default_price"
+        },
+        {
+            "name": "description",
+            "value": "Chillin', Vibin', Kickin'? Let HangyBin hold your knick knacks while you do what you do best.",
+            "label": "description"
+        },
+        {
+            "name": "features",
+            "value": [],
+            "label": "features"
+        },
+        {
+            "name": "images",
+            "value": [
+                "https://tiktok.soy/files/mb1/products/HangyBin_1.png",
+                "https://tiktok.soy/files/mb1/products/HangyBin_2.png",
+                "https://tiktok.soy/files/mb1/products/HangyBin_3.png",
+                "https://tiktok.soy/files/mb1/products/HangyBin_4.png",
+                "https://tiktok.soy/files/mb1/products/HangyBin_5.png"
+            ],
+            "label": "images"
+        },
+        {
+            "name": "livemode",
+            "value": true,
+            "label": "livemode"
+        },
+        {
+            "name": "marketing_features",
+            "value": [],
+            "label": "marketing_features"
+        },
+        null,
+        {
+            "name": "name",
+            "value": "HangyBin",
+            "label": "name"
+        },
+        {
+            "name": "package_dimensions",
+            "value": null,
+            "label": "package_dimensions"
+        },
+        {
+            "name": "shippable",
+            "value": null,
+            "label": "shippable"
+        },
+        {
+            "name": "statement_descriptor",
+            "value": null,
+            "label": "statement_descriptor"
+        },
+        {
+            "name": "tax_code",
+            "value": "txcd_10000000",
+            "label": "tax_code"
+        },
+        {
+            "name": "type",
+            "value": "service",
+            "label": "type"
+        },
+        {
+            "name": "unit_label",
+            "value": null,
+            "label": "unit_label"
+        },
+        {
+            "name": "updated",
+            "value": 1753340855,
+            "label": "updated",
+            "readonly": true
+        },
+        {
+            "name": "url",
+            "value": null,
+            "label": "url"
+        },
+        null
+    ],
+    "price": [
+        {
+            "name": "id",
+            "value": "price_1RqhvTIodeKZRLDVAHylOB6M",
+            "label": "id"
+        },
+        {
+            "name": "object",
+            "value": "price",
+            "label": "object"
+        },
+        {
+            "name": "active",
+            "value": true,
+            "label": "active"
+        },
+        {
+            "name": "billing_scheme",
+            "value": "per_unit",
+            "label": "billing_scheme"
+        },
+        {
+            "name": "created",
+            "value": 1753912363,
+            "label": "created",
+            "readonly": true
+        },
+        {
+            "name": "currency",
+            "value": "usd",
+            "label": "currency"
+        },
+        {
+            "name": "custom_unit_amount",
+            "value": null,
+            "label": "custom_unit_amount"
+        },
+        {
+            "name": "livemode",
+            "value": true,
+            "label": "livemode"
+        },
+        {
+            "name": "lookup_key",
+            "value": null,
+            "label": "lookup_key"
+        },
+        {
+            "name": "metadata",
+            "value": {},
+            "label": "metadata"
+        },
+        {
+            "name": "nickname",
+            "value": "price2",
+            "label": "nickname"
+        },
+        {
+            "name": "product",
+            "value": "prod_SjKzfNfBaWQwja",
+            "label": "product"
+        },
+        {
+            "name": "recurring",
+            "value": null,
+            "label": "recurring"
+        },
+        {
+            "name": "tax_behavior",
+            "value": "exclusive",
+            "label": "tax_behavior"
+        },
+        {
+            "name": "tiers_mode",
+            "value": null,
+            "label": "tiers_mode"
+        },
+        {
+            "name": "transform_quantity",
+            "value": null,
+            "label": "transform_quantity"
+        },
+        {
+            "name": "type",
+            "value": "one_time",
+            "label": "type"
+        },
+        {
+            "name": "unit_amount",
+            "value": 2200,
+            "label": "unit_amount"
+        },
+        {
+            "name": "unit_amount_decimal",
+            "value": "2200",
+            "label": "unit_amount_decimal"
+        }
+    ]
+}

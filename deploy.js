@@ -1,3 +1,8 @@
+
+
+
+// /home/web/code/frontend/deepturn/deploy.js
+
 const { exec } = require('child_process');
 const { deploy, merchants } = require('./merchants.config');
 
@@ -8,17 +13,13 @@ const gitDir = `${merchant.mid}.git`;
 // Fixing the multi-line URL by concatenating properly
 const repoUrl = `git@github.com:landolabrum/${merchant.name}.git`; // Correct URL format
 
-// Deployment command
 const deployCommand = `
   echo "****** PUBLISHING: ${merchant.url}" &&
   npm run build &&
   touch ./out/.nojekyll &&
-  touch out/CNAME &&
-  echo "${merchant.url}" >> out/CNAME &&
-  git --git-dir=${gitDir} --work-tree=. add -f out/ &&
-  git --git-dir=${gitDir} --work-tree=. commit -m "Deploy to gh-pages" &&
-  gh-pages -d out --repo ${repoUrl} &&
-  rm -rf ./out && 
+  echo "${merchant.url}" > out/CNAME &&
+  npx gh-pages -d out --repo ${repoUrl} &&
+  rm -rf ./out &&
   echo "########  [ PUBLISHED: ${merchant.url} ]  ########"
 `;
 
