@@ -7,6 +7,11 @@
   src: url("/fonts/gamestation/gamestationtext.otf") format("opentype");
   font-style: normal;
 }
+@font-face {
+  font-family: Papaya;
+  src: url("/fonts/papaya/sbb-papaya.otf") format("opentype");
+  font-style: normal;
+}
 
 @font-face {
   font-family: Nabla;
@@ -56,6 +61,7 @@
   src: url("/fonts/Decimal/Decimal-Light.otf") format("opentype");
   font-weight: 300;
   font-style: normal;
+  
   font-display: swap;
 }
 
