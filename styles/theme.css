@@ -36,6 +36,7 @@
 }
 
 @font-face {
+
   font-family: PlexLight;
   src: url("/fonts/IBMPlexMono/IBMPlexMono-Light.ttf") format("opentype");
   font-style: normal;
@@ -146,15 +147,13 @@
 @font-face {
   font-family: "Decimal TD";
   src: url("/fonts/Decimal/Decimal-Medium-TD.woff") format("woff");
-  font-weight: 500;           /* use only when explicitly requested */
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Decimal";
   src:
-    url("/fonts/Decimal/Decimal-Medium.woff2") format("woff2"),
-    url("/fonts/Decimal/Decimal-Medium.woff")  format("woff");
+    url("/fonts/Decimal/Decimal-Medium-TD.woff")  format("woff");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -209,9 +208,21 @@
   --yellow-90: #9a6b14;
   --yellow-90-o: #9a6b1470;
 
+  /* ===== Orange (with -o variants) ===== */
+  --orange-10: #ffe4cc;
+  --orange-10-o: #ffe4cc70;
+  --orange-20: #ffc999;
+  --orange-20-o: #ffc99970;
+  --orange-30: #ffb266;
+  --orange-30-o: #ffb26670;
   --orange-50: #ff9900;
   --orange-50-o: #ff990070;
+  --orange-70: #cc7a00;
+  --orange-70-o: #cc7a0070;
+  --orange-90: #995c00;
+  --orange-90-o: #995c0070;
   --orange-o: #ff990070;
+
 
   --red-10: #ef4444;
   --red-10-o: #ef444470;
@@ -266,6 +277,7 @@
 
   --pink: #e91e63;
   --pink-o: #e91e6370;
+  
   --pink-10: #ff80ab;
   --pink-10-o: #ff80ab70;
   --pink-30: #f06292;
@@ -290,8 +302,8 @@
   --gray-60-o: #73737370;
   --gray-70: #525252;
   --gray-70-o: #52525270;
-  --gray-80: #404040;
-  --gray-80-o: #40404070;
+  --gray-80: #454545;
+  --gray-80-o: #45454570;
   --gray-90: #262626;
   --gray-90-o: #26262670;
   --gray-100: #171717;

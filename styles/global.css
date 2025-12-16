@@ -1,3 +1,4 @@
+
 /* SIZING ROOT */
 :root{
   --s-xxl: 50px;
@@ -84,8 +85,16 @@
   --header-height: 175px;
 }
 
-
-
+.desktop-only {
+  @media (max-width: 1100px) {
+    display: none !important;
+  }
+}
+.mobile-only {
+  @media (min-width: 1101px) {
+    display: none !important;
+  }
+}
 
 /* Padding all */
 .s-xxl-p { padding: var(--s-xxl); }
@@ -222,10 +231,12 @@ body {
 
   #__next {
 
+
     margin: 0;
     padding: 0;
     height: 100%;
     min-height: 100vh;
+    overflow: hidden;
   }
 }
 
@@ -238,7 +249,7 @@ body {
 
 *::-webkit-scrollbar {
   width: var(--s-9);
-/*   
+/*
   background: linear-gradient(
     var(--gray-100),
     var(--gray-90-o),
@@ -251,7 +262,7 @@ body {
   }
 *::-webkit-scrollbar-thumb {
   background-color: var(--gray-70-o);
-  border-radius: 0; 
+  border-radius: 0;
   box-shadow: inset -1px -1px 0 1px var(--gray-100), inset 4px 0 3px 3px var(--gray-70-o);
   position: relative;
   z-index: 1;
@@ -1016,7 +1027,7 @@ nav {
 }
 
 .header {
-  --header-primary-bg: var(--gray-100);
+  --header-primary-bg: unset;
   --header-primary-border: solid 1px var(--gray-80);
   --header-primary: var(--gray-30);
   --header-width: var(--full-width);
