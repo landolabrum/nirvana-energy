@@ -117,6 +117,22 @@
   font-weight: 700;
   font-display: swap;
 }
+/* Demi/Bold Italic (700 italic) */
+@font-face {
+  font-family: "JerseyM54";
+  src: url("/fonts/JerseyM54/JerseyM54.ttf") format("truetype");
+  /* font-style: italic; */
+  /* font-weight: 700; */
+  font-display: swap;
+}
+@font-face {
+  font-family: "AvantGarde";
+  src:
+    url("/fonts/AvantGarde/fonnts.com-AVGARDDO_2.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+}
 
 /* Bold (900) */
 @font-face {
@@ -189,6 +205,7 @@
   --color: #615f5f;
   --lite: #f0edeb;
   --dark: #2c0903;
+  --dark-linear-gradient: linear-gradient(170deg, rgba(15, 13, 23, 0.96), rgba(19, 19, 24,.96));
   --dark-70: #200804;
   --dark-o: #242c3670;
   --black: #111111;
@@ -253,8 +270,8 @@
 
   --blue-10: #2b8fdb;
   --blue-10-o: #2b8fdb70;
-  --blue-30: #2277b5;
-  --blue-30-o: #2277b570;
+  --blue-30: #007bff;
+  --blue-30-o: #007bff70;
   --blue-50: #1a5e92;
   --blue-50-o: #1a5e9270;
   --blue-60: #18527f;
@@ -311,7 +328,7 @@
   --gray-100: #171717;
   --gray-100-o: #17171770;
 
-  --box-shadow: -0.06rem -0.07rem 0  var(--gray-30),
+  --box-shadow: -0.06rem -0.07rem 0  var(--gray-90),
         0.1rem 0.1rem 0.1rem 0.1rem var(--gray-100);
   --box-shadow-inset: inset 2px 2px 10px rgba(23, 23, 23, 0.5);
   --box-shadow-sm: 2px 2px 5px rgba(23, 23, 23, 0.5);
