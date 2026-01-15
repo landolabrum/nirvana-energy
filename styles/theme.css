@@ -5,6 +5,25 @@
   display: none !important;
 }
 @font-face {
+  font-family: Chintzy;
+  src: url("/fonts/Chintzy/chintzy.ttf") format("opentype");
+  font-style: normal;
+  font-weight: normal;
+}
+@font-face {
+  font-family: Chintzy;
+  src: url("/fonts/Chintzy/chintzys.ttf") format("opentype");
+  font-style: normal;
+  font-weight: Bold;
+}
+
+@font-face {
+  font-family: RetroPixel;
+  src: url("/fonts/RetroPixel/RetroPixel.otf") format("opentype");
+  font-style: normal;
+}
+
+@font-face {
   font-family: Game;
   src: url("/fonts/gamestation/gamestationtext.otf") format("opentype");
   font-style: normal;
@@ -263,6 +282,8 @@
   --green-20-o: #34d06b70;
   --green-30: #34a853;
   --green-30-o: #34a85370;
+  --green-50: #2c9648;
+  --green-50-o: #2c964870;
   --green-70: #2d8c3b;
   --green-70-o: #2d8c3b70;
   --green-90: #257029;
@@ -364,7 +385,10 @@
 }
 
 
-
+small{
+  position:relative;
+  width: max-content;
+}
 @keyframes fadeIn {
   0% {
     opacity: 0;
@@ -704,4 +728,19 @@
   --ui-icon-color: var(--primary-90);
   background-color: var(--primary-30);
   box-shadow: -1px -1px 1px var(--gray-90), 1px 1px 2px 1px var(--primary-90);
+}
+.badge {
+  position: absolute;
+  font-family: 'Courier New', Courier, monospace;
+  text-transform: uppercase;
+  font-size: var(--s-7);
+  top: -10px;
+  right: -10px;
+  line-height: 1;
+  background: var(--orange-70);
+  color: var(--gray-50);
+  padding: 3px 6px;
+  border-radius: 10px;
+  pointer-events: none;
+  user-select: none;
 }
