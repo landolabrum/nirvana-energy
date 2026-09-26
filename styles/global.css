@@ -38,6 +38,7 @@
   --s-8-w: calc(100% - calc(var(--s-8) * 2));
   --s-9-w: calc(100% - calc(var(--s-9) * 2));
   --s-10-w: calc(100% - calc(var(--s-10) * 2));
+  --s-11-w: calc(100% - calc(var(--s-11) * 2));
   --s-12-w: calc(100% - calc(var(--s-12) * 2));
 
   /* Padding shorthand variables */
@@ -71,12 +72,12 @@
   --s-12-p-t: padding-top: var(--s-12);
 
   /* Borders & misc */
-  --s-border-width: calc(100% - 2px);
+  --s-border-w: calc(100% - 2px);
   --s-border-padding-width: calc(var(--s-4-w) - 2px);
   --s-4-sm: calc(--s-4 * 2);
   --s-element-width: calc(100% - calc(var(var(--s-element))));
   --s-nav-height: 45px;
-  --s-page-height: calc(100vh - var(--s-nav-height));
+  --s-page-height: calc(100vh - var(--s-nav-height) - var(--s-4));
 
   /* PAGE BREAKS */
   --breakpoint-xs: 600px;
@@ -86,14 +87,14 @@
   --breakpoint-xl: 1600px;
   --border-radius: 8px;
   --s-element: 45px;
+  --border: solid 1px rgba(82, 82, 82, 0.5);
+  --border-hover: solid 1px rgba(163, 163, 163, 0.5);
+  --border-focus: solid 1px rgba(224, 224, 224, 0.5);
 
   @media (max-width: 1100px) {
     --border-radius: 5px;
   }
 
-  --border: solid 1px rgba(82, 82, 82, 0.5);
-  --border-hover: solid 1px rgba(163, 163, 163, 0.5);
-  --border-focus: solid 1px rgba(224, 224, 224, 0.5);
   --header-height: 175px;
 }
 
@@ -427,10 +428,8 @@ html {
 }
 
 body {
-  font-family: var(--font-family, "Play"), sans-serif;
+  /* font-family: var(--font-family, "Play"), sans-serif; */
   margin: 0;
-  /* background: var(--bg-primary); */
-  color: var(--color);
   font-size: clamp(14px, 1.5vw, 18px);
   font-weight: 300;
 
@@ -481,7 +480,7 @@ body {
 }
 
 *::-webkit-scrollbar-thumb::after {
-  content: "⛏fdsa";
+  content: "⛏";
   writing-mode: vertical-rl;
   text-orientation: mixed;
   width: 50px;
@@ -723,45 +722,45 @@ body {
   width: var(--s-9-w);
 }
 
-.s-border-width {
-  width: var(--s-border-width);
+.s--s-border-w {
+  width: var(--s--s-border-w);
 }
 
-.s-border-width-50 {
+.s--s-border-w-50 {
   width: calc(50% - 2px);
 }
 
-.s-sm-border-width {
+.s-sm--s-border-w {
   @media (max-width: 900px) {
-    width: var(--s-border-width);
+    width: var(--s--s-border-w);
   }
 }
 
-.s-sm-border-width-50 {
+.s-sm--s-border-w-50 {
   @media (max-width: 900px) {
     width: calc(50% - 2px);
   }
 }
 
-.s-md-border-width {
+.s-md--s-border-w {
   @media (max-width: 1100px) {
-    width: var(--s-border-width);
+    width: var(--s--s-border-w);
   }
 }
 
-.s-md-border-width-50 {
+.s-md--s-border-w-50 {
   @media (max-width: 1100px) {
     width: calc(50% - 2px);
   }
 }
 
-.s-lg-border-width {
+.s-lg--s-border-w {
   @media (min-width: 1100px) {
-    width: var(--s-border-width);
+    width: var(--s--s-border-w);
   }
 }
 
-.s-lg-border-width-50 {
+.s-lg--s-border-w-50 {
   @media (min-width: 1100px) {
     width: calc(50% - 2px);
   }
@@ -940,7 +939,7 @@ h6 {
 }
 
 h1 {
-  gap: var(--s-8);
+  /* gap: var(--s-8); */
   font-size: var(--s-1);
   --ui-icon-size: var(--s-1);
   color: inherit;
@@ -954,7 +953,7 @@ h2 {
 h3 {
   gap: var(--s-9);
   font-size: var(--s-3);
-  color: var(--color, var(--gray-50));
+  color: var(--color, var(--gray-30));
 }
 
 h4 {
@@ -1293,7 +1292,7 @@ button {
   --input-secondary-bg: var(--gray-80);
   --input-focus-bg: var(--gray-60);
   --input-option-hover: var(--gray-40);
-  --input-box-shadow: var(--box-shadow);
+  --input-box-shadow: var(--box-shadow-90);
   --input-border-radius: calc(var(--border-radius) * 0.66);
   --select-option-selected: var(--blue-50);
   --select-option-selected-bg: #c8def0;
@@ -1460,4 +1459,13 @@ a:-webkit-any-link {
 
 .z-3 {
   z-index: 3 !important;
+}
+/* UiIcon animated gradient — global so `--ui-icon-animation` (and its default in
+   UiIcon.scss) can reference it; styled-jsx scopes local keyframes names away. */
+@keyframes ui-icon-gradient-shift {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 100% 20%; }
+  50% { background-position: 80% 100%; }
+  75% { background-position: 10% 80%; }
+  100% { background-position: 0% 50%; }
 }

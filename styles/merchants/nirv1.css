@@ -20,7 +20,7 @@
   --primary-90-o: #26560080;
 
   /* (Optional) keep your generic overlay */
-  --primary-o: #9d8d2b70;
+  --primary-50-o: #9d8d2b70;
 
   --secondary: #c5b9a8;
   --secondary-10: #d6c8b7;
@@ -119,6 +119,9 @@ h3 {
 }
 
 body {
-  color: black;
+  color: var(--gray-20);
+  --ui-icon-color: var(--gray-20);
   background: var(--bg-primary);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-weight: 400;
 }
