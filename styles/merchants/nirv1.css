@@ -113,10 +113,10 @@
   --ui-menu--background: var(--gray-20);
   --ui-menu--border: var(--primary-50);
 }
-
+/* 
 h3 {
   font-family: Decimal;
-}
+} */
 
 body {
   color: var(--gray-80);
